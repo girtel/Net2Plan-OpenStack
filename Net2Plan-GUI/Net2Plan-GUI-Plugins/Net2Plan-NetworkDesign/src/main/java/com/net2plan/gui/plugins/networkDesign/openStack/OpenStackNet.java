@@ -166,7 +166,7 @@ public class OpenStackNet
             final double xCoord = Math.sin(Math.toRadians((360 * index) / numNodes));
             final double yCoord = -Math.cos(Math.toRadians((360 * index) / numNodes));
 
-            node.setXYPositionMap(new Point2D.Double(xCoord, yCoord));
+           // node.setXYPositionMap(new Point2D.Double(xCoord, yCoord));
 
             index++;
         }

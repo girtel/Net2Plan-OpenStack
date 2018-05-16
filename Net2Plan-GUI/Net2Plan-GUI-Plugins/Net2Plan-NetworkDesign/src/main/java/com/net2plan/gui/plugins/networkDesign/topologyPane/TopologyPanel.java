@@ -56,7 +56,7 @@ public class TopologyPanel extends JPanel
 
     JPanel jp1, jp2, jp3;
     JButton jb1, jb2, jb3, jbP1, jbP2, jbP3;
-    JTextField textField, textField1;
+    JTextField textField, textField4,textField2,textField3;
     private FileChooserNetworkDesign fc_netPlan, fc_demands;
 
     /**
@@ -539,7 +539,7 @@ public class TopologyPanel extends JPanel
 
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println(textField.getText());
+                callback.connectToOpenStack(textField3.getText(),textField.getText(),textField2.getText(),textField4.getText());
             }
         } );
         jfM.add(jp1);
@@ -569,21 +569,21 @@ public class TopologyPanel extends JPanel
 
         JLabel l2 = new JLabel("Password", JLabel.TRAILING);
         jp1.add(l2);
-        JTextField textField2 = new JTextField();
+         textField2 = new JTextField();
         textField2.setPreferredSize(new Dimension(10, 10));
         //l.setLabelFor(textField);
         jp1.add(textField2);
 
         JLabel l3 = new JLabel("IP", JLabel.TRAILING);
         jp1.add(l3);
-        JTextField textField3 = new JTextField();
+         textField3 = new JTextField();
         textField3.setPreferredSize(new Dimension(10, 10));
         //l.setLabelFor(textField);
         jp1.add(textField3);
 
         JLabel l4 = new JLabel("Proyect", JLabel.TRAILING);
         jp1.add(l4);
-        JTextField textField4 = new JTextField();
+         textField4 = new JTextField();
         textField4.setPreferredSize(new Dimension(10, 10));
         //l.setLabelFor(textField);
         jp1.add(textField4);

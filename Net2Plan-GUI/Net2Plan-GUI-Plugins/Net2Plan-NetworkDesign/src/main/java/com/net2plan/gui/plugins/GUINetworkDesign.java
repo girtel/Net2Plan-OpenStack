@@ -290,7 +290,7 @@ import java.util.List;
             updateVisualizationAfterNewTopology();
         }
 
-        public void connectToOpenStack(String user, String password, String ip, String proyect)
+        public void connectToOpenStack(String ip, String user, String password, String proyect)
         {
             this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(ip,user,password,proyect);
         }

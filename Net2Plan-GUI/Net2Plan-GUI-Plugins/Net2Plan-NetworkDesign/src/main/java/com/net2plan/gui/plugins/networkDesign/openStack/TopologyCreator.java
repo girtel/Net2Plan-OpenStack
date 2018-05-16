@@ -25,10 +25,11 @@ class TopologyCreator
     TopologyCreator(String openstackIPAddress, String user, String password, String project)
     {
         os  = OSFactory.builderV3()
-                .endpoint("http://"+openstackIPAddress+"/identity/v3")
+                .endpoint("http://"+openstackIPAddress+":5000/v3")
                 .credentials(user,password,Identifier.byName("Default"))
                 .scopeToProject(Identifier.byName(project), Identifier.byId("default"))
                 .authenticate();
+        System.out.println(os.identity().users().list());
     }
 
 
