@@ -29,7 +29,7 @@ public class OpenStackNet
 {
 
     private final NetPlan np;
-
+    protected  Node newNode;
 
     final List<OpenStackNode> list_osNodes = new ArrayList<> ();
     final List<OpenStackLink> list_osLinks = new ArrayList<> ();
@@ -60,11 +60,11 @@ public class OpenStackNet
 
     }
 
-    public static OpenStackNet buildOpenStackNetFromServer(String serverIp, String userName, String password, String proyect)
+    public static OpenStackNet buildOpenStackNetFromServer(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
     {
         try
         {
-            final OpenStackNet res = new TopologyCreator(serverIp, userName, password, proyect).getOpenStackNet();
+            final OpenStackNet res = new TopologyCreator(os_auth_url, os_username, os_password, os_project_name,os_user_domain_name,os_project_domain_id).getOpenStackNet();
             return res;
         } catch (Exception e)
         {
@@ -103,6 +103,7 @@ public class OpenStackNet
 
     public OpenStackNode addOpenStackNode(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
+
         final OpenStackNode res = OpenStackNode.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
         list_osNodes.add(res);
         return res;
@@ -166,7 +167,7 @@ public class OpenStackNet
             final double xCoord = Math.sin(Math.toRadians((360 * index) / numNodes));
             final double yCoord = -Math.cos(Math.toRadians((360 * index) / numNodes));
 
-          //  node.setXYPositionMap(new Point2D.Double(xCoord, yCoord));
+            node.setXYPositionMap(new Point2D.Double(xCoord, yCoord));
 
             index++;
         }

@@ -290,12 +290,14 @@ import java.util.List;
             updateVisualizationAfterNewTopology();
         }
 
-        public void connectToOpenStack(String ip, String user, String password, String proyect)
+        public void connectToOpenStack(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
         {
-            this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(ip,user,password,proyect);
+            this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(os_auth_url,os_username,os_password,os_project_name,os_user_domain_name,os_project_domain_id);
         }
 
         public OpenStackNet getOpenStackNet() { return this.currentOpenStackNet; }
+        public void setOpenStackNet(OpenStackNet design) {  this.currentOpenStackNet = design; }
+
         private JPanel configureLeftBottomPanel()
         {
             this.focusPanel = new FocusPane(this);

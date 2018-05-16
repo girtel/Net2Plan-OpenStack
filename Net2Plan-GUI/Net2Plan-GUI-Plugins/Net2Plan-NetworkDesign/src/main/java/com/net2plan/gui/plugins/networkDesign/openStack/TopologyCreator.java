@@ -22,14 +22,15 @@ class TopologyCreator
 {
     private final OSClientV3 os;
 
-    TopologyCreator(String openstackIPAddress, String user, String password, String project)
+    TopologyCreator(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name ,String os_project_domain_id)
     {
-        os  = OSFactory.builderV3()
-                .endpoint("http://"+openstackIPAddress+":5000/v3")
-                .credentials(user,password,Identifier.byName("Default"))
-                .scopeToProject(Identifier.byName(project), Identifier.byId("default"))
-                .authenticate();
-        System.out.println(os.identity().users().list());
+
+            os = OSFactory.builderV3()
+                    .endpoint(os_auth_url)
+                    .credentials(os_username, os_password, Identifier.byName(os_user_domain_name))
+                    .scopeToProject(Identifier.byName(os_project_name), Identifier.byId(os_project_domain_id))
+                    .authenticate();
+
     }
 
 

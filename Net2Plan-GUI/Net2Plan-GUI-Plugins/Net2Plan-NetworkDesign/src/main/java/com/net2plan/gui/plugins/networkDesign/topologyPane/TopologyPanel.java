@@ -12,11 +12,13 @@
 
 package com.net2plan.gui.plugins.networkDesign.topologyPane;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.FileChooserNetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.plugins.AddLinkGraphPlugin;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.JUNGCanvas;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.state.CanvasOption;
@@ -33,12 +35,17 @@ import com.net2plan.internal.SystemUtils;
 import com.net2plan.utils.Pair;
 import com.net2plan.utils.SwingUtils;
 import org.apache.commons.collections15.BidiMap;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.util.*;
 import java.util.List;
 
@@ -54,9 +61,11 @@ public class TopologyPanel extends JPanel
     private final TopologySideBar sideBar;
 
 
-    JPanel jp1, jp2, jp3;
-    JButton jb1, jb2, jb3, jbP1, jbP2, jbP3;
-    JTextField textField, textField4,textField2,textField3;
+    JPanel jp1;
+    JButton jbP1, jbP2, jbP3;
+    JTextField os_username, os_auth_url,os_project_name,os_user_domain_name,os_project_domain_id;
+    JPasswordField os_password;
+
     private FileChooserNetworkDesign fc_netPlan, fc_demands;
 
     /**
@@ -525,109 +534,160 @@ public class TopologyPanel extends JPanel
 
     public void loadCredentials(){
 
-        JFrame jfM = new JFrame("Please insert your credentials");
+        JFrame jfM = new JFrame("Credentials");
         jfM.setLayout(null);
 
 
-        gridJP();  //invocamos los metodos que contienen los paneles
+        openStackFormView();  //invocamos los metodos que contienen los paneles
 
-        jbP1 = new JButton("Send");
+        jbP1 = new JButton("Enter");
+        jbP2 = new JButton("Load");
+        jbP3 = new JButton("Generate");
 
         jp1.setBounds(10, 10, 200, 200);
 
-        jbP1.setBounds(10, 430, 90, 20);
-
+        jbP1.setBounds(75, 250, 90, 20);
+        jbP2.setBounds(25, 225, 90, 20);
+        jbP3.setBounds(125, 225, 90, 20);
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                callback.connectToOpenStack(textField3.getText(), textField.getText(), textField2.getText(), textField4.getText());
-                // Disable OSM while loading the new topology
-                boolean isOSMRunning = canvas.getState() == CanvasOption.OSMState;
-                if (isOSMRunning) canvas.setState(CanvasOption.ViewState);
 
-                //Disable Site
-                boolean isSiteRunning = canvas.getState() == CanvasOption.SiteState;
-                if (isSiteRunning) canvas.setState(CanvasOption.ViewState);
+                callback.connectToOpenStack(os_auth_url.getText(), os_username.getText(), String.valueOf(os_password.getPassword()), os_project_name.getText(), os_user_domain_name.getText(), os_project_domain_id.getText());
 
+                //NetPlan aux = callback.getDesign();
+                OpenStackNet aux = callback.getOpenStackNet();
+
+                callback.setOpenStackNet(aux);
                 final VisualizationState vs = callback.getVisualizationState();
                 Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
                         vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
                 vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
                 callback.updateVisualizationAfterNewTopology();
                 callback.addNetPlanChange();
+                //callback.resetPickedStateAndUpdateView();
+                jfM.dispose();
+
+            }});
+        jbP2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                assert fc_netPlan != null;
+
+                int rc = fc_netPlan.showOpenDialog(null);
+                if (rc != JFileChooser.APPROVE_OPTION) return;
+
+
+                try{
+                    FileInputStream inputStream = new FileInputStream(fc_netPlan.getSelectedFile().toString());
+                    String everything = IOUtils.toString(inputStream);
+
+                    JSONObject jsonObject = new JSONObject(everything);
+                    os_username.setText(jsonObject.getString("os_username"));
+                    String password = "";
+                    JSONArray jA = jsonObject.getJSONArray("os_password");
+
+                    for(int i = 0; i < jA.length(); i++) {
+                        password = password.concat(jA.getString(i));
+                    }
+
+                    os_password.setText(password);
+                    os_auth_url.setText(jsonObject.getString("os_auth_url"));
+                    os_project_name.setText(jsonObject.getString("os_project_name"));
+                    os_user_domain_name.setText(jsonObject.getString("os_user_domain_name"));
+                    os_project_domain_id.setText(jsonObject.getString("os_project_domain_id"));
+
+
+                } catch (Exception ex) {
+                    System.out.println(ex.toString());
+                }
+
+
+
+            }});
+        jbP3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                assert fc_netPlan != null;
+
+                int rc = fc_netPlan.showOpenDialog(null);
+                if (rc != JFileChooser.APPROVE_OPTION) return;
+
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("os_username",os_username.getText());
+                jsonObject.put("os_password",os_password.getPassword());
+                jsonObject.put("os_auth_url",os_auth_url.getText());
+                jsonObject.put("os_project_name",os_project_name.getText());
+                jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
+                jsonObject.put("os_project_domain_id",os_project_domain_id.getText());
+
+                try  {
+
+
+                    FileWriter file = new FileWriter(fc_netPlan.getSelectedFile().toString());
+                    file.write(jsonObject.toString());
+                    file.flush();
+                    file.close();
+
+                }catch(Exception ex){
+                    System.out.println(ex.toString());
+
+                }
 
             }});
 
-
         jfM.add(jp1);
         jfM.add(jbP1);
+        jfM.add(jbP2);
+        jfM.add(jbP3);
 
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-        jfM.setLocation(100, 50);
+        jfM.setSize(250, 320);
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
         jfM.setResizable(false);
         jfM.setVisible(true);
-        jfM.setSize(800, 600);
-        jfM.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
     }
-    public void gridJP(){
+    public void openStackFormView(){
 
-        jp1 = new JPanel(new GridLayout(4, 2, 0, 0));//filas, columnas, espacio entre filas, espacio entre columnas
+        jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
 
-       // jb1= new JButton("B1"); jb2= new JButton("B2"); jb3= new JButton("B3");//creamos los objetos para el panel
-
-       // jp1.add(jb1); jp1.add(jb2); jp1.add(jb3);//añadimos los objetos al jpanel
-
-        JLabel l = new JLabel("User", JLabel.TRAILING);
+        JLabel l = new JLabel("OS_USERNAME",  SwingConstants.LEFT);
         jp1.add(l);
-         textField = new JTextField();
-        textField.setPreferredSize(new Dimension(10, 10));
-        //l.setLabelFor(textField);
-        jp1.add(textField);
+        os_username = new JTextField(10);
+        l.setLabelFor(os_username);
+        jp1.add(os_username);
 
-        JLabel l2 = new JLabel("Password", JLabel.TRAILING);
+        JLabel l2 = new JLabel("OS_PASSWORD",  SwingConstants.LEFT);
         jp1.add(l2);
-         textField2 = new JTextField();
-        textField2.setPreferredSize(new Dimension(10, 10));
-        //l.setLabelFor(textField);
-        jp1.add(textField2);
+        os_password = new JPasswordField();
+        jp1.add(os_password);
 
-        JLabel l3 = new JLabel("IP", JLabel.TRAILING);
+        JLabel l3 = new JLabel("OS_AUTH_URL",  SwingConstants.LEFT);
         jp1.add(l3);
-         textField3 = new JTextField();
-        textField3.setPreferredSize(new Dimension(10, 10));
-        //l.setLabelFor(textField);
-        jp1.add(textField3);
+        os_auth_url = new JTextField();
+        jp1.add(os_auth_url);
 
-        JLabel l4 = new JLabel("Proyect", JLabel.TRAILING);
+        JLabel l4 = new JLabel("OS_PROJECT_NAME",  SwingConstants.LEFT);
         jp1.add(l4);
-         textField4 = new JTextField();
-        textField4.setPreferredSize(new Dimension(10, 10));
-        //l.setLabelFor(textField);
-        jp1.add(textField4);
+        os_project_name = new JTextField();
+        jp1.add(os_project_name);
+
+        JLabel l5 = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
+        jp1.add(l5);
+        os_user_domain_name = new JTextField();
+        jp1.add(os_user_domain_name);
+
+        JLabel l6 = new JLabel("OS_P_DOMAIN_ID ", SwingConstants.LEFT);
+        jp1.add(l6);
+        os_project_domain_id = new JTextField();
+        jp1.add(os_project_domain_id);
 
         jp1.setVisible(true);
     }
 
-    public void bordJP(){
-        jp2 = new JPanel(new BorderLayout(2, 3));//espacio entre las regiones, horizontal y vertical
-
-        jb1= new JButton("B1"); jb2= new JButton("B2"); jb3= new JButton("B3");//añadiendo objetos al jpanel
-
-        jp2.add(jb1, BorderLayout.NORTH);//boton al panel norte
-        jp2.add(jb2, BorderLayout.WEST); //boton a la region oeste
-        jp2.add(jb3, BorderLayout.CENTER); //boton a la region centro
-
-
-        jp2.setVisible(true);
-    }
-
-    public void flowJP(){
-        jp3 = new JPanel(new FlowLayout());
-
-        jb1= new JButton("B1"); jb2= new JButton("B2"); jb3= new JButton("B3");//añadiendo objetos al jpanel
-
-        jp3.add(jb1); jp3.add(jb2); jp3.add(jb3);//añadimos los objetos al jpanel
-
-
-        jp3.setVisible(true);
-    }
 }
