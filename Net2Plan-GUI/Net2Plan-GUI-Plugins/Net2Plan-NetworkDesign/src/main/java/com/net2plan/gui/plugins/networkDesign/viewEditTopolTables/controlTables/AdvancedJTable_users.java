@@ -39,13 +39,13 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
     {
 
         final List<AjtColumnInfo<OpenStackUser>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Name", "Node name", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Site", "Site this node belongs to", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Up?", "Indicates whether the node is up or down (failed)", null, n -> n.getDomainId(),
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "ID", "User ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Name", "User Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Domain ID", "Domain ID", null, n -> n.getDomainId(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "X-pos", "Coordinate along x-axis (i.e. longitude)",
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Email", "User email",
                 null, n -> n.getEmail(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Y-pos", "Coordinate along y-axis (i.e. latitude)",
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Description", "User description",
                 null, n -> n.getDescription(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;

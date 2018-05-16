@@ -23,13 +23,13 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
     {
 
         final List<AjtColumnInfo<OpenStackNetwork>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Name", "Node name", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Site", "Site this node belongs to", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Up?", "Indicates whether the node is up or down (failed)", null, n -> n.getNetworkProviderPhyNet(),
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "ID", "Network ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Name", "Network Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Provider", "Network Provider PhyNet", null, n -> n.getNetworkProviderPhyNet(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "X-pos", "Coordinate along x-axis (i.e. longitude)",
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Provider ID", "Network Provider SegID",
                 null, n -> n.getNetworkProviderSegID(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Y-pos", "Coordinate along y-axis (i.e. latitude)",
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Tenant ID", "NetworkTenantId",
                 null, n -> n.getNetworkTenantId(), AGTYPE.NOAGGREGATION, null, null));
 
 

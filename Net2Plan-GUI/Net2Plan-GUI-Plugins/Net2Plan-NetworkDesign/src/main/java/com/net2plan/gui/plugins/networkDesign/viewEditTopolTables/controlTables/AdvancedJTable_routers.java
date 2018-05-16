@@ -39,14 +39,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackRouter>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Name", "Node name", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Site", "Site this node belongs to", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Up?", "Indicates whether the node is up or down (failed)", null, n -> n.getId(),
-                AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "X-pos", "Coordinate along x-axis (i.e. longitude)",
-                null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Y-pos", "Coordinate along y-axis (i.e. latitude)",
-                null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "ID", "Router ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;
     }

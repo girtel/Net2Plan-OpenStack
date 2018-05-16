@@ -36,13 +36,13 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackSubnet>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Name", "Node name", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Site", "Site this node belongs to", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Up?", "Indicates whether the node is up or down (failed)", null, n -> n.getSubnetCidr(),
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "ID", "Subnet ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Name", "Subnet Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Cidr", "Subnet Cidr", null, n -> n.getSubnetCidr(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "X-pos", "Coordinate along x-axis (i.e. longitude)",
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Gateway", "Subnet Gateway",
                 null, n -> n.getSubnetGateway(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Y-pos", "Coordinate along y-axis (i.e. latitude)",
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Network ID", "Subnet network ID",
                 null, n -> n.getSubnetNetworkId(), AGTYPE.NOAGGREGATION, null, null));
 
 
