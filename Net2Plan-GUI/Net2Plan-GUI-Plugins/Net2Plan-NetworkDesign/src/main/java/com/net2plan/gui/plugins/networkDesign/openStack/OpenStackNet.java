@@ -60,11 +60,11 @@ public class OpenStackNet
 
     }
 
-    public static OpenStackNet buildOpenStackNetFromServer(String serverIp, String serverPort, String userName, String password)
+    public static OpenStackNet buildOpenStackNetFromServer(String serverIp, String userName, String password, String proyect)
     {
         try
         {
-            final OpenStackNet res = new TopologyCreator(serverIp, serverPort, userName, password).getOpenStackNet();
+            final OpenStackNet res = new TopologyCreator(serverIp, userName, password, proyect).getOpenStackNet();
             return res;
         } catch (Exception e)
         {

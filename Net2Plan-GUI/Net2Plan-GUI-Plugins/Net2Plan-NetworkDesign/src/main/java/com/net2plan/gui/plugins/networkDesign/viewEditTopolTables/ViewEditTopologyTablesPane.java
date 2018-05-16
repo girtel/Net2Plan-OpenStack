@@ -32,12 +32,8 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNode;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
-import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_users;
-import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
-import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networks;
-import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_nodes;
-import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_subnets;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
@@ -149,6 +145,9 @@ public class ViewEditTopologyTablesPane extends JPanel
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
+                break;
+            case LINKS:
+                table = new AdvancedJTable_links(callback);
                 break;
             default:
                 assert false;

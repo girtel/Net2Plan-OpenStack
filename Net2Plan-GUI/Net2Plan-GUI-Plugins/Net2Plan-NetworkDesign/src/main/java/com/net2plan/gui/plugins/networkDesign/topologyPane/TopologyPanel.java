@@ -53,6 +53,10 @@ public class TopologyPanel extends JPanel
     private final TopologyTopBar topBar;
     private final TopologySideBar sideBar;
 
+
+    JPanel jp1, jp2, jp3;
+    JButton jb1, jb2, jb3, jbP1, jbP2, jbP3;
+    JTextField textField, textField1;
     private FileChooserNetworkDesign fc_netPlan, fc_demands;
 
     /**
@@ -517,5 +521,97 @@ public class TopologyPanel extends JPanel
             ErrorHandling.addErrorOrException(ex, TopologyPanel.class);
             ErrorHandling.showErrorDialog("Error saving network design");
         }
+    }
+
+    public void loadCredentials(){
+
+        JFrame jfM = new JFrame("Please insert your credentials");
+        jfM.setLayout(null);
+
+
+        gridJP();  //invocamos los metodos que contienen los paneles
+
+        jbP1 = new JButton("Send");
+
+        jp1.setBounds(10, 10, 200, 200);
+
+        jbP1.setBounds(10, 430, 90, 20);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(textField.getText());
+            }
+        } );
+        jfM.add(jp1);
+        jfM.add(jbP1);
+
+
+        jfM.setLocation(100, 50);
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setSize(800, 600);
+        jfM.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    public void gridJP(){
+
+        jp1 = new JPanel(new GridLayout(4, 2, 0, 0));//filas, columnas, espacio entre filas, espacio entre columnas
+
+       // jb1= new JButton("B1"); jb2= new JButton("B2"); jb3= new JButton("B3");//creamos los objetos para el panel
+
+       // jp1.add(jb1); jp1.add(jb2); jp1.add(jb3);//añadimos los objetos al jpanel
+
+        JLabel l = new JLabel("User", JLabel.TRAILING);
+        jp1.add(l);
+         textField = new JTextField();
+        textField.setPreferredSize(new Dimension(10, 10));
+        //l.setLabelFor(textField);
+        jp1.add(textField);
+
+        JLabel l2 = new JLabel("Password", JLabel.TRAILING);
+        jp1.add(l2);
+        JTextField textField2 = new JTextField();
+        textField2.setPreferredSize(new Dimension(10, 10));
+        //l.setLabelFor(textField);
+        jp1.add(textField2);
+
+        JLabel l3 = new JLabel("IP", JLabel.TRAILING);
+        jp1.add(l3);
+        JTextField textField3 = new JTextField();
+        textField3.setPreferredSize(new Dimension(10, 10));
+        //l.setLabelFor(textField);
+        jp1.add(textField3);
+
+        JLabel l4 = new JLabel("Proyect", JLabel.TRAILING);
+        jp1.add(l4);
+        JTextField textField4 = new JTextField();
+        textField4.setPreferredSize(new Dimension(10, 10));
+        //l.setLabelFor(textField);
+        jp1.add(textField4);
+
+        jp1.setVisible(true);
+    }
+
+    public void bordJP(){
+        jp2 = new JPanel(new BorderLayout(2, 3));//espacio entre las regiones, horizontal y vertical
+
+        jb1= new JButton("B1"); jb2= new JButton("B2"); jb3= new JButton("B3");//añadiendo objetos al jpanel
+
+        jp2.add(jb1, BorderLayout.NORTH);//boton al panel norte
+        jp2.add(jb2, BorderLayout.WEST); //boton a la region oeste
+        jp2.add(jb3, BorderLayout.CENTER); //boton a la region centro
+
+
+        jp2.setVisible(true);
+    }
+
+    public void flowJP(){
+        jp3 = new JPanel(new FlowLayout());
+
+        jb1= new JButton("B1"); jb2= new JButton("B2"); jb3= new JButton("B3");//añadiendo objetos al jpanel
+
+        jp3.add(jb1); jp3.add(jb2); jp3.add(jb3);//añadimos los objetos al jpanel
+
+
+        jp3.setVisible(true);
     }
 }
