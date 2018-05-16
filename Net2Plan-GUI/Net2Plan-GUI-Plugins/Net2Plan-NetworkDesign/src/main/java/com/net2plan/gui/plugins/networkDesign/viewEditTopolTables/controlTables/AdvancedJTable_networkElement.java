@@ -12,12 +12,10 @@
 
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables;
 import java.awt.Cursor;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,32 +27,21 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackLink;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNode;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackSubnet;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.utils.JScrollPopupMenu;
-import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkElement;
-import com.net2plan.interfaces.networkDesign.Node;
-import com.net2plan.internal.ErrorHandling;
+
 import java.util.stream.Collectors;
 
 
@@ -110,9 +97,9 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
         final List<NetworkElement> elementsToPick = new ArrayList<>();
 
-        if (ajtType == AJTableType.NODES)
+        if (ajtType == AJTableType.ROUTERS)
         {
-            selection.stream().map(s->np.getNodeFromId(((OpenStackNode) s).getInternalId())).collect(Collectors.toList());
+            selection.stream().map(s->np.getNodeFromId(((OpenStackRouter) s).getInternalId())).collect(Collectors.toList());
             //selection.forEach(n->elementsToPick.add(np.getNodeFromId(((OpenStackNode) n).getInternalId())));
         }
 

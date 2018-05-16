@@ -31,8 +31,7 @@ public class OpenStackNet
     private final NetPlan np;
     protected  Node newNode;
 
-    final List<OpenStackNode> list_osNodes = new ArrayList<> ();
-    final List<OpenStackLink> list_osLinks = new ArrayList<> ();
+    final List<OpenStackRouter> list_osRouters = new ArrayList<> ();
     final List<OpenStackUser> list_osUsers = new ArrayList<> ();
     final List<OpenStackNetwork> list_osNetworks = new ArrayList<> ();
     final List<OpenStackSubnet> list_osSubnets = new ArrayList<> ();
@@ -54,9 +53,7 @@ public class OpenStackNet
         this.np = np;
 
         for (Node npNode : np.getNodes())
-            OpenStackNode.createFromNetPlan(this, npNode);
-        for (Link npLink : np.getLinks())
-            OpenStackLink.createFromNetPlan(this, npLink);
+            OpenStackRouter.createFromNetPlan(this, npNode);
 
     }
 
@@ -74,12 +71,7 @@ public class OpenStackNet
     }
 
 
-    public OpenStackLink addOpenStackLink (OpenStackNode originNode, OpenStackNode destinationNode, String originPort, String destinationPort, Optional<String> linkType, Optional<String> linkState)
-    {
-        final OpenStackLink res = OpenStackLink.createFromAddLink(originNode, destinationNode, originPort, destinationPort, linkType, linkState);
-        list_osLinks.add(res);
-        return res;
-    }
+
     public OpenStackUser addOpenStackUser (String userId, String userName, String userDomainId, String userEmail, String userDescription)
     {
         final OpenStackUser res = OpenStackUser.createFromAddUser(this , userId, userName, userDomainId, userEmail, userDescription);
@@ -101,11 +93,11 @@ public class OpenStackNet
         return res;
     }
 
-    public OpenStackNode addOpenStackNode(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
+    public OpenStackRouter addOpenStackNode(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
 
-        final OpenStackNode res = OpenStackNode.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
-        list_osNodes.add(res);
+        final OpenStackRouter res = OpenStackRouter.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
+        list_osRouters.add(res);
         return res;
     }
 
@@ -118,8 +110,7 @@ public class OpenStackNet
     public String getDemandTrafficUnitsName () { return np.getNetPlan().getDemandTrafficUnitsName(); }
     public void setDemandTrafficUnitsName (String name) { np.getNetPlan().setDemandTrafficUnitsName(name); }
 
-    public List<OpenStackNode> getOpenStackNodes () { return Collections.unmodifiableList(list_osNodes); }
-    public List<OpenStackLink> getOpenStackLinks () { return Collections.unmodifiableList(list_osLinks); }
+    public List<OpenStackRouter> getOpenStackNodes () { return Collections.unmodifiableList(list_osRouters); }
     public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(list_osUsers); }
     public List<OpenStackNetwork> getOpenStackNetworks () { return Collections.unmodifiableList(list_osNetworks); }
     public List<OpenStackSubnet> getOpenStackSubnets () { return Collections.unmodifiableList(list_osSubnets); }
@@ -128,8 +119,7 @@ public class OpenStackNet
     public OpenStackNetworkElement getOpenStackNetworkElementByInternalId (long internalId)
     {
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
-        allOpenStackNetworkElements.addAll(list_osNodes);
-        allOpenStackNetworkElements.addAll(list_osLinks);
+        allOpenStackNetworkElements.addAll(list_osRouters);
         allOpenStackNetworkElements.addAll(list_osUsers);
         allOpenStackNetworkElements.addAll(list_osNetworks);
         allOpenStackNetworkElements.addAll(list_osSubnets);
@@ -143,8 +133,7 @@ public class OpenStackNet
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId)
     {
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
-        allOpenStackNetworkElements.addAll(list_osNodes);
-        allOpenStackNetworkElements.addAll(list_osLinks);
+        allOpenStackNetworkElements.addAll(list_osRouters);
         allOpenStackNetworkElements.addAll(list_osUsers);
         allOpenStackNetworkElements.addAll(list_osNetworks);
         allOpenStackNetworkElements.addAll(list_osSubnets);
@@ -157,12 +146,12 @@ public class OpenStackNet
     public void distributeTopologyOverCircle()
     {
         // Node list
-        final List<OpenStackNode> nodeList = getOpenStackNodes();
+        final List<OpenStackRouter> nodeList = getOpenStackNodes();
 
         final int numNodes = nodeList.size();
         double index = 0.0;
 
-        for (OpenStackNode node : nodeList)
+        for (OpenStackRouter node : nodeList)
         {
             final double xCoord = Math.sin(Math.toRadians((360 * index) / numNodes));
             final double yCoord = -Math.cos(Math.toRadians((360 * index) / numNodes));

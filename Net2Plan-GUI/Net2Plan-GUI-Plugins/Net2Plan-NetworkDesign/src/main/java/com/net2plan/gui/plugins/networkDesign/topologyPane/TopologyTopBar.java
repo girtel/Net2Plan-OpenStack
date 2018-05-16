@@ -198,6 +198,7 @@ public class TopologyTopBar extends JToolBar implements ActionListener
             //callback.connectToOpenStack("user", "password");
             //topologyPanel.loadDesign();
             topologyPanel.loadCredentials();
+
         } else if (src == btn_loadDemand)
         {
             topologyPanel.loadTrafficDemands();

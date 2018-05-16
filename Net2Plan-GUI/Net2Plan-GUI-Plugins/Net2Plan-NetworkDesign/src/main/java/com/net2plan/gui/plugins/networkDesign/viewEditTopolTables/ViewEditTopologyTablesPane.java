@@ -29,7 +29,7 @@ import javax.swing.table.TableModel;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNode;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
@@ -43,11 +43,11 @@ public class ViewEditTopologyTablesPane extends JPanel
 {
     public enum AJTableType
     {
-        NODES("AlL NODES"),
-        LINKS("AlL LINKS"),
-        USERS("AlL USER"),
-        NETWORKS("ALL NETWORKS"),
-        SUBNETS("ALL SUBNETS");
+
+        USERS("USERS"),
+        ROUTERS("ROUTERS"),
+        NETWORKS("NETWORKS"),
+        SUBNETS("SUBNETS");
 
         private final String tabName;
 
@@ -64,10 +64,8 @@ public class ViewEditTopologyTablesPane extends JPanel
 
         public static AJTableType getTypeOfElement(OpenStackNetworkElement e)
         {
-            if (e instanceof OpenStackNode)
-                return AJTableType.NODES;
-            if (e instanceof OpenStackUser)
-                return AJTableType.LINKS;
+            if (e instanceof OpenStackRouter)
+                return AJTableType.ROUTERS;
             if (e instanceof OpenStackUser)
                 return AJTableType.USERS;
             if (e instanceof OpenStackNetwork)
@@ -114,7 +112,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 
 
         /* The rest of high level tabs */
-        for (AJTableType type : Arrays.asList(AJTableType.NODES,AJTableType.LINKS,AJTableType.USERS, AJTableType.NETWORKS,
+        for (AJTableType type : Arrays.asList(AJTableType.ROUTERS,AJTableType.USERS, AJTableType.NETWORKS,
                 AJTableType.SUBNETS))
             viewEditHighLevelTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
@@ -134,20 +132,18 @@ public class ViewEditTopologyTablesPane extends JPanel
         AdvancedJTable_networkElement table = null;
         switch (type)
         {
-            case NODES:
-                table = new AdvancedJTable_nodes(callback);
-                break;
+
             case USERS:
                 table = new AdvancedJTable_users(callback);
+                break;
+            case ROUTERS:
+                table = new AdvancedJTable_routers(callback);
                 break;
             case NETWORKS:
                 table = new AdvancedJTable_networks(callback);
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
-                break;
-            case LINKS:
-                table = new AdvancedJTable_links(callback);
                 break;
             default:
                 assert false;
@@ -195,8 +191,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     {
         switch (type)
         {
-            case NODES:
-            case LINKS:
+            case ROUTERS:
             case USERS:
             case NETWORKS:
             case SUBNETS:

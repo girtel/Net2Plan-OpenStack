@@ -11,7 +11,7 @@ import org.openstack4j.model.network.State;
  *
  * @author Manuel
  */
-public class OpenStackNode extends OpenStackNetworkElement
+public class OpenStackRouter extends OpenStackNetworkElement
 {
     final Node npNode;
 
@@ -19,25 +19,25 @@ public class OpenStackNode extends OpenStackNetworkElement
     private String osn_nodeName = "";
     private String osn_nodeTenantId = "";
 
-    static OpenStackNode createFromNetPlan (OpenStackNet osn , Node l)
+    static OpenStackRouter createFromNetPlan (OpenStackNet osn , Node l)
     {
-        final OpenStackNode frqLink = new OpenStackNode(osn, l);
+        final OpenStackRouter frqLink = new OpenStackRouter(osn, l);
         return frqLink;
     }
 
-    static OpenStackNode createFromAddNode (OpenStackNet osn ,String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
+    static OpenStackRouter createFromAddNode (OpenStackNet osn ,String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
         final Node npNode2 = osn.getNetPlan().addNode(0,0,"",null);
         npNode2.setName(nodeName);
-        final OpenStackNode res = new OpenStackNode(osn,npNode2);
+        final OpenStackRouter res = new OpenStackRouter(osn,npNode2);
         res.osn_nodeId = nodeId;
         res.osn_nodeName = nodeName;
         res.osn_nodeTenantId = nodeTenantId;
         return res;
     }
-    public OpenStackNode(OpenStackNet osn, Node npNode)
+    public OpenStackRouter(OpenStackNet osn, Node npNode)
     {
-        super (osn , npNode , (List<OpenStackNetworkElement>) (List<?>) osn.list_osNodes);
+        super (osn , npNode , (List<OpenStackNetworkElement>) (List<?>) osn.list_osRouters);
         this.npNode = npNode;
     }
 

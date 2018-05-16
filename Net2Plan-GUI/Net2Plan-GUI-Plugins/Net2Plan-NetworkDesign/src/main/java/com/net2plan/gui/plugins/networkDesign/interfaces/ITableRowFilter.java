@@ -100,10 +100,8 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
-			case NODES:
-				return getVisibleNodes().stream().map(n->os.getOpenStackNetworkElementByInternalId(n.getId())).collect(Collectors.toList());
-			case LINKS:
-				return os.getOpenStackLinks();
+			case ROUTERS:
+				return os.getOpenStackNodes();
 			case USERS:
 				return os.getOpenStackUsers();
 			case NETWORKS:
@@ -120,10 +118,8 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
-			case NODES:
+			case ROUTERS:
 				return os.getOpenStackNodes();
-			case LINKS:
-				return os.getOpenStackLinks();
 			case USERS:
 				return os.getOpenStackUsers();
 			case NETWORKS:

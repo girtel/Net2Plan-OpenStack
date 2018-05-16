@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNode;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 //import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.dialog.AddMulticastFlowDialog;
@@ -27,25 +27,25 @@ import com.net2plan.utils.Pair;
 /**
  */
 @SuppressWarnings("unchecked")
-public class AdvancedJTable_nodes extends AdvancedJTable_networkElement<OpenStackNode>
+public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenStackRouter>
 {
-    public AdvancedJTable_nodes(GUINetworkDesign callback)
+    public AdvancedJTable_routers(GUINetworkDesign callback)
     {
-        super(callback, AJTableType.NODES , true);
+        super(callback, AJTableType.ROUTERS , true);
     }
 
     @Override
-    public List<AjtColumnInfo<OpenStackNode>> getNonBasicUserDefinedColumnsVisibleOrNot()
+    public List<AjtColumnInfo<OpenStackRouter>> getNonBasicUserDefinedColumnsVisibleOrNot()
     {
 
-        final List<AjtColumnInfo<OpenStackNode>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackNode>(this, String.class, null, "Name", "Node name", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNode>(this, String.class, null, "Site", "Site this node belongs to", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNode>(this, String.class, null, "Up?", "Indicates whether the node is up or down (failed)", null, n -> n.getId(),
+        final List<AjtColumnInfo<OpenStackRouter>> res = new LinkedList<>();
+        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Name", "Node name", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Site", "Site this node belongs to", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Up?", "Indicates whether the node is up or down (failed)", null, n -> n.getId(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNode>(this, String.class, null, "X-pos", "Coordinate along x-axis (i.e. longitude)",
+        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "X-pos", "Coordinate along x-axis (i.e. longitude)",
                 null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNode>(this, String.class, null, "Y-pos", "Coordinate along y-axis (i.e. latitude)",
+        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Y-pos", "Coordinate along y-axis (i.e. latitude)",
                 null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;
