@@ -27,6 +27,7 @@ public class OpenStackNode extends OpenStackNetworkElement
 
     static OpenStackNode createFromAddNode (OpenStackNet osn ,String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
+
         final OpenStackNode res = new OpenStackNode(osn,null);
         res.osn_nodeId = nodeId;
         res.osn_nodeName = nodeName;

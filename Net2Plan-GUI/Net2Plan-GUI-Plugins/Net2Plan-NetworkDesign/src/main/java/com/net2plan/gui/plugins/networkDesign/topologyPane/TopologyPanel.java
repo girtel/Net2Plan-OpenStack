@@ -539,9 +539,25 @@ public class TopologyPanel extends JPanel
 
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                callback.connectToOpenStack(textField3.getText(),textField.getText(),textField2.getText(),textField4.getText());
-            }
-        } );
+                callback.connectToOpenStack(textField3.getText(), textField.getText(), textField2.getText(), textField4.getText());
+                // Disable OSM while loading the new topology
+                boolean isOSMRunning = canvas.getState() == CanvasOption.OSMState;
+                if (isOSMRunning) canvas.setState(CanvasOption.ViewState);
+
+                //Disable Site
+                boolean isSiteRunning = canvas.getState() == CanvasOption.SiteState;
+                if (isSiteRunning) canvas.setState(CanvasOption.ViewState);
+
+                final VisualizationState vs = callback.getVisualizationState();
+                Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                        vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                callback.updateVisualizationAfterNewTopology();
+                callback.addNetPlanChange();
+
+            }});
+
+
         jfM.add(jp1);
         jfM.add(jbP1);
 
