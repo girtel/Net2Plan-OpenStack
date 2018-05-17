@@ -27,6 +27,7 @@ public class OpenStackRouter extends OpenStackNetworkElement
 
     static OpenStackRouter createFromAddNode (OpenStackNet osn ,String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
+        System.out.println("CREANDO NODO EN EL N2P "+osn.getNetPlan().getNetworkName());
         final Node npNode2 = osn.getNetPlan().addNode(0,0,"",null);
         npNode2.setName(nodeName);
         final OpenStackRouter res = new OpenStackRouter(osn,npNode2);

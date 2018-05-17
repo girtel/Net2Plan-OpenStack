@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 
 import com.google.common.collect.Lists;
+import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.interfaces.networkDesign.Link;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.Node;
@@ -28,6 +29,7 @@ import org.openstack4j.model.network.Subnet;
 public class OpenStackNet
 {
 
+    private GUINetworkDesign callback;
     private final NetPlan np;
     protected  Node newNode;
 
@@ -38,30 +40,22 @@ public class OpenStackNet
 
     final  NetPlan getNetPlan () { return np; }
 
-    public OpenStackNet ()
+    public OpenStackNet()
     {
-        this.np = new NetPlan ();
+        this.np = new NetPlan();
     }
 
-    public static OpenStackNet buildFrqNetFromN2pFile(File n2pFile)
+    public OpenStackNet (GUINetworkDesign callback)
     {
-        return new OpenStackNet (new NetPlan (n2pFile));
+        this.callback = callback;
+        this.np = callback.getDesign();
     }
 
-    private OpenStackNet (NetPlan np)
-    {
-        this.np = np;
-
-        for (Node npNode : np.getNodes())
-            OpenStackRouter.createFromNetPlan(this, npNode);
-
-    }
-
-    public static OpenStackNet buildOpenStackNetFromServer(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
+    public static OpenStackNet buildOpenStackNetFromServer(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
     {
         try
         {
-            final OpenStackNet res = new TopologyCreator(os_auth_url, os_username, os_password, os_project_name,os_user_domain_name,os_project_domain_id).getOpenStackNet();
+            final OpenStackNet res = new TopologyCreator(callback, os_auth_url, os_username, os_password, os_project_name,os_user_domain_name,os_project_domain_id).getOpenStackNet();
             return res;
         } catch (Exception e)
         {
@@ -95,8 +89,8 @@ public class OpenStackNet
 
     public OpenStackRouter addOpenStackNode(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
-
         final OpenStackRouter res = OpenStackRouter.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
+
         list_osRouters.add(res);
         return res;
     }

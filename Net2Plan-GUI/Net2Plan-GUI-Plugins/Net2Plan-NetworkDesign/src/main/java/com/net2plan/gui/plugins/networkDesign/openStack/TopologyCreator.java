@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
 
+import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.interfaces.networkDesign.Link;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import com.net2plan.interfaces.networkDesign.Node;
@@ -21,8 +22,9 @@ import org.openstack4j.openstack.OSFactory;
 class TopologyCreator
 {
     private final OSClientV3 os;
+    private final GUINetworkDesign callback;
 
-    TopologyCreator(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name ,String os_project_domain_id)
+    TopologyCreator(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name, String os_user_domain_name , String os_project_domain_id)
     {
 
             os = OSFactory.builderV3()
@@ -31,13 +33,14 @@ class TopologyCreator
                     .scopeToProject(Identifier.byName(os_project_name), Identifier.byId(os_project_domain_id))
                     .authenticate();
 
+            this.callback = callback;
     }
 
 
     OpenStackNet getOpenStackNet()
     {
         /* Empty NetPlan */
-        final OpenStackNet osn = new OpenStackNet();
+        final OpenStackNet osn = new OpenStackNet(callback);
 
         /* Get elements */
         final List<User> users = (List<User>) os.identity().users().list();
@@ -64,9 +67,12 @@ class TopologyCreator
             osn.addOpenStackLink(link.getId(),link.getCapacity(),subnet.getAllocationPools(),subnet.getCidr(),subnet.getDnsNames(),subnet.getGateway(),subnet.getHostRoutes(),subnet.getIpVersion(),subnet.getIpv6AddressMode(),subnet.getIpv6RaMode(),subnet.getNetworkId(),subnet.getTenantId(),subnet.isDHCPEnabled());
         */
         /* Create links objects */
-        for (Router router : routers)
+        for (Router router : routers) {
+            osn.addOpenStackNode(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
+            System.out.println("CREANDO NODO DE ROUTER");
+        }
 
-            osn.addOpenStackNode(router.getId(), router.getName(), router.getTenantId(), router.getStatus(),router.isAdminStateUp(),router.getDistributed(),router.getRoutes(),router.getExternalGatewayInfo());
+
 
         if (routers.isEmpty()) throw new Net2PlanException("The OpenStack topology is empty");
 

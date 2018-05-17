@@ -555,9 +555,6 @@ public class TopologyPanel extends JPanel
                 callback.connectToOpenStack(os_auth_url.getText(), os_username.getText(), String.valueOf(os_password.getPassword()), os_project_name.getText(), os_user_domain_name.getText(), os_project_domain_id.getText());
 
                 //NetPlan aux = callback.getDesign();
-                OpenStackNet aux = callback.getOpenStackNet();
-
-                callback.setOpenStackNet(aux);
                 final VisualizationState vs = callback.getVisualizationState();
                 Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
                         vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
