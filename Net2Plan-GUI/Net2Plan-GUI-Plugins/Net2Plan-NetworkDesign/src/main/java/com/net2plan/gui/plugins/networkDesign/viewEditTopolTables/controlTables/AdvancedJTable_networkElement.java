@@ -99,7 +99,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
         if (ajtType == AJTableType.ROUTERS)
         {
-            selection.stream().map(s->np.getNodeFromId(((OpenStackRouter) s).getInternalId())).collect(Collectors.toList());
+            elementsToPick.addAll(selection.stream().map(s->np.getNodeFromId(((OpenStackRouter) s).getInternalId())).collect(Collectors.toList()));
             //selection.forEach(n->elementsToPick.add(np.getNodeFromId(((OpenStackNode) n).getInternalId())));
         }
 

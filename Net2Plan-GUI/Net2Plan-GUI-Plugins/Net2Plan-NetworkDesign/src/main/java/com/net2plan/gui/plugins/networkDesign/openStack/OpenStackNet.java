@@ -31,7 +31,6 @@ public class OpenStackNet
 
     private GUINetworkDesign callback;
     private final NetPlan np;
-    protected  Node newNode;
 
     final List<OpenStackRouter> list_osRouters = new ArrayList<> ();
     final List<OpenStackUser> list_osUsers = new ArrayList<> ();

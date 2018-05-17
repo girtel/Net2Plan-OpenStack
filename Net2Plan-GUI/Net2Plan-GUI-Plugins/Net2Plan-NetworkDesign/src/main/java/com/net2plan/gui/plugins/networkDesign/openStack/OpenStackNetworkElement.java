@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
+import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkElement;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
  *
  * @author Manuel
  */
-public abstract class OpenStackNetworkElement
+public abstract class OpenStackNetworkElement implements Comparable<OpenStackNetworkElement>
 {
     protected final OpenStackNet osn;
     protected final NetPlan np;
@@ -77,6 +78,16 @@ public abstract class OpenStackNetworkElement
     public abstract String get50CharactersDescription ();
 
     public abstract String getId ();
+
+
+    @Override
+    public final int compareTo(OpenStackNetworkElement o)
+    {
+        if (this.equals(o)) return 0;
+        if (o == null) throw new NullPointerException ();
+        if (this.osn != o.osn) throw new Net2PlanException("Different OSN!");
+        return Long.compare(this.getInternalId(), o.getInternalId());
+    }
 
 }
 
