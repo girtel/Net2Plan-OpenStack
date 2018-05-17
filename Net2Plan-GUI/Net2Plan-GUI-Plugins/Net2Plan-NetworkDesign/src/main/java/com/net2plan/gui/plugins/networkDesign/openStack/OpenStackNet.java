@@ -39,7 +39,6 @@ public class OpenStackNet
     final List<OpenStackUser> list_osUsers = new ArrayList<> ();
     final List<OpenStackNetwork> list_osNetworks = new ArrayList<> ();
     final List<OpenStackSubnet> list_osSubnets = new ArrayList<> ();
-
     final  NetPlan getNetPlan () { return np; }
 
     public OpenStackNet()
@@ -47,7 +46,7 @@ public class OpenStackNet
         this.np = new NetPlan();
     }
 
-    public OpenStackNet (GUINetworkDesign callback, OSClientV3 os)
+    public OpenStackNet (GUINetworkDesign callback, OSClientV3 os )
     {
         this.callback = callback;
         this.np = callback.getDesign();
@@ -58,6 +57,7 @@ public class OpenStackNet
     {
         try
         {
+
             final OpenStackNet res = new TopologyCreator(callback, os_auth_url, os_username, os_password, os_project_name,os_user_domain_name,os_project_domain_id).getOpenStackNet();
             return res;
         } catch (Exception e)
@@ -66,7 +66,6 @@ public class OpenStackNet
             return null;
         }
     }
-
 
 
     public OSClientV3 getOs(){

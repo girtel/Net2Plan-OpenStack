@@ -320,8 +320,11 @@ public class TopologyPanel extends JPanel
                 Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
                         vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
                 vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+
+
                 callback.updateVisualizationAfterNewTopology();
                 callback.addNetPlanChange();
+                callback.getWhat().updateText();
                 jfM.dispose();
 
             }});

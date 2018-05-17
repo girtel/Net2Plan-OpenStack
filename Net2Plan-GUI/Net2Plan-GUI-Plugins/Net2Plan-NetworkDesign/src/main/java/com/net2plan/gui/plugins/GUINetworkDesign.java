@@ -278,8 +278,8 @@ import java.util.List;
             this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(this, os_auth_url,os_username,os_password,os_project_name,os_user_domain_name,os_project_domain_id);
         }
 
+
         public OpenStackNet getOpenStackNet() { return this.currentOpenStackNet; }
-        public void setOpenStackNet(OpenStackNet design) {  this.currentOpenStackNet = design; }
 
         private JPanel configureLeftBottomPanel()
         {
@@ -485,6 +485,9 @@ import java.util.List;
             undoRedoManager.addNetPlanChange();
         }
 
+        public WhatIfAnalysisPane getWhat(){
+            return this.whatIfAnalysisPane;
+        }
         public void resetPickedStateAndUpdateView()
         {
             vs.resetPickedState();

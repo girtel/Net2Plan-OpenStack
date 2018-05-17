@@ -33,6 +33,7 @@ import javax.swing.JToggleButton;
 
 import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.utils.ParameterValueDescriptionPanel;
 import com.net2plan.gui.utils.RunnableSelector;
@@ -55,6 +56,7 @@ import com.net2plan.internal.sim.SimCore.SimState;
 import com.net2plan.internal.sim.SimKernel;
 import com.net2plan.utils.ClassLoaderUtils;
 import com.net2plan.utils.Triple;
+import org.openstack4j.model.identity.v3.Project;
 
 /**
  * Targeted to evaluate network designs from the offline tool simulating the
@@ -72,9 +74,9 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
     private ParameterValueDescriptionPanel simulationConfigurationPanel;
     private RunnableSelector eventProcessorPanel;
     private SimKernel simKernel;
-    private final JToggleButton btn_whatIfActivated;
     private Throwable lastWhatIfExecutionException;
-
+    private  JTextArea upperText;
+    final String NEWLINE = String.format("%n");
     public WhatIfAnalysisPane(GUINetworkDesign callback)
     {
         super();
@@ -91,36 +93,18 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
         simulationConfigurationPanel = new ParameterValueDescriptionPanel();
         simulationConfigurationPanel.setParameters(simKernel.getSimulationParameters());
 
-        final JPanel upperButtonPlusLabelPanel = new JPanel();
-        btn_whatIfActivated = new JToggleButton("Toggle What-If Mode");
-        btn_whatIfActivated.setToolTipText("Activate/Deactivate What-if analysis tool");
-        btn_whatIfActivated.addActionListener(this);
-        btn_whatIfActivated.setFocusable(false);
-        btn_whatIfActivated.setSelected(!callback.getVisualizationState().isWhatIfAnalysisActive());
-        // Negate the last selection and run the listener.
-        btn_whatIfActivated.doClick();
-        upperButtonPlusLabelPanel.setLayout(new BorderLayout());
-        upperButtonPlusLabelPanel.add(btn_whatIfActivated, BorderLayout.CENTER);
 
-        final JTextArea upperText = new JTextArea();
+        final JPanel upperButtonPlusLabelPanel = new JPanel();
+
+        upperButtonPlusLabelPanel.setLayout(new BorderLayout());
+
+        upperText = new JTextArea();
         upperText.setFont(new JLabel().getFont());
         upperText.setBackground(new JLabel().getBackground());
         upperText.setLineWrap(true);
         upperText.setEditable(false);
         upperText.setWrapStyleWord(true);
-        final String NEWLINE = String.format("%n");
-        upperText.setText("The what-if analysis tool permits visualizing the changes produced in the network under "
-                + "some events triggered in the user interface." + NEWLINE + NEWLINE
-                + "The events that can be tested are:" + NEWLINE + NEWLINE
-                + "- Setting failures/repairs in nodes and links. This can be done in the Nodes table, Links table "
-                + "and Shared-risk group tables. " + NEWLINE + NEWLINE
-                + "- Modifying the offered traffic of demands (only those not coupled to any upper layer link)." + NEWLINE + NEWLINE
-                + "In the what-if analysis, the user modifications in the previous tables will trigger appropriate "
-                + "events sent to the (built-in or user-developed) online reaction algorithm selected in the "
-                + "table below. This algorithm is expected to receive the event, and generate the next network "
-                + "state considering the network reaction for such event." + NEWLINE + NEWLINE
-                + "Note: If the online reaction algorithm does not process correctly the input event, the design is unchanged."
-        );
+        upperText.setText("No available");
         this.setLayout(new BorderLayout());
         this.add(upperButtonPlusLabelPanel, BorderLayout.NORTH);
 
@@ -136,6 +120,7 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
 
         this.add(aux_Panel, BorderLayout.CENTER);
     }
+
 
     public void whatIfDemandOfferedTrafficModified(Demand demand, double newOfferedTraffic) throws Throwable
     {
@@ -325,16 +310,21 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
         }
     }
 
+    public void updateText(){
+        upperText.setText("In this tab you can see the information about the project and the user who has connected OpenStack"+NEWLINE
+                        + "Project information: " + NEWLINE
+                        + "ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getId()+ NEWLINE
+                        + "DESCRIPTION : " + callback.getOpenStackNet().getOs().getToken().getProject().getDescription()+ NEWLINE
+                        + "DOMAIN ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getDomainId()+ NEWLINE
+                        + "NAME : " + callback.getOpenStackNet().getOs().getToken().getProject().getName()+ NEWLINE
+                        + "PARENT ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getParentId()+ NEWLINE
+        );
+    }
     @Override
     public void actionPerformed(ActionEvent e)
     {
         final Object src = e.getSource();
-        if (src == btn_whatIfActivated)
-        {
-            final VisualizationState vs = callback.getVisualizationState();
-            vs.setWhatIfAnalysisActive(btn_whatIfActivated.isSelected());
-            eventProcessorPanel.setEnabled(btn_whatIfActivated.isSelected());
-        }
+
     }
 
 }
