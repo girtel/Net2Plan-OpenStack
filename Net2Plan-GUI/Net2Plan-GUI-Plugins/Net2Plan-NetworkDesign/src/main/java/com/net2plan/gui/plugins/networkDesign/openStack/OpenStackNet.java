@@ -69,6 +69,7 @@ public class OpenStackNet
     public OpenStackUser addOpenStackUser (String userId, String userName, String userDomainId, String userEmail, String userDescription)
     {
         final OpenStackUser res = OpenStackUser.createFromAddUser(this , userId, userName, userDomainId, userEmail, userDescription);
+        if(list_osUsers.contains(res)) return res;
         list_osUsers.add(res);
         return res;
     }
@@ -76,6 +77,7 @@ public class OpenStackNet
     public OpenStackNetwork addOpenStackNetwork(String networkId,String networkName,State networkStatus,NetworkType networkType,List<? extends Subnet> networkNeutronSubnets,String networkProviderPhyNet,String networkProviderSegID,List <String> networkSubnets,String networkTenantId,boolean networkIsAdminStateUp,boolean networkIsRouterExternal, boolean networkIsShared)
     {
         final OpenStackNetwork res = OpenStackNetwork.createFromAddNetwork(this , networkId, networkName, networkStatus, networkType, networkNeutronSubnets,networkProviderPhyNet,networkProviderSegID,networkSubnets,networkTenantId,networkIsAdminStateUp,networkIsRouterExternal,networkIsShared);
+        if(list_osNetworks.contains(res)) return res;
         list_osNetworks.add(res);
         return res;
     }
@@ -83,6 +85,7 @@ public class OpenStackNet
     public OpenStackSubnet addOpenStackSubnet (String subnetId,String subnetName,List<? extends Pool> subnetAllocationPools,String subnetCidr,List<String> subnetDnsNames,String subnetGateway,List<? extends HostRoute> subnetHostRoutes,IPVersionType subnetIpVersion,Ipv6AddressMode subnetIpv6AddressMode,Ipv6RaMode subnetIpv6RaMode,String subnetNetworkId,String subnetTenantId,boolean subnetIsDHCPEnabled)
     {
         final OpenStackSubnet res = OpenStackSubnet.createFromAddSubnet(this,subnetId, subnetName, subnetAllocationPools, subnetCidr, subnetDnsNames, subnetGateway,subnetHostRoutes,subnetIpVersion,subnetIpv6AddressMode,subnetIpv6RaMode,subnetNetworkId,subnetTenantId,subnetIsDHCPEnabled);
+        if(list_osSubnets.contains(res)) return res;
         list_osSubnets.add(res);
         return res;
     }
@@ -90,7 +93,7 @@ public class OpenStackNet
     public OpenStackRouter addOpenStackNode(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
         final OpenStackRouter res = OpenStackRouter.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
-
+        if(list_osRouters.contains(res)) return res;
         list_osRouters.add(res);
         return res;
     }
