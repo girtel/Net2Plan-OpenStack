@@ -217,12 +217,6 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         if (!vs.isNetPlanEditable()) return actions;
         if (vs.isWhatIfAnalysisActive()) return actions;
 
-
-        JMenuItem addNode = new JMenuItem(new AddNodeAction("Add node here", positionInNetPlanCoordinates));
-        actions.add(addNode);
-
-        actions.add(new JPopupMenu.Separator());
-
         JMenu topologySettingMenu = new JMenu("Change topology layout");
 
         JMenuItem circularSetting = new JMenuItem("Circular");
@@ -260,23 +254,6 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         public void actionPerformed(ActionEvent e)
         {
             canvas.removeNode(node);
-        }
-    }
-
-    private class AddNodeAction extends AbstractAction
-    {
-        private final Point2D positionInNetPlanCoordinates;
-
-        public AddNodeAction(String name, Point2D positionInNetPlanCoordinates)
-        {
-            super(name);
-            this.positionInNetPlanCoordinates = positionInNetPlanCoordinates;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            canvas.addNode(positionInNetPlanCoordinates);
         }
     }
 

@@ -101,10 +101,6 @@ public class OpenStackNet
     public String getTopologyName () { return np.getNetPlan().getNetworkName(); }
     public String getTopologyDescription () { return np.getNetPlan().getNetworkDescription(); }
     public void setTopologyName (String name) { this.np.getNetPlan().setNetworkName(name); }
-    public String getLinkCapacityUnitsName () { return np.getNetPlan().getLinkCapacityUnitsName(); }
-    public void setLinkCapacityUnitsName (String name) { np.getNetPlan().setLinkCapacityUnitsName(name); }
-    public String getDemandTrafficUnitsName () { return np.getNetPlan().getDemandTrafficUnitsName(); }
-    public void setDemandTrafficUnitsName (String name) { np.getNetPlan().setDemandTrafficUnitsName(name); }
 
     public List<OpenStackRouter> getOpenStackNodes () { return Collections.unmodifiableList(list_osRouters); }
     public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(list_osUsers); }

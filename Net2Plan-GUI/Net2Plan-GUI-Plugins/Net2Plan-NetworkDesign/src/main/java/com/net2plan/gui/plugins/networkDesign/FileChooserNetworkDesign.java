@@ -74,10 +74,6 @@ public class FileChooserNetworkDesign extends FileChooserConfirmOverwrite
                 saveFilters.addAll(IOFilter.getIOFiltersByFeatures(EnumSet.of(IOFeature.SAVE_DESIGN)));
                 break;
 
-            case DEMANDS:
-                loadFilters.addAll(IOFilter.getIOFiltersByFeatures(EnumSet.of(IOFeature.LOAD_DEMANDS)));
-                saveFilters.addAll(IOFilter.getIOFiltersByFeatures(EnumSet.of(IOFeature.SAVE_DEMANDS)));
-                break;
         }
 
         lastLoadFilter = null;

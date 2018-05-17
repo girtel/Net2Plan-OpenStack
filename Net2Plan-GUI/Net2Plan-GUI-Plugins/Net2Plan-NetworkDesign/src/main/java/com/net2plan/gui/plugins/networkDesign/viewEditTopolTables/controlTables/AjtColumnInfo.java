@@ -71,17 +71,6 @@ public class AjtColumnInfo<T>
     }
 
 
-
-//    /**
-//     * @return THe table column and true if of fixed, false if scrollable. Null if not visible now
-//     */
-//    public Pair<TableColumn,Boolean> getColumn ()
-//    {
-//    	try { final int indexInFixed = ajTable.getFixedLeftTableColumnModel().getColumnIndex(this.getHeader()); return Pair.of(ajTable.getFixedLeftTableColumnModel().getColumn(indexInFixed) , true); } catch (Exception e) { }
-//    	try { final int indexInScrollable = ajTable.getScrollableRightTableColumnModel().getColumnIndex(this.getHeader()); return Pair.of(ajTable.getScrollableRightTableColumnModel().getColumn(indexInScrollable),false); } catch (Exception e) { }
-//    	return Pair.of((TableColumn) null, (Boolean) null);
-//    }
-
     public AjtColumnInfo(
             AdvancedJTable_networkElement ajTable ,
             Class valueShownIfNotAggregation ,

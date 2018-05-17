@@ -15,10 +15,6 @@ public class LastRowAggregatedValue
     {
         this(val.doubleValue());
     }
-    public LastRowAggregatedValue(int val)
-    {
-        this((double) val);
-    }
 
     public LastRowAggregatedValue(double val)
     {
@@ -30,10 +26,6 @@ public class LastRowAggregatedValue
             value = numberFormat.format(((Number) val).intValue());
     }
 
-    public LastRowAggregatedValue(String value)
-    {
-        this.value = value;
-    }
 
     @Override
     public String toString()

@@ -61,19 +61,6 @@ public class ViewEditTopologyTablesPane extends JPanel
             return tabName;
         }
 
-
-        public static AJTableType getTypeOfElement(OpenStackNetworkElement e)
-        {
-            if (e instanceof OpenStackRouter)
-                return AJTableType.ROUTERS;
-            if (e instanceof OpenStackUser)
-                return AJTableType.USERS;
-            if (e instanceof OpenStackNetwork)
-                return AJTableType.NETWORKS;
-            if (e instanceof OpenStackSubnet)
-                return AJTableType.SUBNETS;
-            return null;
-        }
     }
 
     private final GUINetworkDesign callback;
@@ -122,11 +109,6 @@ public class ViewEditTopologyTablesPane extends JPanel
         this.add(menuBar, BorderLayout.SOUTH);
     }
 
-    public SortedSet<? extends OpenStackNetworkElement> getSelectedElements (AJTableType ajType)
-    {
-        return ajTables.get(ajType).getFirst().getSelectedElements();
-    }
-
     private Pair<AdvancedJTable_networkElement, FilteredTablePanel> createPanelComponentInfo(AJTableType type)
     {
         AdvancedJTable_networkElement table = null;
@@ -160,10 +142,6 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     }
 
-    public void restoreView()
-    {
-        this.updateView();
-    }
 
     public void updateView()
     {
@@ -203,102 +181,4 @@ public class ViewEditTopologyTablesPane extends JPanel
         }
     }
 
-    public void selectItems(List<OpenStackNetworkElement> elements , AJTableType ajTableType)
-    {
-        if (elements == null) return;
-        if (elements.isEmpty()) return;
-
-        final AJTableType tableType = ajTableType != null? ajTableType : AJTableType.getTypeOfElement(elements.get(0));
-        if (tableType == null) return;
-
-        final AdvancedJTable_networkElement table = ajTables.get(tableType).getFirst();
-        if (table == null) return;
-
-        table.clearSelection();
-
-        final TableModel model = table.getModel();
-        assert model != null;
-
-        final Set<String> idstoSelect = elements.stream().map(e -> e.getId()).collect(Collectors.toSet());
-        final int numRows = table.getRowCount();
-
-        selectItemTab(tableType);
-
-        if (elements.size() == 1)
-        {
-            // Single-selection
-            OpenStackNetworkElement element = elements.get(0);
-
-
-        } else
-        {
-           /* // Multiple-selection
-            treePanel.restoreView();*/
-        }
-
-        for (int row = 0; row < numRows; row++)
-        {
-            try
-            {
-                final Object obj = model.getValueAt(row, 0);
-                if (obj == null) continue;
-
-                final long elementID = (long) obj;
-                if (idstoSelect.contains(elementID))
-                {
-                    final int viewRow = table.convertRowIndexToView(row);
-
-                    table.addRowSelectionInterval(viewRow, viewRow);
-                    table.scrollRectToVisible(table.getCellRect(viewRow, 0, true));
-
-                    if (table.getSelectedRowCount() == elements.size()) return;
-                }
-            } catch (ClassCastException e)
-            {
-                ErrorHandling.log("Tried to use aggregation row at: " + row);
-            }
-        }
-    }
-
-    public void selectItemsAllTables(List<OpenStackNetworkElement> elements)
-    {
-        if (elements == null) return;
-        if (elements.isEmpty()) return;
-
-        for (AJTableType tableType : AJTableType.values())
-        {
-            final AdvancedJTable_networkElement table = ajTables.get(tableType).getFirst();
-            if (table == null) continue;
-
-            table.clearSelection();
-
-            final TableModel model = table.getModel();
-            assert model != null;
-
-            final Set<String> idstoSelect = elements.stream().map(e -> e.getId()).collect(Collectors.toSet());
-            final int numRows = table.getRowCount();
-
-            for (int row = 0; row < numRows; row++)
-            {
-                try
-                {
-                    final Object obj = model.getValueAt(row, 0);
-                    if (obj == null) continue;
-
-                    final String elementID = (String) obj;
-                    if (idstoSelect.contains(elementID))
-                    {
-                        final int viewRow = table.convertRowIndexToView(row);
-
-                        table.addRowSelectionInterval(viewRow, viewRow);
-
-                        if (table.getSelectedRowCount() == elements.size()) break;
-                    }
-                } catch (ClassCastException e)
-                {
-                    ErrorHandling.log("Tried to use aggregation row at: " + row);
-                }
-            }
-        }
-    }
 }

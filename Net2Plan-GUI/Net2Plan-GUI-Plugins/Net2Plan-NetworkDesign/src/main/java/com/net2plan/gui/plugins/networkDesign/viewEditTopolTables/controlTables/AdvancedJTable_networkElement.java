@@ -100,7 +100,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         if (ajtType == AJTableType.ROUTERS)
         {
             elementsToPick.addAll(selection.stream().map(s->np.getNodeFromId(((OpenStackRouter) s).getInternalId())).collect(Collectors.toList()));
-            //selection.forEach(n->elementsToPick.add(np.getNodeFromId(((OpenStackNode) n).getInternalId())));
+
         }
 
         if (!elementsToPick.isEmpty())
@@ -214,39 +214,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
-
-    private final Set<T> invertSelection(Set<T> selectedElements)
-    {
-        // Check all elements belong to the same NetPlan
-        final OpenStackNet os = this.callback.getOpenStackNet();
-        for (OpenStackNetworkElement networkElement : selectedElements)
-        {
-            if (networkElement.getOpenStackNet()!= os) return null;
-            if (AJTableType.getTypeOfElement(networkElement) != ajtType) return null;
-        }
-        final List<? extends OpenStackNetworkElement> allElements = ITableRowFilter.getAllElements(os , ajtType);
-        Set<T> invertedElements = new HashSet<> ((List<T>) (List<?>) allElements);
-        invertedElements.removeAll(selectedElements);
-        return invertedElements;
-    }
-
-    protected Double dialogGetDouble (String message , String title )
-    {
-        final String str = JOptionPane.showInputDialog(null, message , title , JOptionPane.QUESTION_MESSAGE);
-        if (str == null) return null;
-        return Double.parseDouble(str);
-    }
-    protected Integer dialogGetInteger (String message , String title )
-    {
-        final String str = JOptionPane.showInputDialog(null, message , title , JOptionPane.QUESTION_MESSAGE);
-        if (str == null) return null;
-        return Integer.parseInt(str);
-    }
-    protected String dialogGetString (String message , String title )
-    {
-        final String val = JOptionPane.showInputDialog(null, message , title , JOptionPane.QUESTION_MESSAGE);
-        return val;
-    }
 
     @Override
     protected final List<AjtColumnInfo<T>> getAllColumnsVisibleOrNot ()

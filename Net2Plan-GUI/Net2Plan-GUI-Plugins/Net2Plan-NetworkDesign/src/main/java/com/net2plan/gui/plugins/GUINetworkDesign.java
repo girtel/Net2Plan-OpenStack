@@ -17,7 +17,6 @@ import com.net2plan.gui.plugins.networkDesign.NetworkDesignWindow;
 import com.net2plan.gui.plugins.networkDesign.focusPane.FocusPane;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
-import com.net2plan.gui.plugins.networkDesign.offlineExecPane.OfflineExecutionPanel;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.TopologyPanel;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
@@ -25,7 +24,6 @@ import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.JUNGCanvas;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
-import com.net2plan.gui.plugins.networkDesign.viewReportsPane.ViewReportPane;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.UndoRedoManager;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.plugins.networkDesign.whatIfAnalysisPane.WhatIfAnalysisPane;
@@ -70,8 +68,6 @@ import java.util.List;
         private FocusPane focusPanel;
 
         private ViewEditTopologyTablesPane viewEditTopTables;
-        private ViewReportPane reportPane;
-        private OfflineExecutionPanel executionPane;
         private WhatIfAnalysisPane whatIfAnalysisPane;
 
         private VisualizationState vs;
@@ -140,6 +136,7 @@ import java.util.List;
 
             this.currentOpenStackNet = new OpenStackNet();
             this.currentNetPlan = new NetPlan();
+
             BidiMap<NetworkLayer, Integer> mapLayer2VisualizationOrder = new DualHashBidiMap<>();
             Map<NetworkLayer, Boolean> layerVisibilityMap = new HashMap<>();
             for (NetworkLayer layer : currentNetPlan.getNetworkLayers())
@@ -171,8 +168,6 @@ import java.util.List;
 
             viewEditTopTables = new ViewEditTopologyTablesPane(GUINetworkDesign.this, new BorderLayout());
 
-            reportPane = new ViewReportPane(GUINetworkDesign.this, JSplitPane.VERTICAL_SPLIT);
-
             setDesign(currentNetPlan);
             Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res = VisualizationState.generateCanvasDefaultVisualizationLayerInfo(getDesign());
             vs.setCanvasLayerVisibilityAndOrder(getDesign(), res.getFirst(), res.getSecond());
@@ -181,14 +176,11 @@ import java.util.List;
             this.undoRedoManager = new UndoRedoManager(this, MAXSIZEUNDOLISTCHANGES);
             this.undoRedoManager.addNetPlanChange();
 
-            executionPane = new OfflineExecutionPanel(this);
             whatIfAnalysisPane = new WhatIfAnalysisPane(this);
 
             final JTabbedPane tabPane = new JTabbedPane();
             tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.network), viewEditTopTables);
-            tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.offline), executionPane);
             tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.whatif), whatIfAnalysisPane);
-            tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.report), reportPane);
 
             // Installing customized mouse listener
             MouseListener[] ml = tabPane.getListeners(MouseListener.class);
@@ -239,17 +231,8 @@ import java.util.List;
                                 {
                                     switch (networkDesignWindow)
                                     {
-                                        case offline:
-                                            windowController.showOfflineWindow(true);
-                                            break;
-                                        case online:
-                                            windowController.showOnlineWindow(true);
-                                            break;
                                         case whatif:
                                             windowController.showWhatifWindow(true);
-                                            break;
-                                        case report:
-                                            windowController.showReportWindow(true);
                                             break;
                                         default:
                                             return;
@@ -284,7 +267,7 @@ import java.util.List;
             };
 
             // Building tab controller
-            this.windowController = new WindowController(executionPane, null, whatIfAnalysisPane, reportPane);
+            this.windowController = new WindowController(null, null, whatIfAnalysisPane, null);
 
             addKeyCombinationActions();
             updateVisualizationAfterNewTopology();
@@ -490,11 +473,7 @@ import java.util.List;
 
 
                 setDesign(new NetPlan());
-                //algorithmSelector.reset();
-                executionPane.reset();
 
-//            reportSelector.reset();
-//            reportContainer.removeAll();
             } catch (Throwable ex)
             {
                 ErrorHandling.addErrorOrException(ex, GUINetworkDesign.class);
@@ -555,37 +534,6 @@ import java.util.List;
                 }
             }, KeyStroke.getKeyStroke(KeyEvent.VK_F11, InputEvent.CTRL_DOWN_MASK));
 
-            /* FROM THE OFFLINE ALGORITHM EXECUTION */
-
-            addKeyCombinationAction("Execute algorithm", new AbstractAction()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    executionPane.doClickInExecutionButton();
-                }
-            }, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK));
-
-            /* FROM REPORT */
-            addKeyCombinationAction("Close selected report", new AbstractAction()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    int tab = reportPane.getReportContainer().getSelectedIndex();
-                    if (tab == -1) return;
-                    reportPane.getReportContainer().remove(tab);
-                }
-            }, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
-
-            addKeyCombinationAction("Close all reports", new AbstractAction()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    reportPane.getReportContainer().removeAll();
-                }
-            }, KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
 
 
             /* Online simulation */
@@ -614,11 +562,6 @@ import java.util.List;
             viewEditTopTables.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
             viewEditTopTables.setActionMap(this.getActionMap());
 
-            reportPane.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
-            reportPane.setActionMap(this.getActionMap());
-
-            executionPane.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
-            executionPane.setActionMap(this.getActionMap());
 
             whatIfAnalysisPane.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
             whatIfAnalysisPane.setActionMap(this.getActionMap());
@@ -741,59 +684,8 @@ import java.util.List;
                 this.reportWindowComponent = reportWindowComponent;
             }
 
-            private void buildOfflineWindow(final JComponent component)
-            {
-                final String tabName = NetworkDesignWindow.getWindowName(NetworkDesignWindow.offline);
 
-                offlineWindow = new GUIWindow(component)
-                {
-                    @Override
-                    public String getTitle()
-                    {
-                        return "Net2Plan - " + tabName;
-                    }
-                };
 
-                offlineWindow.addWindowListener(new CloseWindowAdapter(tabName, component));
-            }
-
-            void showOfflineWindow(final boolean gainFocus)
-            {
-                buildOfflineWindow(offlineWindowComponent);
-
-                if (offlineWindow != null)
-                {
-                    offlineWindow.showWindow(gainFocus);
-                    offlineWindow.setLocationRelativeTo(tableControlWindow);
-                }
-            }
-
-            private void buildOnlineWindow(final JComponent component)
-            {
-                final String tabName = NetworkDesignWindow.getWindowName(NetworkDesignWindow.online);
-
-                onlineWindow = new GUIWindow(component)
-                {
-                    @Override
-                    public String getTitle()
-                    {
-                        return "Net2Plan - " + tabName;
-                    }
-                };
-
-                onlineWindow.addWindowListener(new CloseWindowAdapter(tabName, component));
-            }
-
-            void showOnlineWindow(final boolean gainFocus)
-            {
-                buildOnlineWindow(onlineWindowComponent);
-
-                if (onlineWindow != null)
-                {
-                    onlineWindow.showWindow(gainFocus);
-                    onlineWindow.setLocationRelativeTo(tableControlWindow);
-                }
-            }
 
             private void buildWhatifWindow(final JComponent component)
             {
@@ -821,42 +713,15 @@ import java.util.List;
                 }
             }
 
-            private void buildReportWindow(final JComponent component)
-            {
-                final String tabName = NetworkDesignWindow.getWindowName(NetworkDesignWindow.report);
 
-                reportWindow = new GUIWindow(component)
-                {
-                    @Override
-                    public String getTitle()
-                    {
-                        return "Net2Plan - " + tabName;
-                    }
-                };
 
-                reportWindow.addWindowListener(new CloseWindowAdapter(tabName, component));
-            }
-
-            void showReportWindow(final boolean gainFocus)
-            {
-                buildReportWindow(reportWindowComponent);
-                if (reportWindow != null)
-                {
-                    reportWindow.showWindow(gainFocus);
-                    reportWindow.setLocationRelativeTo(tableControlWindow);
-                }
-            }
 
             void hideAllWindows()
             {
                 if (offlineWindow != null)
                     offlineWindow.dispatchEvent(new WindowEvent(offlineWindow, WindowEvent.WINDOW_CLOSING));
-                if (onlineWindow != null)
-                    onlineWindow.dispatchEvent(new WindowEvent(onlineWindow, WindowEvent.WINDOW_CLOSING));
                 if (whatifWindow != null)
                     whatifWindow.dispatchEvent(new WindowEvent(whatifWindow, WindowEvent.WINDOW_CLOSING));
-                if (reportWindow != null)
-                    reportWindow.dispatchEvent(new WindowEvent(reportWindow, WindowEvent.WINDOW_CLOSING));
             }
 
             private class CloseWindowAdapter extends WindowAdapter
@@ -865,7 +730,7 @@ import java.util.List;
                 private final JComponent component;
 
                 private final NetworkDesignWindow[] tabCorrectOrder =
-                        {NetworkDesignWindow.network, NetworkDesignWindow.offline, NetworkDesignWindow.online, NetworkDesignWindow.whatif, NetworkDesignWindow.report};
+                        {NetworkDesignWindow.network, NetworkDesignWindow.whatif};
 
                 CloseWindowAdapter(final String tabName, final JComponent component)
                 {

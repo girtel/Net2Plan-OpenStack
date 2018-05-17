@@ -149,8 +149,6 @@ public class TopologySideBar extends JPanel implements ActionListener
         this.layerToolBar.add(btn_showUpperLayerInfo);
         this.layerToolBar.add(btn_showThisLayerInfo);
         this.layerToolBar.add(Box.createVerticalGlue());
-        //multiLayerToolbar.add(btn_npChangeUndo);
-        //multiLayerToolbar.add(btn_npChangeRedo);
 
         this.add(layerToolBar, BorderLayout.WEST);
     }
@@ -171,6 +169,7 @@ public class TopologySideBar extends JPanel implements ActionListener
             canvas.updateInterLayerDistanceInNpCoordinates(newInterLayerDistance);
             canvas.updateAllVerticesXYPosition();
             canvas.refresh();
+
         } else if (src == btn_decreaseInterLayerDistance)
         {
             if (vs.getCanvasNumberOfVisibleLayers() == 1) return;
