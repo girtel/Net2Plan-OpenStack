@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.network.ExternalGateway;
 import org.openstack4j.model.network.HostRoute;
 import org.openstack4j.model.network.IPVersionType;
@@ -31,7 +34,7 @@ public class OpenStackNet
 
     private GUINetworkDesign callback;
     private final NetPlan np;
-
+    private OSClientV3 os;
     final List<OpenStackRouter> list_osRouters = new ArrayList<> ();
     final List<OpenStackUser> list_osUsers = new ArrayList<> ();
     final List<OpenStackNetwork> list_osNetworks = new ArrayList<> ();
@@ -44,10 +47,11 @@ public class OpenStackNet
         this.np = new NetPlan();
     }
 
-    public OpenStackNet (GUINetworkDesign callback)
+    public OpenStackNet (GUINetworkDesign callback, OSClientV3 os)
     {
         this.callback = callback;
         this.np = callback.getDesign();
+        this.os=os;
     }
 
     public static OpenStackNet buildOpenStackNetFromServer(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
@@ -65,9 +69,12 @@ public class OpenStackNet
 
 
 
-    public OpenStackUser addOpenStackUser (String userId, String userName, String userDomainId, String userEmail, String userDescription)
+    public OSClientV3 getOs(){
+        return this.os;
+    }
+    public OpenStackUser addOpenStackUser (User user,String userId, String userName, String userDomainId, String userEmail, String userDescription)
     {
-        final OpenStackUser res = OpenStackUser.createFromAddUser(this , userId, userName, userDomainId, userEmail, userDescription);
+        final OpenStackUser res = OpenStackUser.createFromAddUser(this ,user, userId, userName, userDomainId, userEmail, userDescription);
         if(list_osUsers.contains(res)) return res;
         list_osUsers.add(res);
         return res;
@@ -155,5 +162,12 @@ public class OpenStackNet
 
 
 
+    }
+
+    public void updateUserTable(){
+        list_osUsers.clear();
+        List<User> users = (List<User>) os.identity().users().list();
+        for (User user : users)
+            addOpenStackUser(user,user.getId(), user.getName(), user.getDomainId(), user.getEmail(), user.getDescription());
     }
 }

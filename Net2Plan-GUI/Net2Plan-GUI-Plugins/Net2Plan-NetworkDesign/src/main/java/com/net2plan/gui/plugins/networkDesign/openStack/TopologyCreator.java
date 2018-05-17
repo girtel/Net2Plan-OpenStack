@@ -40,7 +40,7 @@ class TopologyCreator
     OpenStackNet getOpenStackNet()
     {
         /* Empty NetPlan */
-        final OpenStackNet osn = new OpenStackNet(callback);
+        final OpenStackNet osn = new OpenStackNet(callback,os);
 
         /* Get elements */
         final List<User> users = (List<User>) os.identity().users().list();
@@ -52,7 +52,7 @@ class TopologyCreator
 
         /* Create users objects */
         for (User user : users)
-            osn.addOpenStackUser(user.getId(), user.getName(), user.getDomainId(), user.getEmail(), user.getDescription());
+            osn.addOpenStackUser(user,user.getId(), user.getName(), user.getDomainId(), user.getEmail(), user.getDescription());
 
         /* Create networks objects */
         for (Network net : networks)
@@ -81,5 +81,7 @@ class TopologyCreator
 
         return osn;
     }
+
+
 }
 

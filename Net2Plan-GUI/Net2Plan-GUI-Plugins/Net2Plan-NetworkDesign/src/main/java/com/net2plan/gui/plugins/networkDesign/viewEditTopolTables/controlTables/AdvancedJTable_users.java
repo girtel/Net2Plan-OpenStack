@@ -1,17 +1,16 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables;
 
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedMap;
 
-import javax.swing.JComponent;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
@@ -20,9 +19,15 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 //import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.dialog.AddMulticastFlowDialog;
 //import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.dialog.CommonIPNodeDialogs;//
 //import com.net2plan.gui.utils.IntegerInputDialog;
+import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.utils.JNumberField;
 //import com.net2plan.gui.utils.TextInputDialog;
+import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  */
@@ -54,10 +59,66 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {
-        final List<AjtRcMenu> res = new ArrayList<>();
+    {final List<AjtRcMenu> res = new ArrayList<>();
+
+        res.add(new AjtRcMenu("Add new user", e -> getSelectedElements().forEach(n -> {
+
+        }), (a, b) -> b >1000, null));
+
+        res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Description",n);
+
+                }), (a, b) -> b ==1, null));
 
         return res;
+
+    }
+
+    public void createTableForUpdate(String key, OpenStackUser user){
+        JFrame jfM = new JFrame(key);
+        jfM.setLayout(null);
+
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        JLabel l6 = new JLabel(key, SwingConstants.LEFT);
+        jp1.add(l6);
+        JTextField os_project_domain_id = new JTextField();
+        jp1.add(os_project_domain_id);
+
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 200);
+        jbP1.setBounds(75, 90, 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                user.updateUserDescription(os_project_domain_id.getText());
+                callback.getOpenStackNet().updateUserTable();
+                final VisualizationState vs = callback.getVisualizationState();
+                Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                        vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                callback.updateVisualizationAfterNewTopology();
+                callback.addNetPlanChange();
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        jfM.setSize(250, 160);
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
     }
 
 
