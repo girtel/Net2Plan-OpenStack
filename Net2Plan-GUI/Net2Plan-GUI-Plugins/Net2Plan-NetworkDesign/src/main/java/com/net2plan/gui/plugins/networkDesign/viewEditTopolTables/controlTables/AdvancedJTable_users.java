@@ -63,8 +63,27 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
         res.add(new AjtRcMenu("Add new user", e -> getSelectedElements().forEach(n -> {
 
-        }), (a, b) -> b >1000, null));
+            addNewUser(n);
 
+        }), (a, b) -> b==b, null));
+
+        res.add(new AjtRcMenu("Remove user", e -> getSelectedElements().forEach(n -> {
+
+            removeUser(n);
+
+
+        }), (a, b) -> b==b, null));
+
+        res.add(new AjtRcMenu("Change the user's name", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Name",n);
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change the user's email", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Email",n);
+
+        }), (a, b) -> b ==1, null));
         res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
 
             createTableForUpdate("Description",n);
@@ -84,8 +103,8 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
         JLabel l6 = new JLabel(key, SwingConstants.LEFT);
         jp1.add(l6);
-        JTextField os_project_domain_id = new JTextField();
-        jp1.add(os_project_domain_id);
+        JTextField os_text_change = new JTextField();
+        jp1.add(os_text_change);
 
 
         jp1.setVisible(true);
@@ -94,7 +113,18 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                user.updateUserDescription(os_project_domain_id.getText());
+                switch(key){
+                    case "Name":
+                        user.updateUserName(os_text_change.getText());
+                        break;
+                    case "Email":
+                        user.updateUserEmail(os_text_change.getText());
+                        break;
+                    case "Description":
+                        user.updateUserDescription(os_text_change.getText());
+                        break;
+
+                }
                 callback.getOpenStackNet().updateUserTable();
                 final VisualizationState vs = callback.getVisualizationState();
                 Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
@@ -119,6 +149,80 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         jfM.setVisible(true);
         jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+    }
+
+    public void addNewUser(OpenStackUser user){
+        JFrame jfM = new JFrame("Add user");
+        jfM.setLayout(null);
+
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        JLabel l6 = new JLabel("Properties", SwingConstants.LEFT);
+        jp1.add(l6);
+        JLabel label = new JLabel("", SwingConstants.LEFT);
+        jp1.add(label);
+        JLabel labelName = new JLabel("Name", SwingConstants.LEFT);
+        jp1.add(labelName);
+        JTextField os_name_change = new JTextField();
+        jp1.add(os_name_change);
+        JLabel labelDescription = new JLabel("Description", SwingConstants.LEFT);
+        jp1.add(labelDescription);
+        JTextField os_description_change = new JTextField();
+        jp1.add(os_description_change);
+        JLabel labelPassword = new JLabel("Password", SwingConstants.LEFT);
+        jp1.add(labelPassword);
+        JTextField os_password_change = new JTextField();
+        jp1.add(os_password_change);
+        JLabel labelEmail = new JLabel("Email", SwingConstants.LEFT);
+        jp1.add(labelEmail);
+        JTextField os_email_change = new JTextField();
+        jp1.add(os_email_change);
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 200);
+        jbP1.setBounds(75, 200, 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                        user.createNewUser(os_name_change.getText(),os_description_change.getText(),os_password_change.getText(),os_email_change.getText());
+
+                callback.getOpenStackNet().updateUserTable();
+                final VisualizationState vs = callback.getVisualizationState();
+                Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                        vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                callback.updateVisualizationAfterNewTopology();
+                callback.addNetPlanChange();
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        jfM.setSize(250, 275);
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+
+    public void removeUser(OpenStackUser user){
+
+        user.deleteUser();
+        callback.getOpenStackNet().updateUserTable();
+        final VisualizationState vs = callback.getVisualizationState();
+        Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+        vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+        callback.updateVisualizationAfterNewTopology();
+        callback.addNetPlanChange();
     }
 
 
