@@ -110,6 +110,16 @@ public class OpenStackNet
         if(!list_osInformation.contains(res)) {
             list_osInformation.add(res);
         }
+
+        res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"Router", list_osRouters.size());
+        if(!list_osInformation.contains(res)) {
+            list_osInformation.add(res);
+        }
+
+        res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"Subnet", list_osSubnets.size());
+        if(!list_osInformation.contains(res)) {
+            list_osInformation.add(res);
+        }
         return res;
     }
 
@@ -175,5 +185,37 @@ public class OpenStackNet
             addOpenStackRouter(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
 
         distributeTopologyOverCircle();
+    }
+
+    public void updateNetworkTable(){
+        list_osNetworks.clear();
+        final List<Network> networks = (List<Network>) os.networking().network().list();
+        for (Network net : networks)
+            addOpenStackNetwork(net.getId(),net.getName(),net.getStatus(),net.getNetworkType(),net.getNeutronSubnets(),net.getProviderPhyNet(),net.getProviderSegID(),net.getSubnets(),net.getTenantId(),net.isAdminStateUp(),net.isRouterExternal(),net.isShared());
+
+    }
+
+    public void updateSubnetTable(){
+        list_osSubnets.clear();
+        final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
+        for (Subnet subnet : subnets)
+            addOpenStackSubnet(subnet.getId(),subnet.getName(),subnet.getAllocationPools(),subnet.getCidr(),subnet.getDnsNames(),subnet.getGateway(),subnet.getHostRoutes(),subnet.getIpVersion(),subnet.getIpv6AddressMode(),subnet.getIpv6RaMode(),subnet.getNetworkId(),subnet.getTenantId(),subnet.isDHCPEnabled());
+
+    }
+
+    public void updateInformationTable(){
+
+        list_osInformation.clear();
+        addOpenStackInformation();
+    }
+
+    public void updateAllTables(){
+
+        updateUserTable();
+        updateInformationTable();
+        updateNetworkTable();
+        updateRouterTable();
+        updateSubnetTable();
+
     }
 }

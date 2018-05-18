@@ -15,18 +15,29 @@ public class OpenStackRouter extends OpenStackNetworkElement
 {
     final Node npNode;
 
-    private String osn_nodeId = "";
-    private String osn_nodeName = "";
-    private String osn_nodeTenantId = "";
+    private String routerId = "";
+    private String routerName = "";
+    private String routerTenantId = "";
+    private State routerState;
+    private boolean routerIsAdminStateUp;
+    private boolean routerIsDistributed;
+    private List<? extends HostRoute> routerRoutes;
+    private ExternalGateway routerExternalGatewayInfo;
 
-    static OpenStackRouter createFromAddNode (OpenStackNet osn ,String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
+
+    static OpenStackRouter createFromAddNode (OpenStackNet osn ,String routerId,String routerName,String routerTenantId, State routerState,boolean routerIsAdminStateUp,boolean routerIsDistributed,List<? extends HostRoute> routerRoutes, ExternalGateway routerExternalGatewayInfo)
     {
         final Node npNode2 = osn.getNetPlan().addNode(0,0,"",null);
-        npNode2.setName(nodeId);
+        npNode2.setName(routerId);
         final OpenStackRouter res = new OpenStackRouter(osn,npNode2);
-        res.osn_nodeId = nodeId;
-        res.osn_nodeName = nodeName;
-        res.osn_nodeTenantId = nodeTenantId;
+        res.routerId = routerId;
+        res.routerName = routerName;
+        res.routerTenantId = routerTenantId;
+        res.routerState = routerState;
+        res.routerIsAdminStateUp = routerIsAdminStateUp;
+        res.routerIsDistributed = routerIsDistributed;
+        res.routerRoutes = routerRoutes;
+        res.routerExternalGatewayInfo = routerExternalGatewayInfo;
         return res;
     }
     public OpenStackRouter(OpenStackNet osn, Node npNode)
@@ -38,7 +49,14 @@ public class OpenStackRouter extends OpenStackNetworkElement
     Node getNpNode () { return npNode; }
 
     @Override
-    public String getId () { return osn_nodeId; }
+    public String getId () { return routerId; }
+    public String getRouterName () { return routerName; }
+    public String getRouterTenantId () { return routerTenantId; }
+    public State getRouterState () { return routerState; }
+    public boolean isRouterIsAdminStateUp () { return routerIsAdminStateUp; }
+    public boolean isRouterIsDistributed () { return routerIsDistributed; }
+    public List<? extends HostRoute> getRouterRoutes () { return routerRoutes; }
+    public ExternalGateway getRouterExternalGatewayInfo () { return routerExternalGatewayInfo; }
 
     public void setXYPositionMap (Point2D pos) { npNode.setXYPositionMap(pos); }
 

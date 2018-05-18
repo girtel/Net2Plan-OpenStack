@@ -42,7 +42,6 @@ public class OpenStackUser extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.userId; }
-
     public String getName () { return this.userName; }
     public String getDomainId () { return this.userDomainId; }
     public String getEmail () { return this.userEmail; }

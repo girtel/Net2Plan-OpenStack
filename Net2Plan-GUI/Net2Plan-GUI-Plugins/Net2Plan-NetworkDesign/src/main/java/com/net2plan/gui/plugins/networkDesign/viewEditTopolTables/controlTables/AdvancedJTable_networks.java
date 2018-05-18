@@ -7,6 +7,8 @@ import java.util.List;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
+import org.openstack4j.model.network.NetworkType;
+import org.openstack4j.model.network.State;
 
 /**
  */
@@ -31,6 +33,18 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
                 null, n -> n.getNetworkProviderSegID(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Tenant ID", "NetworkTenantId",
                 null, n -> n.getNetworkTenantId(), AGTYPE.NOAGGREGATION, null, null));
+
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, State.class, null, "State", "Network state", null, n -> n.getNetworkState(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, NetworkType.class, null, "Type", "Network type", null, n -> n.getNetworkType(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, List.class, null, "Neutron", "Network neutron subnets", null, n -> n.getNetworkNeutronSubnets(),
+                AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, List.class, null, "Subnets", "Network subnets",
+                null, n -> n.getNetworkSubnets(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, boolean.class, null, "Admin State", "Network admin state",
+                null, n -> n.isNetworkIsAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
+
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, boolean.class, null, "Router external", "Network router external", null, n -> n.isNetworkIsRouterExternal(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, boolean.class, null, "Shared", "Network shared", null, n -> n.isNetworkIsShared(), AGTYPE.NOAGGREGATION, null, null));
 
 
         return res;
