@@ -367,7 +367,6 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
             try
             {
                 final AdvancedJTable_abstractElement<T> parent = AdvancedJTable_abstractElement.this;
-//                final SortedSet<T> selection = parent.getSelectedElements();
                 if (SwingUtilities.isRightMouseButton(e))
                 {
                     parent.showPopup(e);
@@ -380,38 +379,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
                     final int rowModelIndex = clickOutside || clickFixedTable? -1 : parent.convertRowIndexToModel(rowAtPoint(e.getPoint()));
                     final int columnModelIndex = clickOutside || clickFixedTable? -1 : parent.convertColumnIndexToModel(columnAtPoint(e.getPoint()));
                     reactToMouseClickInTable (e.getClickCount(), rowModelIndex , columnModelIndex);
-//
-//
-//                    if (e.getClickCount() == 1)
-//                    {
-//                    	if (selection.isEmpty()) callback.resetPickState();
-//
-//                    	if(rowAtPoint(e.getPoint()) == -1) return;
-//                        final int rowViewIndex = parent.convertRowIndexToModel(rowAtPoint(e.getPoint()));
-//
-//                        if (parent.decorator.getFixedTable() == e.getComponent()) return;
-//
-//                        final int columnViewIndex = parent.convertColumnIndexToModel(columnAtPoint(e.getPoint()));
-//
-//                        final Object value = getModel().getValueAt(rowViewIndex, columnViewIndex);
-//                        if (value instanceof MtnNetworkElement)
-//                        {
-//                            callback.getVisualizationState().pickElement((MtnNetworkElement) value);
-//                            callback.updateVisualizationAfterPick();
-//                        }
-//                        else if (value instanceof List)
-//                        {
-//                        	if (((List) value).isEmpty()) return;
-//
-//                        	callback.getVisualizationState().pickElement((List<? extends MtnNetworkElement>) value, null);
-//                            callback.updateVisualizationAfterPick();
-//                        }
-//                        else if (selection.isEmpty()) callback.resetPickState();
-//                    } else if (e.getClickCount() >= 2)
-//                    {
-//                        SwingUtilities.invokeLater(() -> pickSelection(selection));
-//                    }
-//
+
                     return;
                 }
             } catch (Exception ex)
@@ -421,21 +389,6 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
             }
         }
     }
-
-//    private final Set<T> invertSelection(Set<T> selectedElements)
-//    {
-//        // Check all elements belong to the same NetPlan
-//        final Mtn netPlan = this.callback.getDesign();
-//        for (MtnNetworkElement networkElement : selectedElements)
-//        {
-//            if (networkElement.getMtn() != netPlan) return null;
-//            if (AJTableType.getTypeOfElement(networkElement) != ajtType) return null;
-//        }
-//        final List<MtnNetworkElement> allElements = ITableRowFilterTableType.getAllElements(netPlan , ajtType);
-//        Set<T> invertedElements = new HashSet<> ((List<T>) (List<?>) allElements);
-//        invertedElements.removeAll(selectedElements);
-//        return invertedElements;
-//    }
 
     private final DefaultTableModel createTableModel(List<AjtColumnInfo<T>> tableColumns)
     {
@@ -460,26 +413,6 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
         final String [] res = new String [tableColumns.size()];
         int cont = 0; for (AjtColumnInfo c : tableColumns) res [cont ++] = c.getTooltip(); return res;
     }
-
-
-//    protected Double dialogGetDouble (String message , String title )
-//    {
-//      final String str = JOptionPane.showInputDialog(null, message , title , JOptionPane.QUESTION_MESSAGE);
-//      if (str == null) return null;
-//      return Double.parseDouble(str);
-//    }
-//    protected Integer dialogGetInteger (String message , String title )
-//    {
-//      final String str = JOptionPane.showInputDialog(null, message , title , JOptionPane.QUESTION_MESSAGE);
-//      if (str == null) return null;
-//      return Integer.parseInt(str);
-//    }
-//    protected String dialogGetString (String message , String title )
-//    {
-//      final String val = JOptionPane.showInputDialog(null, message , title , JOptionPane.QUESTION_MESSAGE);
-//      return val;
-//    }
-
 
     protected JComponent processMenu (AjtRcMenu popupInfo , List<T> visibleElementsInTable)
     {

@@ -39,6 +39,8 @@ public class OpenStackNet
     final List<OpenStackUser> list_osUsers = new ArrayList<> ();
     final List<OpenStackNetwork> list_osNetworks = new ArrayList<> ();
     final List<OpenStackSubnet> list_osSubnets = new ArrayList<> ();
+    final List<OpenStackGeneralInformation> list_osInformation = new ArrayList<> ();
+
     final  NetPlan getNetPlan () { return np; }
 
     public OpenStackNet()
@@ -103,15 +105,31 @@ public class OpenStackNet
         return res;
     }
 
+    public OpenStackGeneralInformation addOpenStackInformation()
+    {
+        String projectID = os.getToken().getProject().getId();
+         OpenStackGeneralInformation res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"User", list_osUsers.size());
+        if(!list_osInformation.contains(res)) {
+            list_osInformation.add(res);
+        }
+
+        res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"Network", list_osNetworks.size());
+        if(!list_osInformation.contains(res)) {
+            list_osInformation.add(res);
+        }
+        return res;
+    }
+
 
     public String getTopologyName () { return np.getNetPlan().getNetworkName(); }
     public String getTopologyDescription () { return np.getNetPlan().getNetworkDescription(); }
     public void setTopologyName (String name) { this.np.getNetPlan().setNetworkName(name); }
 
-    public List<OpenStackRouter> getOpenStackNodes () { return Collections.unmodifiableList(list_osRouters); }
+    public List<OpenStackRouter> getOpenStackRouters () { return Collections.unmodifiableList(list_osRouters); }
     public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(list_osUsers); }
     public List<OpenStackNetwork> getOpenStackNetworks () { return Collections.unmodifiableList(list_osNetworks); }
     public List<OpenStackSubnet> getOpenStackSubnets () { return Collections.unmodifiableList(list_osSubnets); }
+    public List<OpenStackGeneralInformation> getOpenStackInformation () { return Collections.unmodifiableList(list_osInformation); }
 
 
     public OpenStackNetworkElement getOpenStackNetworkElementByInternalId (long internalId)
@@ -121,6 +139,8 @@ public class OpenStackNet
         allOpenStackNetworkElements.addAll(list_osUsers);
         allOpenStackNetworkElements.addAll(list_osNetworks);
         allOpenStackNetworkElements.addAll(list_osSubnets);
+
+        allOpenStackNetworkElements.addAll(list_osInformation);
 
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getInternalId() == internalId).findFirst();
         if (element.isPresent()) return element.get();
@@ -136,6 +156,7 @@ public class OpenStackNet
         allOpenStackNetworkElements.addAll(list_osNetworks);
         allOpenStackNetworkElements.addAll(list_osSubnets);
 
+        allOpenStackNetworkElements.addAll(list_osInformation);
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getId() == openStackId).findFirst();
         if (element.isPresent()) return element.get();
         else return null;
@@ -144,7 +165,7 @@ public class OpenStackNet
     public void distributeTopologyOverCircle()
     {
         // Node list
-        final List<OpenStackRouter> nodeList = getOpenStackNodes();
+        final List<OpenStackRouter> nodeList = getOpenStackRouters();
 
         final int numNodes = nodeList.size();
         double index = 0.0;

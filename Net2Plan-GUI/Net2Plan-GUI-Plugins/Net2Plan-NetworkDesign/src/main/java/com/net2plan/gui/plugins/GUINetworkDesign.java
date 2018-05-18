@@ -609,6 +609,7 @@ import java.util.List;
             topologyPanel.getCanvas().rebuildGraph();
             topologyPanel.getCanvas().zoomAll();
             viewEditTopTables.updateView();
+            whatIfAnalysisPane.updateView();
             focusPanel.updateView();
         }
 
@@ -634,15 +635,20 @@ import java.util.List;
                 topologyPanel.updateMultilayerPanel();
                 topologyPanel.getCanvas().rebuildGraph();
                 viewEditTopTables.updateView();
+                whatIfAnalysisPane.updateView();
                 focusPanel.updateView();
             } else if ((modificationsMade.contains(NetworkElementType.LINK) || modificationsMade.contains(NetworkElementType.NODE) || modificationsMade.contains(NetworkElementType.LAYER)))
             {
                 topologyPanel.getCanvas().rebuildGraph();
                 viewEditTopTables.updateView();
+
+                whatIfAnalysisPane.updateView();
                 focusPanel.updateView();
             } else
             {
                 viewEditTopTables.updateView();
+
+                whatIfAnalysisPane.updateView();
                 focusPanel.updateView();
             }
         }

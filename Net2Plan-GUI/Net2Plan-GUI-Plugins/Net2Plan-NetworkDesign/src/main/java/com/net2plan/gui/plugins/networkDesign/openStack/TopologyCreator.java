@@ -69,9 +69,10 @@ class TopologyCreator
         /* Create links objects */
         for (Router router : routers) {
             osn.addOpenStackNode(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
-            System.out.println("CREANDO NODO DE ROUTER");
         }
 
+
+        osn.addOpenStackInformation();
 
 
         if (routers.isEmpty()) throw new Net2PlanException("The OpenStack topology is empty");

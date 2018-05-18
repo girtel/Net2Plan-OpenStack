@@ -16,25 +16,17 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 
 import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.gui.utils.ParameterValueDescriptionPanel;
 import com.net2plan.gui.utils.RunnableSelector;
 import com.net2plan.interfaces.networkDesign.Configuration;
@@ -46,6 +38,7 @@ import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.interfaces.simulation.IEventGenerator;
 import com.net2plan.interfaces.simulation.SimEvent;
+import com.net2plan.internal.ErrorHandling;
 import com.net2plan.internal.IExternal;
 import com.net2plan.internal.SystemUtils;
 import com.net2plan.internal.plugins.IGUIModule;
@@ -55,6 +48,7 @@ import com.net2plan.internal.sim.SimCore;
 import com.net2plan.internal.sim.SimCore.SimState;
 import com.net2plan.internal.sim.SimKernel;
 import com.net2plan.utils.ClassLoaderUtils;
+import com.net2plan.utils.Pair;
 import com.net2plan.utils.Triple;
 import org.openstack4j.model.identity.v3.Project;
 
@@ -67,36 +61,22 @@ import org.openstack4j.model.identity.v3.Project;
  * @author Pablo Pavon-Marino, Jose-Luis Izquierdo-Zaragoza
  * @since 0.3.0
  */
-public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener, ActionListener
+public class WhatIfAnalysisPane extends JPanel
 {
     private final GUINetworkDesign callback;
     private Thread simThread;
     private ParameterValueDescriptionPanel simulationConfigurationPanel;
-    private RunnableSelector eventProcessorPanel;
     private SimKernel simKernel;
     private Throwable lastWhatIfExecutionException;
     private  JTextArea upperText;
     final String NEWLINE = String.format("%n");
+    private final Map<ViewEditTopologyTablesPane.AJTableType, Pair<AdvancedJTable_networkElement, FilteredTablePanel>> ajTables = new EnumMap<>(ViewEditTopologyTablesPane.AJTableType.class);
+    private final JTabbedPane whatIfAnalysisPane;
+    private final JMenuBar menuBar;
     public WhatIfAnalysisPane(GUINetworkDesign callback)
     {
         super();
         this.callback = callback;
-
-        simKernel = new SimKernel();
-        simKernel.setGUIListener(this);
-
-        File ALGORITHMS_DIRECTORY = new File(IGUIModule.CURRENT_DIR + SystemUtils.getDirectorySeparator() + "workspace");
-        ALGORITHMS_DIRECTORY = ALGORITHMS_DIRECTORY.isDirectory() ? ALGORITHMS_DIRECTORY : IGUIModule.CURRENT_DIR;
-
-        eventProcessorPanel = new RunnableSelector(SimKernel.getEventProcessorLabel(), "File", simKernel.getEventProcessorClass(), ALGORITHMS_DIRECTORY, new ParameterValueDescriptionPanel());
-
-        simulationConfigurationPanel = new ParameterValueDescriptionPanel();
-        simulationConfigurationPanel.setParameters(simKernel.getSimulationParameters());
-
-
-        final JPanel upperButtonPlusLabelPanel = new JPanel();
-
-        upperButtonPlusLabelPanel.setLayout(new BorderLayout());
 
         upperText = new JTextArea();
         upperText.setFont(new JLabel().getFont());
@@ -106,132 +86,108 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
         upperText.setWrapStyleWord(true);
         upperText.setText("No available");
         this.setLayout(new BorderLayout());
-        this.add(upperButtonPlusLabelPanel, BorderLayout.NORTH);
 
-        final JSplitPane aux_Panel = new JSplitPane();
-        aux_Panel.setLeftComponent(new JScrollPane(upperText));
-        aux_Panel.setRightComponent(eventProcessorPanel);
+        this.whatIfAnalysisPane = new JTabbedPane();
 
-        aux_Panel.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        aux_Panel.setResizeWeight(0.3);
-        aux_Panel.setEnabled(false);
-        aux_Panel.setDividerLocation(0.3);
-        aux_Panel.setDividerSize(0      );
+        final JSplitPane splitPane = new JSplitPane();
+        splitPane.setBottomComponent(upperText);
+        splitPane.setLeftComponent(whatIfAnalysisPane);
 
-        this.add(aux_Panel, BorderLayout.CENTER);
+        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setResizeWeight(0.3);
+        splitPane.setEnabled(true);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerLocation(0.4);
+
+        this.add(splitPane, BorderLayout.CENTER);
+
+        for (ViewEditTopologyTablesPane.AJTableType ajType : ViewEditTopologyTablesPane.AJTableType.values())
+            ajTables.put(ajType, createPanelComponentInfo(ajType));
+
+
+        /* The rest of high level tabs */
+        for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.INFORMATION))
+            whatIfAnalysisPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+
+
+        menuBar = new JMenuBar();
+
+        this.add(menuBar, BorderLayout.SOUTH);
     }
 
-
-    public void whatIfDemandOfferedTrafficModified(Demand demand, double newOfferedTraffic) throws Throwable
+    private Pair<AdvancedJTable_networkElement, FilteredTablePanel> createPanelComponentInfo(ViewEditTopologyTablesPane.AJTableType type)
     {
-    	this.whatIfDemandOfferedTrafficModified(Arrays.asList(demand), Arrays.asList(newOfferedTraffic));
-    }
-
-    public void whatIfDemandOfferedTrafficModified(List<Demand> demands, List<Double> newOfferedTraffics) throws Throwable
-    {
-        synchronized (this)
+        AdvancedJTable_networkElement table = null;
+        switch (type)
         {
-        	if (demands.stream().anyMatch(d->d.isCoupled())) throw new Net2PlanException ("What-if analysis changing the offered traffic in coupled demands is not accepted");
-            this.lastWhatIfExecutionException = null;
-            final List<SimEvent> events = new ArrayList<> (demands.size());
-            for (int cont = 0; cont < demands.size() ; cont ++)
-            {
-                final SimEvent.DemandModify modifyEvent = new SimEvent.DemandModify(demands.get(cont), newOfferedTraffics.get(cont), false);
-                final SimEvent event = new SimEvent(0, SimEvent.DestinationModule.EVENT_PROCESSOR, -1, modifyEvent);
-                events.add(event);
-            }
-            runSimulation(events);
-            if (lastWhatIfExecutionException != null)
-                throw lastWhatIfExecutionException;
-            this.wait(); // wait until the simulation ends
-            if (lastWhatIfExecutionException != null)
-                throw lastWhatIfExecutionException;
+
+            case USERS:
+                table = new AdvancedJTable_users(callback);
+                break;
+            case ROUTERS:
+                table = new AdvancedJTable_routers(callback);
+                break;
+            case NETWORKS:
+                table = new AdvancedJTable_networks(callback);
+                break;
+            case SUBNETS:
+                table = new AdvancedJTable_subnets(callback);
+                break;
+            case INFORMATION:
+                table = new AdvancedJTable_informationProject(callback);
+                break;
+            default:
+                assert false;
         }
-    }
 
-    public void whatIfMulticastDemandOfferedTrafficModified(MulticastDemand demand, double newOfferedTraffic) throws Throwable
-    {
-    	whatIfMulticastDemandOfferedTrafficModified(Arrays.asList(demand), Arrays.asList(newOfferedTraffic));
-    }
-    public void whatIfMulticastDemandOfferedTrafficModified(List<MulticastDemand> demands, List<Double> newOfferedTraffics) throws Throwable
-    {
-        synchronized (this)
-        {
-        	if (demands.stream().anyMatch(d->d.isCoupled())) throw new Net2PlanException ("What-if analysis changing the offered traffic in coupled demands is not accepted");
-            this.lastWhatIfExecutionException = null;
-            final List<SimEvent> events = new ArrayList<> (demands.size());
-            for (int cont = 0; cont < demands.size() ; cont ++)
-            {
-                SimEvent.MulticastDemandModify modifyEvent = new SimEvent.MulticastDemandModify(demands.get(cont), newOfferedTraffics.get(cont), false);
-                SimEvent event = new SimEvent(0, SimEvent.DestinationModule.EVENT_PROCESSOR, -1, modifyEvent);
-                events.add(event);
-            }
-            runSimulation(events);
-            if (lastWhatIfExecutionException != null)
-                throw lastWhatIfExecutionException;
-            this.wait(); // wait until the simulation ends
-            if (lastWhatIfExecutionException != null)
-                throw lastWhatIfExecutionException;
-        }
-    }
 
-    public void whatIfLinkNodesFailureStateChanged(Collection<Node> nodesToSetAsUp, Collection<Node> nodesToSetAsDown, Collection<Link> linksToSetAsUp, Collection<Link> linksToSetAsDown) throws Throwable
-    {
-        synchronized (this)
-        {
-	        this.lastWhatIfExecutionException = null;
-	        SimEvent.NodesAndLinksChangeFailureState eventInfo = new SimEvent.NodesAndLinksChangeFailureState(nodesToSetAsUp, nodesToSetAsDown, linksToSetAsUp, linksToSetAsDown);
-	        SimEvent event = new SimEvent(0, SimEvent.DestinationModule.EVENT_PROCESSOR, -1, eventInfo);
-	        runSimulation(Arrays.asList(event));
-            if (lastWhatIfExecutionException != null)
-                throw lastWhatIfExecutionException;
-            wait(); // wait until the simulation ends
-            if (lastWhatIfExecutionException != null)
-                throw lastWhatIfExecutionException;
-        }
+        return Pair.of(table, new FilteredTablePanel(callback, table.getTableScrollPane()));
     }
 
 
-    @Override
-    public void refresh(boolean forceRefresh)
+    public void resetPickedState()
     {
+        ajTables.values().stream().filter(q -> q.getFirst() != null).forEach(q -> q.getFirst().clearSelection());
+
+    }
+
+
+    public void updateView()
+    {
+        /* Load current network state */
+        final NetPlan currentState = callback.getDesign();
+        if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
+
+        ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
+
+        // Update filter header
+        for (ViewEditTopologyTablesPane.AJTableType type : ViewEditTopologyTablesPane.AJTableType.values())
+            ajTables.get(type).getSecond().updateHeader();
+
+
+
+        if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
     }
 
     /**
-     * Called by the SimKernel of the what-if analysis tool
+     * Shows the tab corresponding associated to a network element.
      *
-     * @param simulationState
-     * @param reason
+     * @param type   Network element type
      */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void simulationStateChanged(SimCore.SimState simulationState, Throwable reason)
+    public void selectItemTab(ViewEditTopologyTablesPane.AJTableType type)
     {
-        simulationConfigurationPanel.setEnabled(false);
-        eventProcessorPanel.setEnabled(false);
-
-        if (reason == null)
+        switch (type)
         {
-            return;
-        }
-
-        if (reason instanceof EndSimulationException)
-        {
-            callback.setDesign(simKernel.getCurrentNetPlan());
-            synchronized (this)
-            {
-                this.lastWhatIfExecutionException = null;
-                eventProcessorPanel.setEnabled(true);
-                this.notify(); // make the thread waiting for the simulation to finish to continue
-            }
-        } else
-        {
-            synchronized (this)
-            {
-                lastWhatIfExecutionException = reason;
-                eventProcessorPanel.setEnabled(true);
-                this.notify(); // make the thread waiting for the simulation to finish to continue
-            }
+            case ROUTERS:
+            case USERS:
+            case NETWORKS:
+            case INFORMATION:
+            case SUBNETS:
+                whatIfAnalysisPane.setSelectedComponent(ajTables.get(type).getSecond());
+                break;
+            default:
+                System.out.println(type);
+                assert false;
         }
     }
 
@@ -241,74 +197,7 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
      *
      *
      */
-    private void runSimulation(List<SimEvent> eventsToRun)
-    {
-        try
-        {
-            if (simKernel.getSimCore().getSimulationState() == SimState.RUNNING)
-                throw new Net2PlanException("Previous what-if analysis is in process");
-            simKernel.getSimCore().setSimulationState(SimState.NOT_STARTED);
-            simKernel.setNetPlan(callback.getDesign());
-//            simKernel.getSimCore().setSimulationState(SimState.STOPPED);
 
-            final Map<String, String> net2planParameters = Configuration.getNet2PlanOptions();
-            final Map<String, String> simulationParameters = new HashMap<>();
-            simulationParameters.put("disableStatistics", "true");
-            simulationParameters.put("refreshTime", "100000");
-            simulationParameters.put("simEvents", "-1");
-            simulationParameters.put("transitoryEvents", "-1");
-            simulationParameters.put("transitoryTime", "-1");
-            simulationParameters.put("simTime", "-1");
-            simulationParameters.put("disableStatistics", "true");
-            simulationParameters.put("disableStatistics", "true");
-
-            final IExternal eventGenerator = new IEventGenerator()
-            {
-                @Override
-                public void processEvent(NetPlan currentNetPlan, SimEvent event)
-                {
-                }
-
-                @Override
-                public void initialize(NetPlan initialNetPlan, Map<String, String> algorithmParameters,
-                                       Map<String, String> simulationParameters, Map<String, String> net2planParameters)
-                {
-                	for (SimEvent eventToRun : eventsToRun)
-                		scheduleEvent(eventToRun);
-                }
-
-                @Override
-                public List<Triple<String, String, String>> getParameters()
-                {
-                    return new LinkedList<>();
-                }
-
-                @Override
-                public String getDescription()
-                {
-                    return "";
-                }
-            };
-
-            Triple<File, String, Class> aux = eventProcessorPanel.getRunnable();
-            IExternal eventProcessor = ClassLoaderUtils.getInstance(aux.getFirst(), aux.getSecond(), simKernel.getEventProcessorClass() , null);
-            Map<String, String> eventProcessorParameters = eventProcessorPanel.getRunnableParameters();
-            simKernel.configureSimulation(simulationParameters, net2planParameters, eventGenerator, new HashMap<String, String>(), eventProcessor, eventProcessorParameters);
-            simKernel.initialize();
-            simKernel.getSimCore().setSimulationState(SimCore.SimState.RUNNING);
-
-            simThread = new Thread(simKernel.getSimCore());
-            simThread.start();
-        } catch (Throwable ex)
-        {
-            synchronized (this)
-            {
-                lastWhatIfExecutionException = ex;
-                eventProcessorPanel.setEnabled(true);
-                this.notify(); // make the thread waiting for the simulation to finish to continue
-            }
-        }
-    }
 
     public void updateText(){
         upperText.setText("In this tab you can see the information about the project and the user who has connected OpenStack"+NEWLINE
@@ -320,11 +209,6 @@ public class WhatIfAnalysisPane extends JPanel implements IGUISimulationListener
                         + "PARENT ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getParentId()+ NEWLINE
         );
     }
-    @Override
-    public void actionPerformed(ActionEvent e)
-    {
-        final Object src = e.getSource();
 
-    }
 
 }

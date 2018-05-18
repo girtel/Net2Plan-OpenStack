@@ -168,24 +168,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 if (((Collection) value).isEmpty()) return;
 
                 final Object firstElement = ((Collection) value).iterator().next();
-                                /*
-				if (firstElement instanceof OpenStackNetworkElement || firstElement instanceof Bidi)
-				{
-					final List<OpenStackNetworkElement> es = new ArrayList<>();
 
-					if (firstElement instanceof Bidi)
-					{
-						for (Bidi bidi : (Collection<? extends Bidi>) value)
-						{
-							es.add((OpenStackNetworkElement) bidi.getLowUnidi());
-							es.add((OpenStackNetworkElement) bidi.getHighUnidi());
-						}
-
-					} else es.addAll((Collection) value);
-
-					callback.getVisualizationState().pickElement(es, null);
-					callback.updateVisualizationAfterPick();
-				}*/
 
             }
             else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();

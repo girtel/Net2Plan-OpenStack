@@ -20,10 +20,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
@@ -43,7 +42,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 {
     public enum AJTableType
     {
-
+        INFORMATION("INFORMATION"),
         USERS("USERS"),
         ROUTERS("ROUTERS"),
         NETWORKS("NETWORKS"),
@@ -68,6 +67,9 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final JTabbedPane viewEditHighLevelTabbedPane;
 
     private final JMenuBar menuBar;
+    private JTextArea upperText;
+
+    final String NEWLINE = String.format("%n");
 
     /**
      * Main Panel with CENTER: high level tabbed pane (Network, layer, nodes, ...), SOUTH: Export as Excel mention
@@ -81,11 +83,24 @@ public class ViewEditTopologyTablesPane extends JPanel
 
         this.callback = callback;
 
-        this.viewEditHighLevelTabbedPane = new JTabbedPane();
+        upperText = new JTextArea();
+        upperText.setFont(new JLabel().getFont());
+        upperText.setBackground(new JLabel().getBackground());
+        upperText.setLineWrap(true);
+        upperText.setEditable(false);
+        upperText.setWrapStyleWord(true);
+        upperText.setText("No available yet");
 
+        this.viewEditHighLevelTabbedPane = new JTabbedPane();
+        viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                updateText(viewEditHighLevelTabbedPane.getSelectedIndex());
+            }
+        });
         final JSplitPane splitPane = new JSplitPane();
         splitPane.setLeftComponent(viewEditHighLevelTabbedPane);
 
+        splitPane.setBottomComponent(upperText);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.3);
         splitPane.setEnabled(true);
@@ -126,6 +141,9 @@ public class ViewEditTopologyTablesPane extends JPanel
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
+                break;
+            case INFORMATION:
+                table = new AdvancedJTable_informationProject(callback);
                 break;
             default:
                 assert false;
@@ -172,6 +190,7 @@ public class ViewEditTopologyTablesPane extends JPanel
             case ROUTERS:
             case USERS:
             case NETWORKS:
+            case INFORMATION:
             case SUBNETS:
                 viewEditHighLevelTabbedPane.setSelectedComponent(ajTables.get(type).getSecond());
                 break;
@@ -180,5 +199,38 @@ public class ViewEditTopologyTablesPane extends JPanel
                 assert false;
         }
     }
+    public void updateText(int type){
+        if(callback.getOpenStackNet().getOpenStackUsers().size() == 0) return;
+        switch (type){
+            case 0:
+                upperText.setText("In this tab you can see the information about the routers of OpenStack"+NEWLINE
+                        + "Table description: " + NEWLINE
+                        + callback.getOpenStackNet().getOpenStackRouters().get(0).get50CharactersDescription()
+                );
+                break;
+            case 1:
+                upperText.setText("In this tab you can see the information about the users of OpenStack"+NEWLINE
+                        + "Table description: " + NEWLINE
+                        + callback.getOpenStackNet().getOpenStackUsers().get(0).get50CharactersDescription()
+                );
+                break;
+            case 2:
+                upperText.setText("In this tab you can see the information about the networks of OpenStack"+NEWLINE
+                        + "Table description: " + NEWLINE
+                        + callback.getOpenStackNet().getOpenStackNetworks().get(0).get50CharactersDescription()
+                );
+                break;
+            case 3:
+                upperText.setText("In this tab you can see the information about the subnets of OpenStack"+NEWLINE
+                        + "Table description: " + NEWLINE
+                        + callback.getOpenStackNet().getOpenStackSubnets().get(0).get50CharactersDescription()
+                );
+                break;
+            case 4:
+            case 5:
 
+                break;
+        }
+
+    }
 }

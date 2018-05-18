@@ -14,6 +14,7 @@ import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
+
 import com.net2plan.interfaces.networkDesign.*;
 import com.net2plan.utils.Pair;
 
@@ -101,13 +102,15 @@ public abstract class ITableRowFilter
 		switch(ajTableType)
 		{
 			case ROUTERS:
-				return os.getOpenStackNodes();
+				return os.getOpenStackRouters();
 			case USERS:
 				return os.getOpenStackUsers();
 			case NETWORKS:
 				return os.getOpenStackNetworks();
 			case SUBNETS:
 				return os.getOpenStackSubnets();
+			case INFORMATION:
+				return os.getOpenStackInformation();
 			default:
 				assert false;
 				return new ArrayList<>();
@@ -119,13 +122,15 @@ public abstract class ITableRowFilter
 		switch(ajTableType)
 		{
 			case ROUTERS:
-				return os.getOpenStackNodes();
+				return os.getOpenStackRouters();
 			case USERS:
 				return os.getOpenStackUsers();
 			case NETWORKS:
 				return os.getOpenStackNetworks();
 			case SUBNETS:
 				return os.getOpenStackSubnets();
+			case INFORMATION:
+				return os.getOpenStackInformation();
 			default:
 				assert false;
 				return new ArrayList<>();
