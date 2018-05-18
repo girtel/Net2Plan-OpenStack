@@ -17,11 +17,6 @@ public class OpenStackNetwork extends OpenStackNetworkElement
     private String networkProviderPhyNet = "";
     private String networkProviderSegID ="";
     private String networkTenantId = "";
-    static OpenStackNetwork createFromNetPlan (OpenStackNet osn , Resource n)
-    {
-        final OpenStackNetwork osNetwork = new OpenStackNetwork(osn, n);
-        return osNetwork;
-    }
 
     static OpenStackNetwork createFromAddNetwork (OpenStackNet osn ,String networkId,String networkName,State networkStatus,NetworkType networkType,List<? extends Subnet> networkNeutronSubnets,String networkProviderPhyNet,String networkProviderSegID,List <String> networkSubnets,String networkTenantId,boolean networkIsAdminStateUp,boolean networkIsRouterExternal, boolean networkIsShared)
     {

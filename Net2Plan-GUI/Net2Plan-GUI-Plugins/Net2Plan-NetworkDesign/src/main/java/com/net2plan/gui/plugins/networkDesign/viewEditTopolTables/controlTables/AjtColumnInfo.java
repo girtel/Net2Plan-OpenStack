@@ -153,14 +153,17 @@ public class AjtColumnInfo<T>
     {
         return new AjtColumnInfo<OpenStackNetworkElement>(ajTable, Long.class, null, "Id", "Unique identifier (never repeated in any other network element)", null , e->e.getId() , AGTYPE.NOAGGREGATION , null , null);
     }
+
     public static AjtColumnInfo<OpenStackNetworkElement> createIndexColumn (AdvancedJTable_networkElement<? extends OpenStackNetworkElement> ajTable)
     {
         return new AjtColumnInfo<>(ajTable, Integer.class, null , "Index", "Index (consecutive integer starting in zero)", null , e->e.getOpenStackIndex(), AGTYPE.NOAGGREGATION , null , null);
     }
+
     public static AjtColumnInfo<OpenStackNetworkElement> createTagsColumn (AdvancedJTable_networkElement<? extends OpenStackNetworkElement> ajTable)
     {
         return new AjtColumnInfo<>(ajTable, String.class, null , "Tags", "User-defined tags associated to this element", null , e->e.getId() , AGTYPE.NOAGGREGATION , null , null);
     }
+
     public static AjtColumnInfo<OpenStackNetworkElement> createAttributesColumn (AdvancedJTable_networkElement<? extends OpenStackNetworkElement> ajTable)
     {
         return new AjtColumnInfo<>(ajTable, String.class, null , "Attributes", "User-defined attributes associated to this element", null , e->e.getId() , AGTYPE.NOAGGREGATION , null , null);

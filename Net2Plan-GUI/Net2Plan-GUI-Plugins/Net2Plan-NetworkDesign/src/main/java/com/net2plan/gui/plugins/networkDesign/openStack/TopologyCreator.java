@@ -2,10 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.interfaces.networkDesign.Link;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
-import com.net2plan.interfaces.networkDesign.Node;
-import java.util.ArrayList;
 import java.util.List;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.common.Identifier;
@@ -47,7 +44,6 @@ class TopologyCreator
         final List<Network> networks = (List<Network>) os.networking().network().list();
         final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
         final List<Router> routers = (List<Router>) os.networking().router().list();
-        final List<Link> links = new ArrayList<>();
 
 
         /* Create users objects */
@@ -62,11 +58,7 @@ class TopologyCreator
         for (Subnet subnet : subnets)
             osn.addOpenStackSubnet(subnet.getId(),subnet.getName(),subnet.getAllocationPools(),subnet.getCidr(),subnet.getDnsNames(),subnet.getGateway(),subnet.getHostRoutes(),subnet.getIpVersion(),subnet.getIpv6AddressMode(),subnet.getIpv6RaMode(),subnet.getNetworkId(),subnet.getTenantId(),subnet.isDHCPEnabled());
 
-        /*Create links objects
-        for (Link link : links)
-            osn.addOpenStackLink(link.getId(),link.getCapacity(),subnet.getAllocationPools(),subnet.getCidr(),subnet.getDnsNames(),subnet.getGateway(),subnet.getHostRoutes(),subnet.getIpVersion(),subnet.getIpv6AddressMode(),subnet.getIpv6RaMode(),subnet.getNetworkId(),subnet.getTenantId(),subnet.isDHCPEnabled());
-        */
-        /* Create links objects */
+        /* Create routers objects */
         for (Router router : routers) {
             osn.addOpenStackRouter(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
         }

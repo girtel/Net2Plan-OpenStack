@@ -16,6 +16,7 @@ public abstract class OpenStackNetworkElement implements Comparable<OpenStackNet
     protected final NetworkElement npNe;
     protected final List<? extends OpenStackNetworkElement> indexedList;
     protected Integer osnIndex;
+
     protected OpenStackNetworkElement (OpenStackNet osn , NetworkElement npNe , List<OpenStackNetworkElement> indexedList)
     {
         assert npNe != null;

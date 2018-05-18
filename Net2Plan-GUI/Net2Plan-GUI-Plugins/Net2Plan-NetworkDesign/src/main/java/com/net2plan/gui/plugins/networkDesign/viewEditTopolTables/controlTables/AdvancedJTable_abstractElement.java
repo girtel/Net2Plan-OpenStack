@@ -280,11 +280,11 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
     {
         return this.decorator.getFixedTable().getColumnModel();
     }
+
     private TableColumnModel getScrollableRightTableColumnModel ()
     {
         return this.decorator.getMainTable().getColumnModel();
     }
-
 
     private void setTips(List<AjtColumnInfo<T>> tableColumnsInModel)
     {
@@ -305,7 +305,6 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
     protected abstract void showPopup (MouseEvent me);
 
     public abstract T getElementAtModelRowIndex(int rowModelIndex);
-
 
     protected abstract List<AjtColumnInfo<T>> getAllColumnsVisibleOrNot ();
 
@@ -403,11 +402,13 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
         };
         return tableModel;
     }
+
     private String[] getTableHeaders(List<AjtColumnInfo<T>> tableColumns)
     {
         final String [] res = new String [tableColumns.size()];
         int cont = 0; for (AjtColumnInfo c : tableColumns) res [cont ++] = c.getHeader(); return res;
     }
+
     private String[] getTableTips(List<AjtColumnInfo<T>> tableColumns)
     {
         final String [] res = new String [tableColumns.size()];

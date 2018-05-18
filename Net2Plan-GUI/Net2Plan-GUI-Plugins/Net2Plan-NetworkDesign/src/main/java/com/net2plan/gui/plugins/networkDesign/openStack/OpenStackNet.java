@@ -65,6 +65,7 @@ public class OpenStackNet
     public OSClientV3 getOs(){
         return this.os;
     }
+
     public OpenStackUser addOpenStackUser (User user,String userId, String userName, String userDomainId, String userEmail, String userDescription)
     {
         final OpenStackUser res = OpenStackUser.createFromAddUser(this ,user, userId, userName, userDomainId, userEmail, userDescription);
@@ -112,7 +113,6 @@ public class OpenStackNet
         return res;
     }
 
-
     public String getTopologyName () { return np.getNetPlan().getNetworkName(); }
     public String getTopologyDescription () { return np.getNetPlan().getNetworkDescription(); }
     public void setTopologyName (String name) { this.np.getNetPlan().setNetworkName(name); }
@@ -123,23 +123,6 @@ public class OpenStackNet
     public List<OpenStackSubnet> getOpenStackSubnets () { return Collections.unmodifiableList(list_osSubnets); }
     public List<OpenStackGeneralInformation> getOpenStackInformation () { return Collections.unmodifiableList(list_osInformation); }
 
-
-    public OpenStackNetworkElement getOpenStackNetworkElementByInternalId (long internalId)
-    {
-        final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
-        allOpenStackNetworkElements.addAll(list_osRouters);
-        allOpenStackNetworkElements.addAll(list_osUsers);
-        allOpenStackNetworkElements.addAll(list_osNetworks);
-        allOpenStackNetworkElements.addAll(list_osSubnets);
-
-        allOpenStackNetworkElements.addAll(list_osInformation);
-
-        Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getInternalId() == internalId).findFirst();
-        if (element.isPresent()) return element.get();
-        else return null;
-    }
-
-
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId)
     {
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
@@ -147,8 +130,8 @@ public class OpenStackNet
         allOpenStackNetworkElements.addAll(list_osUsers);
         allOpenStackNetworkElements.addAll(list_osNetworks);
         allOpenStackNetworkElements.addAll(list_osSubnets);
-
         allOpenStackNetworkElements.addAll(list_osInformation);
+
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getId() == openStackId).findFirst();
         if (element.isPresent()) return element.get();
         else return null;

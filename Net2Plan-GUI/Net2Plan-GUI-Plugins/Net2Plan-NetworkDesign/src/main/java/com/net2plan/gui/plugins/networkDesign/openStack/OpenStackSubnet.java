@@ -21,12 +21,6 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     private String subnetGateway = "";
     private String subnetNetworkId = "";
 
-    static OpenStackSubnet createFromNetPlan (OpenStackNet osn , Resource n)
-    {
-        final OpenStackSubnet osSubnet = new OpenStackSubnet(osn, n);
-        return osSubnet;
-    }
-
     static OpenStackSubnet createFromAddSubnet (OpenStackNet osn ,String subnetId,String subnetName,List<? extends Pool> subnetAllocationPools,String subnetCidr,List<String> subnetDnsNames,String subnetGateway,List<? extends HostRoute> subnetHostRoutes,IPVersionType subnetIpVersion,Ipv6AddressMode subnetIpv6AddressMode,Ipv6RaMode subnetIpv6RaMode,String subnetNetworkId,String subnetTenantId,boolean subnetIsDHCPEnabled)
     {
 

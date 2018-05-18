@@ -26,15 +26,14 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.UndoRedoManager;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
-import com.net2plan.gui.plugins.networkDesign.whatIfAnalysisPane.WhatIfAnalysisPane;
+import com.net2plan.gui.plugins.networkDesign.aboutItPane.AboutIt;
 import com.net2plan.gui.utils.ProportionalResizeJSplitPaneListener;
 import com.net2plan.interfaces.networkDesign.*;
 import com.net2plan.internal.Constants.NetworkElementType;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.internal.plugins.IGUIModule;
 import com.net2plan.internal.plugins.PluginSystem;
-import com.net2plan.internal.sim.SimCore.SimState;
-import com.net2plan.utils.Pair;
+  import com.net2plan.utils.Pair;
 import com.net2plan.utils.Triple;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.collections15.BidiMap;
@@ -68,7 +67,7 @@ import java.util.List;
         private FocusPane focusPanel;
 
         private ViewEditTopologyTablesPane viewEditTopTables;
-        private WhatIfAnalysisPane whatIfAnalysisPane;
+        private AboutIt aboutIt;
 
         private VisualizationState vs;
         private UndoRedoManager undoRedoManager;
@@ -176,11 +175,11 @@ import java.util.List;
             this.undoRedoManager = new UndoRedoManager(this, MAXSIZEUNDOLISTCHANGES);
             this.undoRedoManager.addNetPlanChange();
 
-            whatIfAnalysisPane = new WhatIfAnalysisPane(this);
+            aboutIt = new AboutIt(this);
 
             final JTabbedPane tabPane = new JTabbedPane();
             tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.network), viewEditTopTables);
-            tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.whatif), whatIfAnalysisPane);
+            tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.whatif), aboutIt);
 
             // Installing customized mouse listener
             MouseListener[] ml = tabPane.getListeners(MouseListener.class);
@@ -232,7 +231,7 @@ import java.util.List;
                                     switch (networkDesignWindow)
                                     {
                                         case whatif:
-                                            windowController.showWhatifWindow(true);
+                                            windowController.showAboutItWindow(true);
                                             break;
                                         default:
                                             return;
@@ -267,7 +266,7 @@ import java.util.List;
             };
 
             // Building tab controller
-            this.windowController = new WindowController(null, null, whatIfAnalysisPane, null);
+            this.windowController = new WindowController(aboutIt);
 
             addKeyCombinationActions();
             updateVisualizationAfterNewTopology();
@@ -417,11 +416,6 @@ import java.util.List;
             return null;
         }
 
-        public WhatIfAnalysisPane getWhatIfAnalysisPane()
-        {
-            return whatIfAnalysisPane;
-        }
-
         public void addNetPlanChange()
         {
             undoRedoManager.addNetPlanChange();
@@ -485,8 +479,8 @@ import java.util.List;
             undoRedoManager.addNetPlanChange();
         }
 
-        public WhatIfAnalysisPane getWhat(){
-            return this.whatIfAnalysisPane;
+        public AboutIt getAboutIt(){
+            return this.aboutIt;
         }
         public void resetPickedStateAndUpdateView()
         {
@@ -538,18 +532,6 @@ import java.util.List;
             }, KeyStroke.getKeyStroke(KeyEvent.VK_F11, InputEvent.CTRL_DOWN_MASK));
 
 
-
-            /* Online simulation */
-            addKeyCombinationAction("Run simulation", new AbstractAction()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-
-
-                }
-            }, KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_DOWN_MASK));
-
             // Windows
             addKeyCombinationAction("Show control window", new AbstractAction()
             {
@@ -566,8 +548,8 @@ import java.util.List;
             viewEditTopTables.setActionMap(this.getActionMap());
 
 
-            whatIfAnalysisPane.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
-            whatIfAnalysisPane.setActionMap(this.getActionMap());
+            aboutIt.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
+            aboutIt.setActionMap(this.getActionMap());
         }
 
         public void putTransientColorInElementTopologyCanvas(Collection<? extends NetworkElement> linksAndNodes, Color color)
@@ -609,7 +591,7 @@ import java.util.List;
             topologyPanel.getCanvas().rebuildGraph();
             topologyPanel.getCanvas().zoomAll();
             viewEditTopTables.updateView();
-            whatIfAnalysisPane.updateView();
+            aboutIt.updateView();
             focusPanel.updateView();
         }
 
@@ -635,20 +617,20 @@ import java.util.List;
                 topologyPanel.updateMultilayerPanel();
                 topologyPanel.getCanvas().rebuildGraph();
                 viewEditTopTables.updateView();
-                whatIfAnalysisPane.updateView();
+                aboutIt.updateView();
                 focusPanel.updateView();
             } else if ((modificationsMade.contains(NetworkElementType.LINK) || modificationsMade.contains(NetworkElementType.NODE) || modificationsMade.contains(NetworkElementType.LAYER)))
             {
                 topologyPanel.getCanvas().rebuildGraph();
                 viewEditTopTables.updateView();
 
-                whatIfAnalysisPane.updateView();
+                aboutIt.updateView();
                 focusPanel.updateView();
             } else
             {
                 viewEditTopTables.updateView();
 
-                whatIfAnalysisPane.updateView();
+                aboutIt.updateView();
                 focusPanel.updateView();
             }
         }
@@ -677,30 +659,24 @@ import java.util.List;
 
         private class WindowController
         {
-            private GUIWindow reportWindow;
-            private GUIWindow offlineWindow;
-            private GUIWindow onlineWindow;
-            private GUIWindow whatifWindow;
+            private GUIWindow aboutItWindow;
 
-            private final JComponent offlineWindowComponent, onlineWindowComponent;
-            private final JComponent whatitWindowComponent, reportWindowComponent;
+             private final JComponent aboutItWindowComponent;
 
-            WindowController(final JComponent offlineWindowComponent, final JComponent onlineWindowComponent, final JComponent whatifWindowComponent, final JComponent reportWindowComponent)
+            WindowController(final JComponent aboutIt)
             {
-                this.offlineWindowComponent = offlineWindowComponent;
-                this.onlineWindowComponent = onlineWindowComponent;
-                this.whatitWindowComponent = whatifWindowComponent;
-                this.reportWindowComponent = reportWindowComponent;
+
+                this.aboutItWindowComponent = aboutIt;
             }
 
 
 
 
-            private void buildWhatifWindow(final JComponent component)
+            private void buildAboutItfWindow(final JComponent component)
             {
                 final String tabName = NetworkDesignWindow.getWindowName(NetworkDesignWindow.whatif);
 
-                whatifWindow = new GUIWindow(component)
+                aboutItWindow = new GUIWindow(component)
                 {
                     @Override
                     public String getTitle()
@@ -709,16 +685,16 @@ import java.util.List;
                     }
                 };
 
-                whatifWindow.addWindowListener(new CloseWindowAdapter(tabName, component));
+                aboutItWindow.addWindowListener(new CloseWindowAdapter(tabName, component));
             }
 
-            void showWhatifWindow(final boolean gainFocus)
+            void showAboutItWindow(final boolean gainFocus)
             {
-                buildWhatifWindow(whatitWindowComponent);
-                if (whatifWindow != null)
+                buildAboutItfWindow(aboutItWindowComponent);
+                if (aboutItWindow != null)
                 {
-                    whatifWindow.showWindow(gainFocus);
-                    whatifWindow.setLocationRelativeTo(tableControlWindow);
+                    aboutItWindow.showWindow(gainFocus);
+                    aboutItWindow.setLocationRelativeTo(tableControlWindow);
                 }
             }
 
@@ -727,10 +703,8 @@ import java.util.List;
 
             void hideAllWindows()
             {
-                if (offlineWindow != null)
-                    offlineWindow.dispatchEvent(new WindowEvent(offlineWindow, WindowEvent.WINDOW_CLOSING));
-                if (whatifWindow != null)
-                    whatifWindow.dispatchEvent(new WindowEvent(whatifWindow, WindowEvent.WINDOW_CLOSING));
+                if (aboutItWindow != null)
+                    aboutItWindow.dispatchEvent(new WindowEvent(aboutItWindow, WindowEvent.WINDOW_CLOSING));
             }
 
             private class CloseWindowAdapter extends WindowAdapter

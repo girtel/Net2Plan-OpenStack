@@ -4,30 +4,18 @@ package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
 
-import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
-//import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.dialog.AddMulticastFlowDialog;
-//import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.dialog.CommonIPNodeDialogs;//
-//import com.net2plan.gui.utils.IntegerInputDialog;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
-import com.net2plan.gui.utils.JNumberField;
-//import com.net2plan.gui.utils.TextInputDialog;
 import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  */

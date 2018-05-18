@@ -10,47 +10,20 @@
  *******************************************************************************/
 
 
-package com.net2plan.gui.plugins.networkDesign.whatIfAnalysisPane;
+package com.net2plan.gui.plugins.networkDesign.aboutItPane;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.*;
 
 import javax.swing.*;
 
-import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
-import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
-import com.net2plan.gui.utils.ParameterValueDescriptionPanel;
-import com.net2plan.gui.utils.RunnableSelector;
-import com.net2plan.interfaces.networkDesign.Configuration;
-import com.net2plan.interfaces.networkDesign.Demand;
-import com.net2plan.interfaces.networkDesign.Link;
-import com.net2plan.interfaces.networkDesign.MulticastDemand;
-import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import com.net2plan.interfaces.networkDesign.NetPlan;
-import com.net2plan.interfaces.networkDesign.Node;
-import com.net2plan.interfaces.simulation.IEventGenerator;
-import com.net2plan.interfaces.simulation.SimEvent;
 import com.net2plan.internal.ErrorHandling;
-import com.net2plan.internal.IExternal;
-import com.net2plan.internal.SystemUtils;
-import com.net2plan.internal.plugins.IGUIModule;
-import com.net2plan.internal.sim.EndSimulationException;
-import com.net2plan.internal.sim.IGUISimulationListener;
-import com.net2plan.internal.sim.SimCore;
-import com.net2plan.internal.sim.SimCore.SimState;
-import com.net2plan.internal.sim.SimKernel;
-import com.net2plan.utils.ClassLoaderUtils;
 import com.net2plan.utils.Pair;
-import com.net2plan.utils.Triple;
-import org.openstack4j.model.identity.v3.Project;
 
 /**
  * Targeted to evaluate network designs from the offline tool simulating the
@@ -61,19 +34,16 @@ import org.openstack4j.model.identity.v3.Project;
  * @author Pablo Pavon-Marino, Jose-Luis Izquierdo-Zaragoza
  * @since 0.3.0
  */
-public class WhatIfAnalysisPane extends JPanel
+public class AboutIt extends JPanel
 {
     private final GUINetworkDesign callback;
-    private Thread simThread;
-    private ParameterValueDescriptionPanel simulationConfigurationPanel;
-    private SimKernel simKernel;
-    private Throwable lastWhatIfExecutionException;
     private  JTextArea upperText;
     final String NEWLINE = String.format("%n");
     private final Map<ViewEditTopologyTablesPane.AJTableType, Pair<AdvancedJTable_networkElement, FilteredTablePanel>> ajTables = new EnumMap<>(ViewEditTopologyTablesPane.AJTableType.class);
-    private final JTabbedPane whatIfAnalysisPane;
+    private final JTabbedPane aboutIt;
     private final JMenuBar menuBar;
-    public WhatIfAnalysisPane(GUINetworkDesign callback)
+
+    public AboutIt(GUINetworkDesign callback)
     {
         super();
         this.callback = callback;
@@ -84,14 +54,18 @@ public class WhatIfAnalysisPane extends JPanel
         upperText.setLineWrap(true);
         upperText.setEditable(false);
         upperText.setWrapStyleWord(true);
-        upperText.setText("No available");
+        upperText.setText("What is OpenStack4j?" +NEWLINE +NEWLINE
+                +"OpenStack4j is an open source library that helps you manage an OpenStack deployment. "+NEWLINE+NEWLINE
+                +"It is a fluent based API giving you full control over the various OpenStack services." + NEWLINE+NEWLINE
+                +"OpenStack4j is broken out into several major API abstractions as Java libraries.");
+
         this.setLayout(new BorderLayout());
 
-        this.whatIfAnalysisPane = new JTabbedPane();
+        this.aboutIt = new JTabbedPane();
 
         final JSplitPane splitPane = new JSplitPane();
         splitPane.setBottomComponent(upperText);
-        splitPane.setLeftComponent(whatIfAnalysisPane);
+        splitPane.setLeftComponent(aboutIt);
 
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.3);
@@ -107,7 +81,7 @@ public class WhatIfAnalysisPane extends JPanel
 
         /* The rest of high level tabs */
         for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.INFORMATION))
-            whatIfAnalysisPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+            aboutIt.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
 
         menuBar = new JMenuBar();
@@ -144,14 +118,6 @@ public class WhatIfAnalysisPane extends JPanel
         return Pair.of(table, new FilteredTablePanel(callback, table.getTableScrollPane()));
     }
 
-
-    public void resetPickedState()
-    {
-        ajTables.values().stream().filter(q -> q.getFirst() != null).forEach(q -> q.getFirst().clearSelection());
-
-    }
-
-
     public void updateView()
     {
         /* Load current network state */
@@ -168,35 +134,6 @@ public class WhatIfAnalysisPane extends JPanel
 
         if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
     }
-
-    /**
-     * Shows the tab corresponding associated to a network element.
-     *
-     * @param type   Network element type
-     */
-    public void selectItemTab(ViewEditTopologyTablesPane.AJTableType type)
-    {
-        switch (type)
-        {
-            case ROUTERS:
-            case USERS:
-            case NETWORKS:
-            case INFORMATION:
-            case SUBNETS:
-                whatIfAnalysisPane.setSelectedComponent(ajTables.get(type).getSecond());
-                break;
-            default:
-                System.out.println(type);
-                assert false;
-        }
-    }
-
-
-    /**
-     * Runs a short simulation to perform the what-if analysis. At the end, the resulting netplan is set
-     *
-     *
-     */
 
 
     public void updateText(){

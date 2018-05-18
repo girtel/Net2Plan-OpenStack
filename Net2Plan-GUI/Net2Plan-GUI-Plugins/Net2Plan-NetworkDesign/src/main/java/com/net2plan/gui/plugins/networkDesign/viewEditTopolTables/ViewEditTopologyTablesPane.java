@@ -14,23 +14,13 @@ import java.awt.BorderLayout;
 import java.awt.LayoutManager;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.TableModel;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetwork;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackRouter;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackSubnet;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
@@ -89,7 +79,14 @@ public class ViewEditTopologyTablesPane extends JPanel
         upperText.setLineWrap(true);
         upperText.setEditable(false);
         upperText.setWrapStyleWord(true);
-        upperText.setText("No available yet");
+        upperText.setText("Identity Service (Keystone) V3"+ NEWLINE+NEWLINE
+        +"The Identity (Keystone) V3 service provides the central directory of users, groups, region, service, endpoints, role management and authorization."+ NEWLINE
+                +"This API is responsible for authenticating and providing access to all the other OpenStack services. "+NEWLINE
+                +"The API also enables administrators to configured centralized access policies, users, domains and projects."+ NEWLINE
+                +NEWLINE+NEWLINE
+                +"Network (Neutron)" + NEWLINE+NEWLINE
+                +"Neutron is the Network service for OpenStack. Unlike Nova Networking, Neutron is broken up into the following abstractions: Networks, Subnets and Routers."+NEWLINE
+                +"Each has functionality that mimics the physical layers.");
 
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
@@ -153,13 +150,11 @@ public class ViewEditTopologyTablesPane extends JPanel
         return Pair.of(table, new FilteredTablePanel(callback, table.getTableScrollPane()));
     }
 
-
     public void resetPickedState()
     {
         ajTables.values().stream().filter(q -> q.getFirst() != null).forEach(q -> q.getFirst().clearSelection());
 
     }
-
 
     public void updateView()
     {
@@ -199,6 +194,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 assert false;
         }
     }
+
     public void updateText(int type){
         if(callback.getOpenStackNet().getOpenStackUsers().size() == 0) return;
         switch (type){

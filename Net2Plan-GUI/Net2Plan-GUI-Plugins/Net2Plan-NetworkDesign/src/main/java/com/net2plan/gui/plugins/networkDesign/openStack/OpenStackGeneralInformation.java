@@ -1,24 +1,13 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.net2plan.interfaces.networkDesign.Link;
-import org.openstack4j.model.identity.v3.User;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class OpenStackGeneralInformation extends OpenStackNetworkElement {
 
     private String type;
     private Integer number ;
     private String projectId="";
-
-
-    static OpenStackGeneralInformation createFromNetPlan (OpenStackNet osn , Link l)
-    {
-        final OpenStackGeneralInformation frqLink = new OpenStackGeneralInformation(osn, l);
-        return frqLink;
-    }
 
     static OpenStackGeneralInformation createFromAddInformation (OpenStackNet osn ,String projectId,String type, Integer number)
     {

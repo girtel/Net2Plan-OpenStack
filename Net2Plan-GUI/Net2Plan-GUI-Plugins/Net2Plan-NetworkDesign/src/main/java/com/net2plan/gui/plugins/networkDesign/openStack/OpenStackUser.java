@@ -21,12 +21,6 @@ public class OpenStackUser extends OpenStackNetworkElement
     private User user ;
 
 
-    static OpenStackUser createFromNetPlan (OpenStackNet osn , Link l,User user)
-    {
-        final OpenStackUser frqLink = new OpenStackUser(osn, l,user);
-        return frqLink;
-    }
-
     static OpenStackUser createFromAddUser (OpenStackNet osn , User user, String userId, String userName, String userDomainId, String userEmail, String userDescription)
     {
         final OpenStackUser res = new OpenStackUser(osn,null,user);
@@ -53,19 +47,21 @@ public class OpenStackUser extends OpenStackNetworkElement
     public String getDomainId () { return this.userDomainId; }
     public String getEmail () { return this.userEmail; }
     public String getDescription () { return this.userDescription; }
-     OpenStackUser getOpenStackUser () { return this; }
+    OpenStackUser getOpenStackUser () { return this; }
 
     @Override
     public String get50CharactersDescription()
     {
         return "User-" + this.getId();
     }
+
     public void updateUserDescription(String userDescription){
 
         this.osn.getOs().identity().users().update(this.user.toBuilder().description(userDescription).build());
 
 
     }
+
     public void updateUserName(String userName){
 
         this.osn.getOs().identity().users().update(this.user.toBuilder().name(userName).build());
