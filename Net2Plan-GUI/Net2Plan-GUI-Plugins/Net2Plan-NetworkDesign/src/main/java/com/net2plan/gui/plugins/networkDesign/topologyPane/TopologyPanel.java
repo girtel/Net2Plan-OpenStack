@@ -26,6 +26,7 @@ import com.net2plan.gui.plugins.networkDesign.topologyPane.plugins.MoveNodePlugi
 import com.net2plan.gui.plugins.networkDesign.topologyPane.plugins.PanGraphPlugin;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.plugins.PopupMenuPlugin;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+import com.net2plan.gui.plugins.utils.CipherClass;
 import com.net2plan.gui.utils.FileDrop;
 import com.net2plan.interfaces.networkDesign.*;
 import com.net2plan.internal.Constants.DialogType;
@@ -35,6 +36,7 @@ import com.net2plan.internal.SystemUtils;
 import com.net2plan.utils.Pair;
 import com.net2plan.utils.SwingUtils;
 import org.apache.commons.collections15.BidiMap;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +48,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class TopologyPanel extends JPanel
     private final TopologyTopBar topBar;
     private final TopologySideBar sideBar;
 
-
+    private final CipherClass cc = new CipherClass();
     JPanel jp1;
     JButton jbP1, jbP2, jbP3;
     JTextField os_username, os_auth_url,os_project_name,os_user_domain_name,os_project_domain_id;
@@ -337,9 +340,8 @@ public class TopologyPanel extends JPanel
 
 
                 try{
-                    FileInputStream inputStream = new FileInputStream(fc_netPlan.getSelectedFile().toString());
-                    String everything = IOUtils.toString(inputStream);
-
+                    byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
+                    String everything = cc.descifra(bytes);
                     JSONObject jsonObject = new JSONObject(everything);
                     os_username.setText(jsonObject.getString("os_username"));
                     String password = "";
@@ -382,11 +384,7 @@ public class TopologyPanel extends JPanel
 
                 try  {
 
-
-                    FileWriter file = new FileWriter(fc_netPlan.getSelectedFile().toString());
-                    file.write(jsonObject.toString());
-                    file.flush();
-                    file.close();
+                    FileUtils.writeByteArrayToFile(new File(fc_netPlan.getSelectedFile().getAbsolutePath()), cc.cifra(jsonObject.toString()));
 
                 }catch(Exception ex){
                     System.out.println(ex.toString());
