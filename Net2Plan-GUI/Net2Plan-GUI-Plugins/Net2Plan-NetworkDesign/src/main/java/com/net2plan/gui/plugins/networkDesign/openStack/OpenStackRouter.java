@@ -29,7 +29,7 @@ public class OpenStackRouter extends OpenStackNetworkElement
     {
         System.out.println("CREANDO NODO EN EL N2P "+osn.getNetPlan().getNetworkName());
         final Node npNode2 = osn.getNetPlan().addNode(0,0,"",null);
-        npNode2.setName(nodeName);
+        npNode2.setName(nodeId);
         final OpenStackRouter res = new OpenStackRouter(osn,npNode2);
         res.osn_nodeId = nodeId;
         res.osn_nodeName = nodeName;

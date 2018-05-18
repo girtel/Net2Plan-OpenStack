@@ -15,15 +15,7 @@ import java.util.Optional;
 
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.identity.v3.User;
-import org.openstack4j.model.network.ExternalGateway;
-import org.openstack4j.model.network.HostRoute;
-import org.openstack4j.model.network.IPVersionType;
-import org.openstack4j.model.network.Ipv6AddressMode;
-import org.openstack4j.model.network.Ipv6RaMode;
-import org.openstack4j.model.network.NetworkType;
-import org.openstack4j.model.network.Pool;
-import org.openstack4j.model.network.State;
-import org.openstack4j.model.network.Subnet;
+import org.openstack4j.model.network.*;
 
 /**
  *
@@ -97,7 +89,7 @@ public class OpenStackNet
         return res;
     }
 
-    public OpenStackRouter addOpenStackNode(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
+    public OpenStackRouter addOpenStackRouter(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
     {
         final OpenStackRouter res = OpenStackRouter.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
         if(list_osRouters.contains(res)) return res;
@@ -189,5 +181,16 @@ public class OpenStackNet
         List<User> users = (List<User>) os.identity().users().list();
         for (User user : users)
             addOpenStackUser(user,user.getId(), user.getName(), user.getDomainId(), user.getEmail(), user.getDescription());
+    }
+
+    public void updateRouterTable(){
+        list_osRouters.clear();
+
+        callback.getDesign().removeAllNodes();
+        List<Router> routers = (List<Router>) os.networking().router().list();
+        for (Router router : routers)
+            addOpenStackRouter(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
+
+        distributeTopologyOverCircle();
     }
 }

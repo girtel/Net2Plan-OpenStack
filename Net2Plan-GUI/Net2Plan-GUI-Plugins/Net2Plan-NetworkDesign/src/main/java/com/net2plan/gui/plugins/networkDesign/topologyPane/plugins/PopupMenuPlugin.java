@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;
@@ -25,15 +26,21 @@ import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.internal.Constants.NetworkElementType;
+import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
+import org.openstack4j.api.Builders;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Plugin for the popup menu of the canvas.
@@ -217,6 +224,10 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         if (!vs.isNetPlanEditable()) return actions;
         if (vs.isWhatIfAnalysisActive()) return actions;
 
+            JMenuItem addNode = new JMenuItem(new AddNodeAction("Add router here", positionInNetPlanCoordinates));
+             actions.add(addNode);
+             actions.add(new JPopupMenu.Separator());
+
         JMenu topologySettingMenu = new JMenu("Change topology layout");
 
         JMenuItem circularSetting = new JMenuItem("Circular");
@@ -240,6 +251,23 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         return actions;
     }
 
+    private class AddNodeAction extends AbstractAction
+   {
+            private final Point2D positionInNetPlanCoordinates;
+
+                    public AddNodeAction(String name, Point2D positionInNetPlanCoordinates)
+                    {
+                        super(name);
+                       this.positionInNetPlanCoordinates = positionInNetPlanCoordinates;
+           }
+
+                   @Override
+           public void actionPerformed(ActionEvent e)
+           {
+                        //canvas.addNode(positionInNetPlanCoordinates);
+                       addNewRouter();
+           }
+        }
     private class RemoveNodeAction extends AbstractAction
     {
         private final Node node;
@@ -253,10 +281,10 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            canvas.removeNode(node);
+           // canvas.removeNode(node);
+            removeRouter(node);
         }
     }
-
     private class RemoveLinkAction extends AbstractAction
     {
         private final Link link;
@@ -276,5 +304,81 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         	callback.addNetPlanChange();
         }
     }
+    public void addNewRouter(){
+        JFrame jfM = new JFrame("Add router");
+        jfM.setLayout(null);
 
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        JLabel l6 = new JLabel("Properties", SwingConstants.LEFT);
+        jp1.add(l6);
+        JLabel label = new JLabel("", SwingConstants.LEFT);
+        jp1.add(label);
+        JLabel labelName = new JLabel("Name", SwingConstants.LEFT);
+        jp1.add(labelName);
+        JTextField os_name_change = new JTextField();
+        jp1.add(os_name_change);
+        JLabel labelDescription = new JLabel("Gateway", SwingConstants.LEFT);
+        jp1.add(labelDescription);
+        JTextField os_description_change = new JTextField();
+        jp1.add(os_description_change);
+        JLabel labelPassword = new JLabel("Password", SwingConstants.LEFT);
+        jp1.add(labelPassword);
+        JTextField os_password_change = new JTextField();
+        jp1.add(os_password_change);
+        JLabel labelEmail = new JLabel("Email", SwingConstants.LEFT);
+        jp1.add(labelEmail);
+        JTextField os_email_change = new JTextField();
+        jp1.add(os_email_change);
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 200);
+        jbP1.setBounds(75, 200, 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                callback.getOpenStackNet().getOs().networking().router().create("name"
+                        ,true);
+
+                callback.getOpenStackNet().updateRouterTable();
+
+                final VisualizationState vs = callback.getVisualizationState();
+                Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                        vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                callback.updateVisualizationAfterNewTopology();
+                callback.addNetPlanChange();
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        jfM.setSize(250, 275);
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    public void removeRouter(Node node){
+
+
+
+                callback.getOpenStackNet().getOs().networking().router().delete(node.getName());
+                callback.getOpenStackNet().updateRouterTable();
+                final VisualizationState vs = callback.getVisualizationState();
+                Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                        vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                callback.updateVisualizationAfterNewTopology();
+                callback.addNetPlanChange();
+
+    }
 }
