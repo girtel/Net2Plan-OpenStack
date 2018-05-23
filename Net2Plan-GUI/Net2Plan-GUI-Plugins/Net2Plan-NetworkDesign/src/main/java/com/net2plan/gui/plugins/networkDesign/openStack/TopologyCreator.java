@@ -3,9 +3,13 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.model.common.Extension;
 import org.openstack4j.model.common.Identifier;
+import org.openstack4j.model.compute.*;
 import org.openstack4j.model.identity.v3.*;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
@@ -41,6 +45,18 @@ class TopologyCreator
         final OpenStackNet osn = new OpenStackNet(callback,os);
 
         /* Get elements */
+
+        /*Compute elements*/
+        final List<Extension> extensions = (List<Extension>) os.compute().listExtensions();
+        final List<Flavor> flavors = (List<Flavor>) os.compute().flavors().list();
+        final List<? extends FloatingIP> floatingIPS = (List<? extends FloatingIP>) os.compute().floatingIps().list();
+        final List<Image> images = (List<Image>) os.compute().images().list();
+        final List<Keypair> keypairs = (List<Keypair>) os.compute().keypairs().list();
+        final List<Limits> limits = new ArrayList<>();
+        limits.add(os.compute().quotaSets().limits());
+       // final List<QuotaSet> quotaSets = (List<QuotaSet>)os.compute().quotaSets().listTenantUsages();
+        final List<? extends SecGroupExtension> secGroupExtensions = os.compute().securityGroups().list();
+        final List<Server> servers = (List<Server>) os.compute().servers().list();
 
         /*Identity elements*/
         final List<Credential> credentials = (List<Credential>) os.identity().credentials().list();
@@ -100,18 +116,51 @@ class TopologyCreator
         for (Policy policy : policies) {
             osn.addOpenStackPolicy(policy.getId(),policy.getUserId(),policy.getProjectId(),policy.getType(),policy.getBlob(),policy.getLinks());
         }
+
         for (Project project : projects) {
             osn.addOpenStackProject(project.getId(),project.getName(),project.getParentId(),project.getDomainId(),project.getDomain(),project.getDescription(),project.getParents(),project.getSubtree(),project.isEnabled(),project.getLinks());
         }
+
         for (Region region : regions) {
             osn.addOpenStackRegion(region.getId(),region.getDescription(),region.getParentRegionId());
         }
+
         for (Role role : roles) {
             osn.addOpenStackRole(role.getId(),role.getName(),role.getDomainId(),role.getLinks());
         }
+
         for (Service service : services) {
             osn.addOpenStackService(service.getId(),service.getName(),service.getDescription(),service.getType(),service.getVersion(),service.isEnabled(),service.getEndpoints(),service.getLinks());
         }
+
+        for (Extension extension : extensions) {
+            osn.addOpenStackExtension(extension.getAlias(),extension.getName(),extension.getDescription(),extension.getNamespace(),extension.getUpdated(),extension.getLinks());
+        }
+        for (Flavor flavor : flavors) {
+            osn.addOpenStackFlavor(flavor.getId(),flavor.getName(),flavor.getDisk(),flavor.getEphemeral(),flavor.getRam(),flavor.getSwap(),flavor.getVcpus(),flavor.isDisabled(),flavor.isPublic(),flavor.getRxtxCap(),flavor.getRxtxFactor(),flavor.getRxtxQuota());
+        }
+        for (FloatingIP floatingIP : floatingIPS) {
+            osn.addOpenStackFloatingIP(floatingIP.getId(),floatingIP.getInstanceId(),floatingIP.getPool(),floatingIP.getFloatingIpAddress(),floatingIP.getFixedIpAddress());
+        }
+        for (Image image : images) {
+            osn.addOpenStackImage(image.getId(),image.getName(),image.getSize(),image.getStatus(),image.getCreated(),image.getUpdated(),image.getMetaData(),image.getProgress(),image.getMinDisk(),image.getMinRam(),image.isSnapshot(),image.getLinks());
+        }
+        for (Keypair keypair : keypairs) {
+            osn.addOpenStackKeypair(keypair.getId(),keypair.getName(),keypair.getUserId(),keypair.getCreatedAt(),keypair.getDeleted(),keypair.getDeletedAt(),keypair.getUpdatedAt(),keypair.getFingerprint(),keypair.getPrivateKey(),keypair.getPublicKey());
+        }
+        for (Limits limit : limits) {
+            osn.addOpenStackLimit(limit.getAbsolute(),limit.getRate());
+        }
+       /* for (QuotaSet quotaSet : quotaSets) {
+            osn.addOpenStackQuotaSet(quotaSet.getId(),quotaSet.getCores(),quotaSet.getFloatingIps(),quotaSet.getGigabytes(),quotaSet.getKeyPairs(),quotaSet.getRam(),quotaSet.getInstances(),quotaSet.getVolumes(),quotaSet.getSecurityGroups(),quotaSet.getSecurityGroupRules(),quotaSet.getMetadataItems(),quotaSet.getInjectedFileContentBytes(),quotaSet.getInjectedFilePathBytes(),quotaSet.getInjectedFiles());
+        }*/
+        for (SecGroupExtension secGroupExtension : secGroupExtensions) {
+            osn.addOpenStackSecurityGroup(secGroupExtension.getId(),secGroupExtension.getName(),secGroupExtension.getDescription(),secGroupExtension.getTenantId(),secGroupExtension.getRules(),secGroupExtension.getLinks());
+        }
+        for (Server server : servers) {
+            osn.addOpenStackServer(server.getId(),server.getName(),server.getAccessIPv4(),server.getAccessIPv6(),server.getAddresses(),server.getAdminPass(),server.getAvailabilityZone(),server.getConfigDrive(),server.getCreated(),server.getDiskConfig(),server.getFault(),server.getFlavor(),server.getFlavorId(),server.getHost(),server.getHostId(),server.getHypervisorHostname(),server.getImage(),server.getImageId(),server.getInstanceName(),server.getKeyName(),server.getLaunchedAt(),server.getMetadata(),server.getLinks(),server.getOsExtendedVolumesAttached(),server.getPowerState(),server.getProgress(),server.getSecurityGroups(),server.getStatus(),server.getTaskState(),server.getTenantId(),server.getTerminatedAt(),server.getUpdated(),server.getUserId(),server.getUuid(),server.getVmState());
+        }
+
 
         osn.addOpenStackInformation();
 

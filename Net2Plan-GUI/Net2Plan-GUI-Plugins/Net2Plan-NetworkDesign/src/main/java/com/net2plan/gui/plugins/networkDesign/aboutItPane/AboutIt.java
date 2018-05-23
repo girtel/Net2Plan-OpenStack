@@ -20,6 +20,7 @@ import javax.swing.*;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
@@ -141,6 +142,33 @@ public class AboutIt extends JPanel
                 break;
             case POLICIES:
                 table = new AdvancedJTable_policies(callback);
+                break;
+            case EXTENSIONS:
+                table = new AdvancedJTable_extensions(callback);
+                break;
+            case FLAVORS:
+                table = new AdvancedJTable_flavors(callback);
+                break;
+            case FLOATINGIPS:
+                table = new AdvancedJTable_floatingIpDns(callback);
+                break;
+            case IMAGES:
+                table = new AdvancedJTable_images(callback);
+                break;
+            case KEYPAIRS:
+                table = new AdvancedJTable_keypairs(callback);
+                break;
+            case QUOTAS:
+                table = new AdvancedJTable_quotas(callback);
+                break;
+            case LIMITS:
+                table = new AdvancedJTable_limits(callback);
+                break;
+            case SECURITYGROUPS:
+                table = new AdvancedJTable_securityGroups(callback);
+                break;
+            case SERVERS:
+                table = new AdvancedJTable_servers(callback);
                 break;
             case INFORMATION:
                 table = new AdvancedJTable_informationProject(callback);

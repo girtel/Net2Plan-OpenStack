@@ -3,25 +3,30 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
-import com.net2plan.interfaces.networkDesign.Link;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.Node;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.api.types.Facing;
+import org.openstack4j.model.common.Link;
+import org.openstack4j.model.compute.*;
+import org.openstack4j.model.compute.SecurityGroup;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.Endpoint;
 import org.openstack4j.model.identity.v3.User;
+import org.openstack4j.model.compute.Image;
 import org.openstack4j.model.network.*;
 
 /**
@@ -54,6 +59,17 @@ public class OpenStackNet
     public final List<OpenStackService> list_osServices = new ArrayList<> ();
 
     //Compute
+    public final List<OpenStackExtension> list_osExtensions = new ArrayList<> ();
+    public final List<OpenStackFlavor> list_osFlavours = new ArrayList<> ();
+    public final List<OpenStackFloatingIpDns> list_osFloatingIpDns = new ArrayList<> ();
+    public final List<OpenStackImage> list_osImages = new ArrayList<> ();
+    public final List<OpenStackKeypair> list_osKeypairs = new ArrayList<> ();
+    public final List<OpenStackLimit> list_osLimits = new ArrayList<> ();
+    public final List<OpenStackQuota> list_osQuotas = new ArrayList<> ();
+    public final List<OpenStackSecurityGroup> list_osSecurityGroups = new ArrayList<> ();
+    public final List<OpenStackServer> list_osServers = new ArrayList<> ();
+
+    //General
     public final List<OpenStackGeneralInformation> list_osInformation = new ArrayList<> ();
 
     public final  NetPlan getNetPlan () { return np; }
@@ -194,6 +210,74 @@ public class OpenStackNet
         list_osServices.add(res);
         return res;
     }
+//////////////////////
+
+    public OpenStackExtension addOpenStackExtension(String extensionAlias, String extensionName, String extensionDescription, URI extensionNamespace, Date extensionUpdated, List<? extends Link> extensionLinks)
+    {
+        final OpenStackExtension res = OpenStackExtension.createFromAddExtension(this,extensionAlias,extensionName,extensionDescription,extensionNamespace,extensionUpdated,extensionLinks);
+        if(list_osExtensions.contains(res)) return res;
+        list_osExtensions.add(res);
+        return res;
+    }
+
+    public OpenStackFlavor addOpenStackFlavor(String flavorId,String flavorName,Integer flavorDisk,Integer flavorEphemeral,Integer flavorRam,Integer flavorSwap,Integer flavorVcpus, boolean flavorDisabled, boolean flavorPublic,Integer flavorRxtxCap,float flavorRxtxFactor,Integer flavorRxtxQuota)
+    {
+        final OpenStackFlavor res = OpenStackFlavor.createFromAddFlavor(this,flavorId,flavorName,flavorDisk,flavorEphemeral,flavorRam,flavorSwap,flavorVcpus,flavorDisabled,flavorPublic,flavorRxtxCap,flavorRxtxFactor,flavorRxtxQuota);
+        if(list_osFlavours.contains(res)) return res;
+        list_osFlavours.add(res);
+        return res;
+    }
+    public OpenStackFloatingIpDns addOpenStackFloatingIP(String floatingIPId,String floatingIPInstanceId,String floatingIPPool, String floatingIPFloatingIpAddress,String floatingIPFixedIpAddress)
+    {
+        final OpenStackFloatingIpDns res = OpenStackFloatingIpDns.createFromAddFloatingIp(this,floatingIPId,floatingIPInstanceId,floatingIPPool,floatingIPFloatingIpAddress,floatingIPFixedIpAddress);
+        if(list_osFloatingIpDns.contains(res)) return res;
+        list_osFloatingIpDns.add(res);
+        return res;
+    }
+
+    public OpenStackImage addOpenStackImage(String imageId, String imageName, long imageSize, org.openstack4j.model.compute.Image.Status imageStatus, Date imageCreated, Date imageUpdated, Map<String,Object> imageMetaData, Integer imageProgress, Integer imageMinDisk, Integer imageMinRam, boolean imageSnapshot, List<? extends Link>imageLinks)
+    {
+        final OpenStackImage res = OpenStackImage.createFromAddImage(this,imageId,imageName,imageSize,imageStatus,imageCreated,imageUpdated,imageMetaData,imageProgress,imageMinDisk,imageMinRam,imageSnapshot,imageLinks);
+        if(list_osImages.contains(res)) return res;
+        list_osImages.add(res);
+        return res;
+    }
+    public OpenStackKeypair addOpenStackKeypair(Integer keypairId,String keypairName,String keypairUserId,Date keypairCreatedA,boolean keypairDeleted,Date keypairDeletedAt,Date keypairUpdatedAt,String keypairFingerprint,String keypairPrivateKey,String keypairPublicKey)
+    {
+        final OpenStackKeypair res = OpenStackKeypair.createFromAddKeypair(this,keypairId,keypairName,keypairUserId,keypairCreatedA,keypairDeleted,keypairDeletedAt,keypairUpdatedAt,keypairFingerprint,keypairPrivateKey,keypairPublicKey);
+        if(list_osKeypairs.contains(res)) return res;
+        list_osKeypairs.add(res);
+        return res;
+    }
+    public OpenStackLimit addOpenStackLimit(AbsoluteLimit limitAbsolute, List<? extends RateLimit> limitRate)
+    {
+        final OpenStackLimit res = OpenStackLimit.createFromAddLimit(this,limitAbsolute,limitRate);
+        if(list_osLimits.contains(res)) return res;
+        list_osLimits.add(res);
+        return res;
+    }
+
+    public OpenStackQuota addOpenStackQuotaSet(String quotaSetId,Integer quotaSetCores,Integer quotaSetFloatingIps,Integer quotaSetGigabytes,Integer quotaSetKeyPairs,Integer quotaSetRam,Integer quotaSetInstances,Integer quotaSetVolumes,Integer quotaSetSecurityGroups,Integer quotaSetSecurityGroupRules,Integer quotaSetMetadataItems, Integer quotaSetInjectedFileContentBytes,Integer quotaSetInjectedFilePathBytes,Integer quotaSetInjectedFiles)
+    {
+        final OpenStackQuota res = OpenStackQuota.createFromAddQuota(this,quotaSetId,quotaSetCores,quotaSetFloatingIps,quotaSetGigabytes,quotaSetKeyPairs,quotaSetRam,quotaSetInstances,quotaSetVolumes,quotaSetSecurityGroups,quotaSetSecurityGroupRules,quotaSetMetadataItems,quotaSetInjectedFileContentBytes,quotaSetInjectedFilePathBytes,quotaSetInjectedFiles);
+        if(list_osQuotas.contains(res)) return res;
+        list_osQuotas.add(res);
+        return res;
+    }
+    public OpenStackSecurityGroup addOpenStackSecurityGroup(String secGroupExtensionId, String secGroupExtensionName, String secGroupExtensionDescription, String secGroupExtensionTenantId, List<? extends SecGroupExtension.Rule> secGroupExtensionRules, List<? extends Link>secGroupExtensionLinks)
+    {
+        final OpenStackSecurityGroup res = OpenStackSecurityGroup.createFromAddSegurityGroup(this,secGroupExtensionId,secGroupExtensionName,secGroupExtensionDescription,secGroupExtensionTenantId,secGroupExtensionRules,secGroupExtensionLinks);
+        if(list_osSecurityGroups.contains(res)) return res;
+        list_osSecurityGroups.add(res);
+        return res;
+    }
+    public OpenStackServer addOpenStackServer(String serverId, String serverName, String serverAccessIPv4, String serverAccessIPv6, Addresses serverAddresses, String serverAdminPass, String serverAvailabilityZone, String serverConfigDrive, Date serverCreated, Server.DiskConfig serverDiskConfig, Fault serverFault, Flavor serverFlavor, String serverFlavorId, String serverHost, String serverHostId, String serverHypervisorHostname, Image serverImage, String serverImageId, String serverInstanceName, String serverKeyName, Date serverLaunchedAt, Map<String,String> serverMetadata, List<? extends Link> serverLinks, List<String> serverOsExtendedVolumesAttached, String serverPowerState, Integer serverProgress, List<? extends SecurityGroup> serverSecurityGroups, Server.Status serverStatus, String serverTaskState, String serverTenantId, Date serverTerminatedAt, Date serverUpdate, String serverUserId, String serverUuid, String serverVmState)
+    {
+        final OpenStackServer res = OpenStackServer.createFromAddServer(this,serverId,serverName,serverAccessIPv4,serverAccessIPv6,serverAddresses,serverAdminPass,serverAvailabilityZone,serverConfigDrive,serverCreated,serverDiskConfig,serverFault,serverFlavor,serverFlavorId,serverHost,serverHostId,serverHypervisorHostname,serverImage,serverImageId,serverInstanceName,serverKeyName,serverLaunchedAt,serverMetadata,serverLinks,serverOsExtendedVolumesAttached,serverPowerState,serverProgress,serverSecurityGroups,serverStatus,serverTaskState,serverTenantId,serverTerminatedAt,serverUpdate,serverUserId,serverUuid,serverVmState);
+        if(list_osServers.contains(res)) return res;
+        list_osServers.add(res);
+        return res;
+    }
 
     public OpenStackGeneralInformation addOpenStackInformation()
     {
@@ -238,6 +322,15 @@ public class OpenStackNet
     public List<OpenStackRegion> getOpenStackRegions () { return Collections.unmodifiableList(list_osRegions); }
     public List<OpenStackRole> getOpenStackRoles () { return Collections.unmodifiableList(list_osRoles); }
     public List<OpenStackService> getOpenStackServices () { return Collections.unmodifiableList(list_osServices); }
+    public List<OpenStackExtension> getOpenStackExtensions () { return Collections.unmodifiableList(list_osExtensions); }
+    public List<OpenStackFlavor> getOpenStackFlavor () { return Collections.unmodifiableList(list_osFlavours); }
+    public List<OpenStackFloatingIpDns> getOpenStackFloatingIpDns () { return Collections.unmodifiableList(list_osFloatingIpDns); }
+    public List<OpenStackImage> getOpenStackImages () { return Collections.unmodifiableList(list_osImages); }
+    public List<OpenStackKeypair> getOpenStackKeypairs () { return Collections.unmodifiableList(list_osKeypairs); }
+    public List<OpenStackLimit> getOpenStackLimits () { return Collections.unmodifiableList(list_osLimits); }
+    public List<OpenStackQuota> getOpenStackQuotas () { return Collections.unmodifiableList(list_osQuotas); }
+    public List<OpenStackSecurityGroup> getOpenStackSecurityGroups () { return Collections.unmodifiableList(list_osSecurityGroups); }
+    public List<OpenStackServer> getOpenStackServers () { return Collections.unmodifiableList(list_osServers); }
 
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId)
     {

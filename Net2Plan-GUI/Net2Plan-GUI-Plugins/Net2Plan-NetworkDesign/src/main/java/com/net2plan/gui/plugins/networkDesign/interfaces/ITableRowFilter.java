@@ -127,6 +127,24 @@ public abstract class ITableRowFilter
 				return os.getOpenStackRoles();
 			case SERVICES:
 				return os.getOpenStackServices();
+			case EXTENSIONS:
+				return os.getOpenStackExtensions();
+			case FLAVORS:
+				return os.getOpenStackFlavor();
+			case FLOATINGIPS:
+				return os.getOpenStackFloatingIpDns();
+			case IMAGES:
+				return os.getOpenStackImages();
+			case KEYPAIRS:
+				return os.getOpenStackKeypairs();
+			case LIMITS:
+				return os.getOpenStackLimits();
+			case QUOTAS:
+				return os.getOpenStackQuotas();
+			case SECURITYGROUPS:
+				return os.getOpenStackSecurityGroups();
+			case SERVERS:
+				return os.getOpenStackServers();
 			case INFORMATION:
 				return os.getOpenStackInformation();
 			default:
@@ -165,6 +183,24 @@ public abstract class ITableRowFilter
 				return os.getOpenStackServices();
 			case CREDENTIALS:
 				return os.getOpenStackCredentials();
+			case EXTENSIONS:
+				return os.getOpenStackExtensions();
+			case FLAVORS:
+				return os.getOpenStackFlavor();
+			case FLOATINGIPS:
+				return os.getOpenStackFloatingIpDns();
+			case IMAGES:
+				return os.getOpenStackImages();
+			case KEYPAIRS:
+				return os.getOpenStackKeypairs();
+			case LIMITS:
+				return os.getOpenStackLimits();
+			case QUOTAS:
+				return os.getOpenStackQuotas();
+			case SECURITYGROUPS:
+				return os.getOpenStackSecurityGroups();
+			case SERVERS:
+				return os.getOpenStackServers();
 			case INFORMATION:
 				return os.getOpenStackInformation();
 			default:
