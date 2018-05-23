@@ -1,30 +1,28 @@
-package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables;
+package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity;
 
+import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackUser;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+import com.net2plan.interfaces.networkDesign.NetworkLayer;
+import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
-import javax.swing.*;
-
-import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
-import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
-import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
-import com.net2plan.interfaces.networkDesign.NetworkLayer;
-import com.net2plan.utils.Pair;
-import org.apache.commons.collections15.BidiMap;
-
-/**
- */
-@SuppressWarnings("unchecked")
 public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStackUser>
 {
     public AdvancedJTable_users(GUINetworkDesign callback)
     {
-        super(callback, AJTableType.USERS , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.USERS , true);
     }
 
     @Override
@@ -53,7 +51,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
             addNewUser(n);
 
-        }), (a, b) -> b==b, null));
+        }), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove user", e -> getSelectedElements().forEach(n -> {
 
@@ -76,7 +74,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
             createTableForUpdate("Description",n);
 
-                }), (a, b) -> b ==1, null));
+        }), (a, b) -> b ==1, null));
 
         return res;
 
@@ -174,7 +172,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                        user.createNewUser(os_name_change.getText(),os_description_change.getText(),os_password_change.getText(),os_email_change.getText());
+                callback.getOpenStackNet().createNewUser(os_name_change.getText(),os_description_change.getText(),os_password_change.getText(),os_email_change.getText());
 
                 callback.getOpenStackNet().updateUserTable();
                 final VisualizationState vs = callback.getVisualizationState();

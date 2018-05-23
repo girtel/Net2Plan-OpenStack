@@ -6,8 +6,9 @@ import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import java.util.List;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.common.Identifier;
-import org.openstack4j.model.identity.v3.User;
+import org.openstack4j.model.identity.v3.*;
 import org.openstack4j.model.network.Network;
+import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.OSFactory;
@@ -40,11 +41,24 @@ class TopologyCreator
         final OpenStackNet osn = new OpenStackNet(callback,os);
 
         /* Get elements */
+
+        /*Identity elements*/
+        final List<Credential> credentials = (List<Credential>) os.identity().credentials().list();
+        final List<Domain> domains = (List<Domain>) os.identity().domains().list();
+        final List<Endpoint> endpoints = (List<Endpoint>) os.identity().serviceEndpoints().listEndpoints();
+        final List<Group> groups = (List<Group>) os.identity().groups().list();
+        final List<Policy> policies = (List<Policy>) os.identity().policies().list();
         final List<User> users = (List<User>) os.identity().users().list();
+        final List<? extends Project> projects = (List<? extends Project>)os.identity().tokens().getProjectScopes(os.getToken().getUser().getId());
+        final List<Region> regions = (List<Region>)os.identity().regions().list();
+        final List<Role> roles = (List<Role>)os.identity().roles().list();
+        final List<Service> services = (List<Service>) os.identity().serviceEndpoints().list();
+
+        /* Network elements */
         final List<Network> networks = (List<Network>) os.networking().network().list();
         final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
         final List<Router> routers = (List<Router>) os.networking().router().list();
-
+        final List<Port> ports = (List<Port>) os.networking().port().list();
 
         /* Create users objects */
         for (User user : users)
@@ -52,7 +66,7 @@ class TopologyCreator
 
         /* Create networks objects */
         for (Network net : networks)
-            osn.addOpenStackNetwork(net.getId(),net.getName(),net.getStatus(),net.getNetworkType(),net.getNeutronSubnets(),net.getProviderPhyNet(),net.getProviderSegID(),net.getSubnets(),net.getTenantId(),net.isAdminStateUp(),net.isRouterExternal(),net.isShared());
+            osn.addOpenStackNetwork(net.getId(),net.getName(),net.getStatus(),net.getNetworkType(),net.getNeutronSubnets(),net.getProviderPhyNet(),net.getProviderSegID(),net.getSubnets(),net.getTenantId(),net.isAdminStateUp(),net.isRouterExternal(),net.isShared(),net.getMTU());
 
         /* Create subnets objects */
         for (Subnet subnet : subnets)
@@ -63,6 +77,41 @@ class TopologyCreator
             osn.addOpenStackRouter(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
         }
 
+        for (Port port : ports) {
+           osn.addOpenStackPort(port.getId(), port.getName(), port.getTenantId(), port.getAllowedAddressPairs(),port.getDeviceId(),port.getDeviceOwner(),port.getFixedIps(),port.getHostId(),port.getMacAddress(),port.getNetworkId(),port.getProfile(),port.getSecurityGroups(),port.getState(), port.isAdminStateUp(), port.isPortSecurityEnabled());
+        }
+
+        for (Credential credential : credentials) {
+            osn.addOpenStackCredential(credential.getId(),credential.getUserId(),credential.getProjectId(),credential.getBlob(),credential.getType(),credential.getLinks());
+        }
+
+        for (Domain domain : domains) {
+            osn.addOpenStackDomain(domain.getId(),domain.getName(),domain.getDescription(),domain.isEnabled(),domain.getLinks());
+        }
+
+        for (Endpoint endpoint : endpoints) {
+            osn.addOpenStackEndpoint(endpoint.getId(),endpoint.getName(),endpoint.getDescription(),endpoint.isEnabled(),endpoint.getLinks(),endpoint.getRegion(),endpoint.getRegionId(),endpoint.getIface(),endpoint.getServiceId(),endpoint.getType(),endpoint.getUrl());
+        }
+
+        for (Group group : groups) {
+            osn.addOpenStackGroup(group.getId(),group.getName(),group.getDescription(),group.getDomainId(),group.getLinks());
+        }
+
+        for (Policy policy : policies) {
+            osn.addOpenStackPolicy(policy.getId(),policy.getUserId(),policy.getProjectId(),policy.getType(),policy.getBlob(),policy.getLinks());
+        }
+        for (Project project : projects) {
+            osn.addOpenStackProject(project.getId(),project.getName(),project.getParentId(),project.getDomainId(),project.getDomain(),project.getDescription(),project.getParents(),project.getSubtree(),project.isEnabled(),project.getLinks());
+        }
+        for (Region region : regions) {
+            osn.addOpenStackRegion(region.getId(),region.getDescription(),region.getParentRegionId());
+        }
+        for (Role role : roles) {
+            osn.addOpenStackRole(role.getId(),role.getName(),role.getDomainId(),role.getLinks());
+        }
+        for (Service service : services) {
+            osn.addOpenStackService(service.getId(),service.getName(),service.getDescription(),service.getType(),service.getVersion(),service.isEnabled(),service.getEndpoints(),service.getLinks());
+        }
 
         osn.addOpenStackInformation();
 

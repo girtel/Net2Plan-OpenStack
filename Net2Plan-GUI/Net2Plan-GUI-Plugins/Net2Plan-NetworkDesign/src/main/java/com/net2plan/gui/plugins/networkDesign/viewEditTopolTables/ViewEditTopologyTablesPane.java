@@ -22,10 +22,17 @@ import javax.swing.event.ChangeListener;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
+
+
 
 @SuppressWarnings("unchecked")
 public class ViewEditTopologyTablesPane extends JPanel
@@ -36,6 +43,16 @@ public class ViewEditTopologyTablesPane extends JPanel
         USERS("USERS"),
         ROUTERS("ROUTERS"),
         NETWORKS("NETWORKS"),
+        PORTS("PORTS"),
+        DOMAINS("DOMAINS"),
+        CREDENTIALS("CREDENTIALS"),
+        POLICIES("POLICIES"),
+        ENDPOINTS("ENDPOINTS"),
+        PROJECTS("PROJECTS"),
+        REGIONS("REGIONS"),
+        ROLES("ROLES"),
+        SERVICES("SERVICES"),
+        GROUPS("GROUPS"),
         SUBNETS("SUBNETS");
 
         private final String tabName;
@@ -56,9 +73,9 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final Map<AJTableType, Pair<AdvancedJTable_networkElement, FilteredTablePanel>> ajTables = new EnumMap<>(AJTableType.class);
     private final JTabbedPane viewEditHighLevelTabbedPane;
 
+    private JTabbedPane networkDifferentTypesLevel2Pane;
     private final JMenuBar menuBar;
     private JTextArea upperText;
-
     final String NEWLINE = String.format("%n");
 
     /**
@@ -96,7 +113,6 @@ public class ViewEditTopologyTablesPane extends JPanel
         });
         final JSplitPane splitPane = new JSplitPane();
         splitPane.setLeftComponent(viewEditHighLevelTabbedPane);
-
         splitPane.setBottomComponent(upperText);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.3);
@@ -105,14 +121,23 @@ public class ViewEditTopologyTablesPane extends JPanel
         splitPane.setDividerLocation(0.4);
 
         this.add(splitPane, BorderLayout.CENTER);
-
         for (AJTableType ajType : AJTableType.values())
             ajTables.put(ajType, createPanelComponentInfo(ajType));
 
 
+        this.networkDifferentTypesLevel2Pane = new JTabbedPane();
+
+
+        networkDifferentTypesLevel2Pane.addTab("intento",ajTables.get(AJTableType.INFORMATION).getSecond());
+        networkDifferentTypesLevel2Pane.addTab("intento2",ajTables.get(AJTableType.USERS).getSecond());
+        networkDifferentTypesLevel2Pane.addTab("intento3",ajTables.get(AJTableType.INFORMATION).getSecond());
+        viewEditHighLevelTabbedPane.addTab("USERS", networkDifferentTypesLevel2Pane);
+
+
+
         /* The rest of high level tabs */
-        for (AJTableType type : Arrays.asList(AJTableType.ROUTERS,AJTableType.USERS, AJTableType.NETWORKS,
-                AJTableType.SUBNETS))
+        for (AJTableType type : Arrays.asList(AJTableType.ROUTERS,AJTableType.USERS,AJTableType.NETWORKS,AJTableType.PORTS,AJTableType.CREDENTIALS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.GROUPS,
+                AJTableType.SUBNETS,AJTableType.POLICIES,AJTableType.PROJECTS,AJTableType.REGIONS,AJTableType.ROLES,AJTableType.SERVICES))
             viewEditHighLevelTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
 
@@ -138,6 +163,36 @@ public class ViewEditTopologyTablesPane extends JPanel
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
+                break;
+            case PORTS:
+                table = new AdvancedJTable_ports(callback);
+                break;
+            case CREDENTIALS:
+                table = new AdvancedJTable_credentials(callback);
+                break;
+            case DOMAINS:
+                table = new AdvancedJTable_domains(callback);
+                break;
+            case ENDPOINTS:
+                table = new AdvancedJTable_endpoints(callback);
+                break;
+            case GROUPS:
+                table = new AdvancedJTable_groups(callback);
+                break;
+            case POLICIES:
+                table = new AdvancedJTable_policies(callback);
+                break;
+            case PROJECTS:
+                table = new AdvancedJTable_projects(callback);
+                break;
+            case REGIONS:
+                table = new AdvancedJTable_regions(callback);
+                break;
+            case ROLES:
+                table = new AdvancedJTable_roles(callback);
+                break;
+            case SERVICES:
+                table = new AdvancedJTable_services(callback);
                 break;
             case INFORMATION:
                 table = new AdvancedJTable_informationProject(callback);
@@ -187,6 +242,15 @@ public class ViewEditTopologyTablesPane extends JPanel
             case NETWORKS:
             case INFORMATION:
             case SUBNETS:
+            case PORTS:
+            case CREDENTIALS:
+            case GROUPS:
+            case DOMAINS:
+            case POLICIES:
+            case PROJECTS:
+            case REGIONS:
+            case ROLES:
+            case SERVICES:
                 viewEditHighLevelTabbedPane.setSelectedComponent(ajTables.get(type).getSecond());
                 break;
             default:

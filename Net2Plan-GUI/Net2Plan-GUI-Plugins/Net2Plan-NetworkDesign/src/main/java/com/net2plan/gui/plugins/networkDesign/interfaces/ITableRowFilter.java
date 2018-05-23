@@ -109,6 +109,24 @@ public abstract class ITableRowFilter
 				return os.getOpenStackNetworks();
 			case SUBNETS:
 				return os.getOpenStackSubnets();
+			case PORTS:
+				return os.getOpenStackPorts();
+			case DOMAINS:
+				return os.getOpenStackDomains();
+			case CREDENTIALS:
+				return os.getOpenStackCredentials();
+			case ENDPOINTS:
+				return os.getOpenStackEndpoints();
+			case POLICIES:
+				return os.getOpenStackPolicies();
+			case PROJECTS:
+				return os.getOpenStackProjects();
+			case REGIONS:
+				return os.getOpenStackRegions();
+			case ROLES:
+				return os.getOpenStackRoles();
+			case SERVICES:
+				return os.getOpenStackServices();
 			case INFORMATION:
 				return os.getOpenStackInformation();
 			default:
@@ -129,6 +147,24 @@ public abstract class ITableRowFilter
 				return os.getOpenStackNetworks();
 			case SUBNETS:
 				return os.getOpenStackSubnets();
+			case PORTS:
+				return os.getOpenStackPorts();
+			case DOMAINS:
+				return os.getOpenStackDomains();
+			case ENDPOINTS:
+				return os.getOpenStackEndpoints();
+			case POLICIES:
+				return os.getOpenStackPolicies();
+			case PROJECTS:
+				return os.getOpenStackProjects();
+			case REGIONS:
+				return os.getOpenStackRegions();
+			case ROLES:
+				return os.getOpenStackRoles();
+			case SERVICES:
+				return os.getOpenStackServices();
+			case CREDENTIALS:
+				return os.getOpenStackCredentials();
 			case INFORMATION:
 				return os.getOpenStackInformation();
 			default:

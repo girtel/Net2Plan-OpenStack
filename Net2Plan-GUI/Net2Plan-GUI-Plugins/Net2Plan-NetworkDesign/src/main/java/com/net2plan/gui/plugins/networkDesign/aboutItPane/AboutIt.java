@@ -20,6 +20,11 @@ import javax.swing.*;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
@@ -106,6 +111,36 @@ public class AboutIt extends JPanel
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
+                break;
+            case PORTS:
+                table = new AdvancedJTable_ports(callback);
+                break;
+            case CREDENTIALS:
+                table = new AdvancedJTable_credentials(callback);
+                break;
+            case DOMAINS:
+                table = new AdvancedJTable_domains(callback);
+                break;
+            case PROJECTS:
+                table = new AdvancedJTable_projects(callback);
+                break;
+            case REGIONS:
+                table = new AdvancedJTable_regions(callback);
+                break;
+            case ROLES:
+                table = new AdvancedJTable_roles(callback);
+                break;
+            case SERVICES:
+                table = new AdvancedJTable_services(callback);
+                break;
+            case ENDPOINTS:
+                table = new AdvancedJTable_endpoints(callback);
+                break;
+            case GROUPS:
+                table = new AdvancedJTable_groups(callback);
+                break;
+            case POLICIES:
+                table = new AdvancedJTable_policies(callback);
                 break;
             case INFORMATION:
                 table = new AdvancedJTable_informationProject(callback);

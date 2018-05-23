@@ -1,15 +1,12 @@
-package com.net2plan.gui.plugins.networkDesign.openStack;
+package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Link;
-import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.User;
 
 import java.util.List;
 
-/**
- *
- * @author Manuel
- */
 public class OpenStackUser extends OpenStackNetworkElement
 {
 
@@ -21,7 +18,7 @@ public class OpenStackUser extends OpenStackNetworkElement
     private User user ;
 
 
-    static OpenStackUser createFromAddUser (OpenStackNet osn , User user, String userId, String userName, String userDomainId, String userEmail, String userDescription)
+    public static OpenStackUser createFromAddUser (OpenStackNet osn , User user, String userId, String userName, String userDomainId, String userEmail, String userDescription)
     {
         final OpenStackUser res = new OpenStackUser(osn,null,user);
         res.userId= userId;
@@ -33,7 +30,7 @@ public class OpenStackUser extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackUser (OpenStackNet osn , Link npLink,User user)
+    private OpenStackUser (OpenStackNet osn , Link npLink, User user)
     {
         super (osn , npLink , (List<OpenStackNetworkElement>) (List<?>) osn.list_osUsers);
         this.user =user;
@@ -75,19 +72,11 @@ public class OpenStackUser extends OpenStackNetworkElement
 
     }
 
-    public void createNewUser (String userName, String userDescription,String password,String email){
 
-        this.osn.getOs().identity().users().create(Builders.user()
-                .name(userName)
-                .description(userDescription)
-                .password(password)
-                .email(email)
-                .domainId(this.osn.getOs().getToken().getUser().getDomainId())
-                .build());
-    }
 
     public void deleteUser(){
         this.osn.getOs().identity().users().delete(this.userId);
     }
 }
+
 

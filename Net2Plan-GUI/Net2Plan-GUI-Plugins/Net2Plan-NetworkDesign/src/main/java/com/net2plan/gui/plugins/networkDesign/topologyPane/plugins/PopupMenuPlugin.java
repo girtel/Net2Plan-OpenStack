@@ -16,7 +16,7 @@ import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;

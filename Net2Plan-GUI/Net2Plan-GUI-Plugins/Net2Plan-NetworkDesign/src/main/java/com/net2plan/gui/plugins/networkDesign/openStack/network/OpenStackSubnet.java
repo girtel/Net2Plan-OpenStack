@@ -1,18 +1,12 @@
-package com.net2plan.gui.plugins.networkDesign.openStack;
+package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.openstack4j.api.Builders;
+import org.openstack4j.model.network.*;
 
-import com.net2plan.interfaces.networkDesign.Resource;
 import java.util.List;
-import org.openstack4j.model.network.HostRoute;
-import org.openstack4j.model.network.IPVersionType;
-import org.openstack4j.model.network.Ipv6AddressMode;
-import org.openstack4j.model.network.Ipv6RaMode;
-import org.openstack4j.model.network.Pool;
 
-/**
- *
- * @author Manuel
- */
 public class OpenStackSubnet extends OpenStackNetworkElement
 {
     private String subnetId = "";
@@ -29,10 +23,12 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     private Ipv6AddressMode subnetIpv6AddressMode;
     private Ipv6RaMode subnetIpv6RaMode;
 
-    static OpenStackSubnet createFromAddSubnet (OpenStackNet osn ,String subnetId,String subnetName,List<? extends Pool> subnetAllocationPools,String subnetCidr,List<String> subnetDnsNames,String subnetGateway,List<? extends HostRoute> subnetHostRoutes,IPVersionType subnetIpVersion,Ipv6AddressMode subnetIpv6AddressMode,Ipv6RaMode subnetIpv6RaMode,String subnetNetworkId,String subnetTenantId,boolean subnetIsDHCPEnabled)
+    private Subnet osSubnet;
+
+   public static OpenStackSubnet createFromAddSubnet (OpenStackNet osn , String subnetId, String subnetName, List<? extends Pool> subnetAllocationPools, String subnetCidr, List<String> subnetDnsNames, String subnetGateway, List<? extends HostRoute> subnetHostRoutes, IPVersionType subnetIpVersion, Ipv6AddressMode subnetIpv6AddressMode, Ipv6RaMode subnetIpv6RaMode, String subnetNetworkId, String subnetTenantId, boolean subnetIsDHCPEnabled)
     {
 
-        final OpenStackSubnet res = new OpenStackSubnet(osn,null);
+        final OpenStackSubnet res = new OpenStackSubnet(osn);
         res.subnetId = subnetId;
         res.subnetName =subnetName;
         res.subnetCidr = subnetCidr;
@@ -51,10 +47,10 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         return res;
     }
 
-    public OpenStackSubnet(OpenStackNet osn, Resource npDummyResource)
+    public OpenStackSubnet(OpenStackNet osn)
     {
-        super (osn , npDummyResource , (List<OpenStackNetworkElement>) (List<?>) osn.list_osSubnets);
-
+        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.list_osSubnets);
+       // this.osSubnet = this.osn.getOs().networking().subnet().get(this.subnetId);
     }
 
     @Override
@@ -73,12 +69,19 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public Ipv6RaMode getSubnetIpv6RaMode () { return this.subnetIpv6RaMode; }
 
 
-    OpenStackSubnet getOpenStackSubnet () { return this; }
-
     @Override
     public String get50CharactersDescription()
     {
-        return this.getId();
+        return "Subnet" + this.getId();
     }
+
+    public void setName (String value) { this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().name(value).build());}
+    public void setSubnetGateway (String value) { this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().gateway(value).build());}
+    public void setSubnetNetworkId (String value) { this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().networkId(value).build());}
+    public void setSubnetIpVersion (IPVersionType value) { this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().ipVersion(value).build());}
+    public void setSubnetTenantId (String value) {this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().tenantId(value).build()); }
+    public void isSubnetIsDHCPEnabled (boolean value) {this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().enableDHCP(value).build()); }
+    public void setSubnetIpv6AddressMode (Ipv6AddressMode value) { this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().ipv6AddressMode(value).build()); }
+    public void setSubnetIpv6RaMode (Ipv6RaMode value) { this.osn.getOs().networking().subnet().update(osSubnet.toBuilder().ipv6RaMode(value).build());}
 }
 

@@ -32,8 +32,8 @@ import javax.swing.SwingUtilities;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.utils.JScrollPopupMenu;
 import com.net2plan.interfaces.networkDesign.NetPlan;
