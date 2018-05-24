@@ -353,4 +353,28 @@ public class ViewEditTopologyTablesPane extends JPanel
         }
 
     }
+
+    public void updateViewOfNetworkTabAfterDoubleClick (Object value, String type, Integer indexSubTab){
+
+        this.networkDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
+        FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.networkDifferentTypesLevel2Pane.getSelectedComponent();
+        updateView();
+        filteredTablePanel.updateTableSelection(type,value);
+    }
+
+    public void updateViewOfIdentityTabAfterDoubleClick (Object value, String type, Integer indexSubTab){
+
+        this.identityDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
+        FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.identityDifferentTypesLevel2Pane.getSelectedComponent();
+        updateView();
+        filteredTablePanel.updateTableSelection(type,value);
+    }
+
+    public void updateViewOfComputeTabAfterDoubleClick (Object value, String type, Integer indexSubTab){
+
+        this.computeDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
+        FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.computeDifferentTypesLevel2Pane.getSelectedComponent();
+        updateView();
+        filteredTablePanel.updateTableSelection(type,value);
+    }
 }

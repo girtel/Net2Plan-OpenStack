@@ -148,6 +148,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     @Override
     protected void reactToMouseClickInTable (int numClicks , int rowModelIndexOfClickOrMinus1IfOut , int columnModelIndexOfClickOrMinus1IfOut)
     {
+        System.out.println(rowModelIndexOfClickOrMinus1IfOut +"   "+ columnModelIndexOfClickOrMinus1IfOut);
          final SortedSet<T> selectedElements = this.getSelectedElements();
         if (numClicks == 1)
         {
@@ -181,15 +182,62 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     }
 
     public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
-        if(ajtType == AJTableType.NETWORKS)
-            if(columnModelIndexOfClickOrMinus1IfOut == 10){
 
-                callback.getViewEditTopTables().getNetworkDifferentTypesLevel2Pane().setSelectedIndex(3);
-                FilteredTablePanel filteredTablePanel = (FilteredTablePanel) callback.getViewEditTopTables().getNetworkDifferentTypesLevel2Pane().getSelectedComponent();
-
-                callback.getViewEditTopTables().updateView();
-                filteredTablePanel.updateTable(value);
-
+        switch (ajtType) {
+            case NETWORKS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 10) {
+                    callback.getViewEditTopTables().updateViewOfNetworkTabAfterDoubleClick(value,"ArrayList",3);
+                }
+                break;
+            case PORTS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 10) {
+                    callback.getViewEditTopTables().updateViewOfNetworkTabAfterDoubleClick(value,"String",1);
+                }
+                break;
+            case SUBNETS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 6)
+                    callback.getViewEditTopTables().updateViewOfNetworkTabAfterDoubleClick(value,"String",1);
+                break;
+            case USERS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                }
+                break;
+            case ENDPOINTS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 7) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",7);
+                }
+                if (columnModelIndexOfClickOrMinus1IfOut == 8) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",9);
+                }
+                break;
+            case CREDENTIALS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 3)
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",6);
+                break;
+            case GROUPS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 5) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                }
+                break;
+            case POLICIES:
+                if (columnModelIndexOfClickOrMinus1IfOut == 3) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",0);
+                }
+                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",6);
+                }
+                break;
+            case PROJECTS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 6) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                }
+                break;
+            case ROLES:
+                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
+                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                }
+                break;
         }
     }
 
@@ -210,7 +258,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         }
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
-
 
     @Override
     protected final List<AjtColumnInfo<T>> getAllColumnsVisibleOrNot ()

@@ -100,20 +100,28 @@ public class FilteredTablePanel extends JPanel
         else
             numEntriesLabel.setText("Number of entries: " + numEntries);
     }
-    public void updateTable(Object id) {
-        List<String> openStackNetworkElementId = (ArrayList<String>) id;
-        System.out.println("id" +id);
-        System.out.println("rows" + table.getModel().getRowCount());
-        System.out.println("cols" + table.getModel().getColumnCount());
+    public void updateTableSelection(String type,Object id) {
 
-        for(int i = 0; i< table.getModel().getRowCount();i++) {
-
-            System.out.println("onfor"+table.getModel().getValueAt(i, 0));
-            if(((ArrayList<String>) id).contains(table.getModel().getValueAt(i, 0))){
-                System.out.println("equals"+table.getModel().getValueAt(i, 0));
-                table.setRowSelectionInterval(i,i);
+        if(type.equals("String")){
+          String openStackNetworkElementId = (String) id;
+          if(openStackNetworkElementId!=null){
+            for(int i = 0; i< table.getModel().getRowCount();i++) {
+                System.out.println(openStackNetworkElementId + "= " + table.getModel().getValueAt(i, 0));
+                if((openStackNetworkElementId).equals(table.getModel().getValueAt(i, 0))){
+                    table.getSelectionModel().addSelectionInterval(i, i);
+                }
             }
+          }
         }
-
+        if(type.equals("ArrayList")) {
+            List<String> openStackNetworkElementId = (ArrayList<String>) id;
+            if(openStackNetworkElementId!=null){
+            for (int i = 0; i < table.getModel().getRowCount(); i++) {
+                if ((openStackNetworkElementId).contains(table.getModel().getValueAt(i, 0))) {
+                    table.getSelectionModel().addSelectionInterval(i, i);
+                }
+            }
+          }
+        }
     }
 }
