@@ -80,11 +80,13 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     private final GUINetworkDesign callback;
     private final Map<AJTableType, Pair<AdvancedJTable_networkElement, FilteredTablePanel>> ajTables = new EnumMap<>(AJTableType.class);
+
     private final JTabbedPane viewEditHighLevelTabbedPane;
 
     private JTabbedPane identityDifferentTypesLevel2Pane;
     private JTabbedPane computeDifferentTypesLevel2Pane;
     private JTabbedPane networkDifferentTypesLevel2Pane;
+
     private final JMenuBar menuBar;
     private JTextArea upperText;
     final String NEWLINE = String.format("%n");
@@ -141,6 +143,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 
 
 
+
         for(AJTableType type : Arrays.asList(AJTableType.USERS,AJTableType.CREDENTIALS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.PROJECTS,AJTableType.REGIONS,AJTableType.ROLES,AJTableType.SERVICES)){
             identityDifferentTypesLevel2Pane.addTab(type.getTabName(), null, ajTables.get(type).getSecond(), "Does nothing");
         }
@@ -154,6 +157,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         viewEditHighLevelTabbedPane.addTab("IDENTITY", identityDifferentTypesLevel2Pane);
         viewEditHighLevelTabbedPane.addTab("COMPUTE", computeDifferentTypesLevel2Pane);
         viewEditHighLevelTabbedPane.addTab("NETWORK", networkDifferentTypesLevel2Pane);
+
         this.add(splitPane, BorderLayout.CENTER);
 
 
@@ -165,6 +169,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     private Pair<AdvancedJTable_networkElement, FilteredTablePanel> createPanelComponentInfo(AJTableType type)
     {
         AdvancedJTable_networkElement table = null;
+
         switch (type)
         {
 
@@ -271,6 +276,9 @@ public class ViewEditTopologyTablesPane extends JPanel
         if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
     }
 
+    public JTabbedPane getNetworkDifferentTypesLevel2Pane (){
+        return this.networkDifferentTypesLevel2Pane;
+    }
     /**
      * Shows the tab corresponding associated to a network element.
      *

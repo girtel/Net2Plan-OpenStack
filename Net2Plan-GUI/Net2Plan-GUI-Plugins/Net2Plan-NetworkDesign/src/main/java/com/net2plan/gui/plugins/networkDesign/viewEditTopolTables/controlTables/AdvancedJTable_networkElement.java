@@ -11,7 +11,7 @@
 
 
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables;
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -22,19 +22,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 
+import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
+import com.net2plan.gui.plugins.utils.FilteredTablePanel;
+import com.net2plan.gui.utils.AdvancedJTable;
 import com.net2plan.gui.utils.JScrollPopupMenu;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkElement;
@@ -91,7 +90,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         assert selection != null;
 
         final NetPlan np = callback.getDesign();
-
         final List<NetworkElement> elementsToPick = new ArrayList<>();
 
         if (ajtType == AJTableType.ROUTERS)
@@ -150,7 +148,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     @Override
     protected void reactToMouseClickInTable (int numClicks , int rowModelIndexOfClickOrMinus1IfOut , int columnModelIndexOfClickOrMinus1IfOut)
     {
-        final SortedSet<T> selectedElements = this.getSelectedElements();
+         final SortedSet<T> selectedElements = this.getSelectedElements();
         if (numClicks == 1)
         {
             if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
@@ -171,9 +169,28 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
         } else if (numClicks >= 2)
         {
-            SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
-        }
 
+            final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
+            pickSelectionHyperLink(value,columnModelIndexOfClickOrMinus1IfOut);
+
+
+
+            SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
+           }
+
+    }
+
+    public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
+        if(ajtType == AJTableType.NETWORKS)
+            if(columnModelIndexOfClickOrMinus1IfOut == 10){
+
+                callback.getViewEditTopTables().getNetworkDifferentTypesLevel2Pane().setSelectedIndex(3);
+                FilteredTablePanel filteredTablePanel = (FilteredTablePanel) callback.getViewEditTopTables().getNetworkDifferentTypesLevel2Pane().getSelectedComponent();
+
+                callback.getViewEditTopTables().updateView();
+                filteredTablePanel.updateTable(value);
+
+        }
     }
 
     @Override

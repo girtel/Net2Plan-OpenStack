@@ -339,9 +339,28 @@ public class OpenStackNet
         allOpenStackNetworkElements.addAll(list_osUsers);
         allOpenStackNetworkElements.addAll(list_osNetworks);
         allOpenStackNetworkElements.addAll(list_osSubnets);
-        allOpenStackNetworkElements.addAll(list_osInformation);
+        allOpenStackNetworkElements.addAll(list_osPorts);
         allOpenStackNetworkElements.addAll(list_osCredentials);
+        allOpenStackNetworkElements.addAll(list_osInformation);
+
+        allOpenStackNetworkElements.addAll(list_osDomains);
         allOpenStackNetworkElements.addAll(list_osEndpoints);
+        allOpenStackNetworkElements.addAll(list_osPolicies);
+        allOpenStackNetworkElements.addAll(list_osProjects);
+        allOpenStackNetworkElements.addAll(list_osRegions);
+        allOpenStackNetworkElements.addAll(list_osRoles);
+        allOpenStackNetworkElements.addAll(list_osServices);
+
+        allOpenStackNetworkElements.addAll(list_osExtensions);
+        allOpenStackNetworkElements.addAll(list_osFlavours);
+        allOpenStackNetworkElements.addAll(list_osImages);
+        allOpenStackNetworkElements.addAll(list_osKeypairs);
+        allOpenStackNetworkElements.addAll(list_osLimits);
+        allOpenStackNetworkElements.addAll(list_osQuotas);
+        allOpenStackNetworkElements.addAll(list_osSecurityGroups);
+
+        allOpenStackNetworkElements.addAll(list_osServers);
+
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getId() == openStackId).findFirst();
         if (element.isPresent()) return element.get();
         else return null;

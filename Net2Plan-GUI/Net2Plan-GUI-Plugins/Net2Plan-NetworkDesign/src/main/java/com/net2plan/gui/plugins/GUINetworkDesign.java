@@ -415,6 +415,7 @@ import java.util.List;
         {
             return null;
         }
+        public ViewEditTopologyTablesPane getViewEditTopTables(){ return this.viewEditTopTables;};
 
         public void addNetPlanChange()
         {
