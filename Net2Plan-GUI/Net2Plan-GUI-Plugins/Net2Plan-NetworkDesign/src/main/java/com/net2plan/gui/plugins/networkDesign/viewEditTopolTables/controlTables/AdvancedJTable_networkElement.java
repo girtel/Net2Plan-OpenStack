@@ -155,9 +155,11 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
             if (rowModelIndexOfClickOrMinus1IfOut == -1) return;
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
+            pickUpdateText(value);
             if (value instanceof OpenStackNetworkElement)
             {
                 //pickSelection(Sets.newHashSet((OpenStackNetworkElement) value));
+                pickSelectionOneClick(value);
             }
             else if (value instanceof Collection)
             {
@@ -178,6 +180,14 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
             SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
            }
+
+    }
+    public void pickSelectionOneClick(Object value){
+        callback.getViewEditTopTables().updateViewOfText(value);
+
+    }
+
+    public void pickUpdateText(Object ope){
 
     }
 

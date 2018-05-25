@@ -20,6 +20,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
@@ -121,7 +122,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                updateText(viewEditHighLevelTabbedPane.getSelectedIndex());
+                updateText(viewEditHighLevelTabbedPane.getSelectedIndex(),null);
             }
         });
         final JSplitPane splitPane = new JSplitPane();
@@ -319,7 +320,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         }
     }
 
-    public void updateText(int type){
+    public void updateText(int type,Object ope){
         if(callback.getOpenStackNet().getOpenStackUsers().size() == 0) return;
         switch (type){
             case 0:
@@ -347,6 +348,8 @@ public class ViewEditTopologyTablesPane extends JPanel
                 );
                 break;
             case 4:
+                upperText.setText(((OpenStackNetworkElement) ope).get50CharactersDescription());
+                break;
             case 5:
 
                 break;
@@ -376,5 +379,10 @@ public class ViewEditTopologyTablesPane extends JPanel
         FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.computeDifferentTypesLevel2Pane.getSelectedComponent();
         updateView();
         filteredTablePanel.updateTableSelection(type,value);
+    }
+
+    public void updateViewOfText(Object ope){
+
+        updateText(4, ope);
     }
 }

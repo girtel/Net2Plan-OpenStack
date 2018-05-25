@@ -15,6 +15,7 @@ import javax.swing.JTable;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 
@@ -103,7 +104,7 @@ public class FilteredTablePanel extends JPanel
     public void updateTableSelection(String type,Object id) {
 
         if(type.equals("String")){
-          String openStackNetworkElementId = (String) id;
+          String openStackNetworkElementId = ((OpenStackNetworkElement) id).getId();
           if(openStackNetworkElementId!=null){
             for(int i = 0; i< table.getModel().getRowCount();i++) {
                 System.out.println(openStackNetworkElementId + "= " + table.getModel().getValueAt(i, 0));
