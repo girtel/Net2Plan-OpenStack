@@ -5,7 +5,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 
 import java.util.List;
 
-public class OpenStackFloatingIpDns  extends OpenStackNetworkElement
+public class OpenStackFloatingIp extends OpenStackNetworkElement
 {
 
 
@@ -15,9 +15,9 @@ public class OpenStackFloatingIpDns  extends OpenStackNetworkElement
     private String floatingIPFloatingIpAddress;
     private String floatingIPFixedIpAddress;
 
-    public static OpenStackFloatingIpDns createFromAddFloatingIp (OpenStackNet osn , String floatingIPId, String floatingIPInstanceId, String floatingIPPool, String floatingIPFloatingIpAddress, String floatingIPFixedIpAddress)
+    public static OpenStackFloatingIp createFromAddFloatingIp (OpenStackNet osn , String floatingIPId, String floatingIPInstanceId, String floatingIPPool, String floatingIPFloatingIpAddress, String floatingIPFixedIpAddress)
     {
-        final OpenStackFloatingIpDns res = new OpenStackFloatingIpDns(osn);
+        final OpenStackFloatingIp res = new OpenStackFloatingIp(osn);
         res.floatingIPId= floatingIPId;
         res.floatingIPInstanceId=floatingIPInstanceId;
         res.floatingIPPool=floatingIPPool;
@@ -26,7 +26,7 @@ public class OpenStackFloatingIpDns  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackFloatingIpDns (OpenStackNet osn )
+    private OpenStackFloatingIp(OpenStackNet osn )
     {
         super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.list_osFloatingIpDns);
     }

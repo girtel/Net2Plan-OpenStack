@@ -42,6 +42,8 @@ public class AdvancedJTable_keypairs extends AdvancedJTable_networkElement<OpenS
                 null, n -> n.getKeypairPublicKey(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackKeypair>(this, Boolean.class, null, "Deleted?", "Credentials links",
                 null, n -> n.isKeypairDeleted(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackKeypair>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }
@@ -51,16 +53,26 @@ public class AdvancedJTable_keypairs extends AdvancedJTable_networkElement<OpenS
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
+        res.add(new AjtRcMenu("Add keypair", e -> addKeypair(), (a, b) -> true, null));
 
-        res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Remove keypair", e -> getSelectedElements().forEach(n -> {
 
+            removeKeypair(n);
 
-        }), (a, b) -> b ==1, null));
+        }), (a, b) -> b == 1, null));
+
 
         return res;
 
     }
+    public void addKeypair(){
 
+        callback.getOpenStackNet().getOsnc().createOpenStackKeypair("name");
+    }
+    public void removeKeypair(OpenStackKeypair keypair){
+
+        callback.getOpenStackNet().getOsnd().deleteOpenStackKeypair(keypair.getId());
+    }
 
 
 }

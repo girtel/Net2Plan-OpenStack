@@ -52,6 +52,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Router external", "Network router external", null, n -> n.isNetworkIsRouterExternal(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Shared", "Network shared", null, n -> n.isNetworkIsShared(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
 
 
         return res;
@@ -68,10 +69,15 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
             createTableForUpdate("Name",n);
 
-        }), (a, b) -> b ==1, null));
+        }), (a, b) -> b == 1, null));
 
+        res.add(new AjtRcMenu("Add network", e -> addNetwork(), (a, b) -> true, null));
 
+        res.add(new AjtRcMenu("Remove network", e -> getSelectedElements().forEach(n -> {
 
+            removeNetwork(n);
+
+        }), (a, b) -> b == 1, null));
         return res;
 
     }
@@ -128,4 +134,11 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
     }
 
+    public void addNetwork(){
+        callback.getOpenStackNet().getOsnc().createOpenStackNetwork("Name","segment","tenant");
+    }
+    public void removeNetwork(OpenStackNetwork network){
+
+        callback.getOpenStackNet().getOsnd().deleteOpenStackNetwork(network.getId());
+    }
 }

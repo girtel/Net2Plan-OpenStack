@@ -150,7 +150,7 @@ public class AboutIt extends JPanel
                 table = new AdvancedJTable_flavors(callback);
                 break;
             case FLOATINGIPS:
-                table = new AdvancedJTable_floatingIpDns(callback);
+                table = new AdvancedJTable_floatingIp(callback);
                 break;
             case IMAGES:
                 table = new AdvancedJTable_images(callback);

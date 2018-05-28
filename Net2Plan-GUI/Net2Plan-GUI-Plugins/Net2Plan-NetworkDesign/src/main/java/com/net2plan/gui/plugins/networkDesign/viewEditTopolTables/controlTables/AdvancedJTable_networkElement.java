@@ -126,9 +126,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         popup.show(me.getComponent(), me.getX(), me.getY());
     }
 
-    /**
-     * Under testing, do not use just yet
-     **/
     @Override
     public T getElementAtModelRowIndex(int rowModelIndex)
     {
@@ -148,47 +145,32 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     @Override
     protected void reactToMouseClickInTable (int numClicks , int rowModelIndexOfClickOrMinus1IfOut , int columnModelIndexOfClickOrMinus1IfOut)
     {
-        System.out.println(rowModelIndexOfClickOrMinus1IfOut +"   "+ columnModelIndexOfClickOrMinus1IfOut);
+         System.out.println(rowModelIndexOfClickOrMinus1IfOut +"   "+ columnModelIndexOfClickOrMinus1IfOut);
          final SortedSet<T> selectedElements = this.getSelectedElements();
         if (numClicks == 1)
         {
             if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
             if (rowModelIndexOfClickOrMinus1IfOut == -1) return;
-            final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
-            pickUpdateText(value);
-            if (value instanceof OpenStackNetworkElement)
-            {
-                //pickSelection(Sets.newHashSet((OpenStackNetworkElement) value));
-                pickSelectionOneClick(value);
-            }
-            else if (value instanceof Collection)
-            {
-                if (((Collection) value).isEmpty()) return;
+            pickSelectionOneClickUpdateText(rowModelIndexOfClickOrMinus1IfOut);
 
-                final Object firstElement = ((Collection) value).iterator().next();
-
-
-            }
-            else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
         } else if (numClicks >= 2)
         {
 
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
             pickSelectionHyperLink(value,columnModelIndexOfClickOrMinus1IfOut);
-
-
-
             SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
+
            }
 
     }
-    public void pickSelectionOneClick(Object value){
-        callback.getViewEditTopTables().updateViewOfText(value);
 
-    }
+    public void pickSelectionOneClickUpdateText(int rowModelIndexOfClickOrMinus1IfOut ){
 
-    public void pickUpdateText(Object ope){
-
+        final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, getModel().getColumnCount() - 5);
+        if (value instanceof OpenStackNetworkElement)
+        {
+            callback.getViewEditTopTables().updateViewOfTextAfterOneClick(((OpenStackNetworkElement) value).get50CharactersDescription());
+        }
     }
 
     public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
@@ -196,56 +178,56 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         switch (ajtType) {
             case NETWORKS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 10) {
-                    callback.getViewEditTopTables().updateViewOfNetworkTabAfterDoubleClick(value,"ArrayList",3);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",3);
                 }
                 break;
             case PORTS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 10) {
-                    callback.getViewEditTopTables().updateViewOfNetworkTabAfterDoubleClick(value,"String",1);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",1);
                 }
                 break;
             case SUBNETS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 6)
-                    callback.getViewEditTopTables().updateViewOfNetworkTabAfterDoubleClick(value,"String",1);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",1);
                 break;
             case USERS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 4) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
                 }
                 break;
             case ENDPOINTS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 7) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",7);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",7);
                 }
                 if (columnModelIndexOfClickOrMinus1IfOut == 8) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",9);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",9);
                 }
                 break;
             case CREDENTIALS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 3)
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",6);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",6);
                 break;
             case GROUPS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 5) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
                 }
                 break;
             case POLICIES:
                 if (columnModelIndexOfClickOrMinus1IfOut == 3) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",0);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
                 }
                 if (columnModelIndexOfClickOrMinus1IfOut == 4) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",6);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",6);
                 }
                 break;
             case PROJECTS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 6) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
                 }
                 break;
             case ROLES:
                 if (columnModelIndexOfClickOrMinus1IfOut == 4) {
-                    callback.getViewEditTopTables().updateViewOfIdentityTabAfterDoubleClick(value,"String",2);
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
                 }
                 break;
         }

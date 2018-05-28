@@ -41,6 +41,8 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
                 null, n -> n.getFlavorSwap(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackFlavor>(this, Integer.class, null, "CPUs", "Flavor cpus",
                 null, n -> n.getFlavorVcpus(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackFlavor>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }
@@ -50,16 +52,26 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
+        res.add(new AjtRcMenu("Add flavor", e -> addFlavor(), (a, b) -> true, null));
 
-        res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Remove flavor", e -> getSelectedElements().forEach(n -> {
 
+            removeFlavor(n);
 
-        }), (a, b) -> b ==1, null));
+        }), (a, b) -> b == 1, null));
+
 
         return res;
 
     }
 
+    public void addFlavor(){
 
+        callback.getOpenStackNet().getOsnc().createOpenStackFlavor("name",1,1,1,1,1,1);
+    }
+    public void removeFlavor(OpenStackFlavor flavor){
+
+        callback.getOpenStackNet().getOsnd().deleteOpenStackFlavor(flavor.getId());
+    }
 
 }

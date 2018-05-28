@@ -91,13 +91,13 @@ public class OpenStackPort extends OpenStackNetworkElement
     public void setPortDeviceId (String value) {  this.osn.getOs().networking().port().update(osPort.toBuilder().deviceId(value).build());}
     public void setPortDeviceOwner (String value) {  this.osn.getOs().networking().port().update(osPort.toBuilder().deviceOwner(value).build()); }
     public void setPortHostId (String value) {  this.osn.getOs().networking().port().update(osPort.toBuilder().hostId(value).build()); }
-    public void getPortMacAddress (String value) { this.osn.getOs().networking().port().update(osPort.toBuilder().macAddress(value).build()); }
-    public void getPortNetworkId (String value) { this.osn.getOs().networking().port().update(osPort.toBuilder().networkId(value).build()); }
-    public void getPortState (State value) { this.osn.getOs().networking().port().update(osPort.toBuilder().state(value).build()); }
+    public void setPortMacAddress (String value) { this.osn.getOs().networking().port().update(osPort.toBuilder().macAddress(value).build()); }
+    public void setPortNetworkId (String value) { this.osn.getOs().networking().port().update(osPort.toBuilder().networkId(value).build()); }
+    public void setPortState (State value) { this.osn.getOs().networking().port().update(osPort.toBuilder().state(value).build()); }
     public void isAdminStateUp (boolean value) { this.osn.getOs().networking().port().update(osPort.toBuilder().adminState(value).build()); }
     public void isPortSecurityEnable (boolean value) { this.osn.getOs().networking().port().update(osPort.toBuilder().portSecurityEnabled(value).build()); }
-    public void getPortVifType (String value) {this.osn.getOs().networking().port().update(osPort.toBuilder().vifType(value).build()); }
-    public void getPortvNicType (String value) { this.osn.getOs().networking().port().update(osPort.toBuilder().vNicType(value).build()); }
+    public void setPortVifType (String value) {this.osn.getOs().networking().port().update(osPort.toBuilder().vifType(value).build()); }
+    public void setPortvNicType (String value) { this.osn.getOs().networking().port().update(osPort.toBuilder().vNicType(value).build()); }
 
 
 }

@@ -39,6 +39,8 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
         res.add(new AjtColumnInfo<OpenStackQuota>(this, Integer.class, null, "Project ID", "Credential project ID", null, n -> n.getQuotaSetSecurityGroupRules(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuota>(this, Integer.class, null, "Project ID", "Credential project ID", null, n -> n.getQuotaSetSecurityGroups(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuota>(this, Integer.class, null, "Project ID", "Credential project ID", null, n -> n.getQuotaSetVolumes(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackQuota>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }

@@ -65,7 +65,7 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
 
     public void setEndpointName (String value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().name(value).build());  }
     public void setEndpointDescription (String value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().description(value).build());  }
-    public void setEndpointEnabled (boolean value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().enabled(value).build());  }
+    public void isEnabled (boolean value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().enabled(value).build());  }
     public void setEndpointRegion (String value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().region(value).build()); }
     public void setEndpointRegionId (String value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().regionId(value).build());  }
     public void setEndpointIface (Facing value) { this.osn.getOs().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().iface(value).build());  }

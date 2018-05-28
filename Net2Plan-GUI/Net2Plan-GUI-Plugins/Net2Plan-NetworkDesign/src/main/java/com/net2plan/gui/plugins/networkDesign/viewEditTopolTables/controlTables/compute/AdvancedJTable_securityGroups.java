@@ -31,6 +31,8 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
                 null, n -> n.getSecGroupExtensionRules(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Links", "Credentials links",
                 null, n -> n.getSecGroupExtensionTenantId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }
@@ -41,15 +43,25 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
     {final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Add security group", e -> addSecurityGroup(), (a, b) -> true, null));
 
+        res.add(new AjtRcMenu("Remove security group", e -> getSelectedElements().forEach(n -> {
 
-        }), (a, b) -> b ==1, null));
+            removeSecurityGroup(n);
 
+        }), (a, b) -> b == 1, null));
         return res;
 
     }
 
+    public void addSecurityGroup(){
+
+        callback.getOpenStackNet().getOsnc().createOpenStackSecurityGroup("name");
+    }
+    public void removeSecurityGroup(OpenStackSecurityGroup securityGroup){
+
+        callback.getOpenStackNet().getOsnd().deleteOpenStackSecurityGroup(securityGroup.getId());
+    }
 
 
 }

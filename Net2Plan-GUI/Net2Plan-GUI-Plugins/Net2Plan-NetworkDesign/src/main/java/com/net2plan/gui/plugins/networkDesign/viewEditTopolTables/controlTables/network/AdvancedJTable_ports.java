@@ -55,6 +55,8 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Tenant ID", "Port tenant id", null, n -> n.getPortTenantId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Boolean.class, null, "Admin state", "Port admin state", null, n -> n.isAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Boolean.class, null, "Segurity", "Port security enable", null, n -> n.isPortSecurityEnable(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPort>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
 
         return res;
@@ -65,11 +67,71 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
+        res.add(new AjtRcMenu("Add port", e -> addPort(), (a, b) -> true, null));
 
+        res.add(new AjtRcMenu("Remove port", e -> getSelectedElements().forEach(n -> {
 
-        res.add(new AjtRcMenu("Change the network's name", e -> getSelectedElements().forEach(n -> {
+            removePort(n);
+
+        }), (a, b) -> b == 1, null));
+
+        res.add(new AjtRcMenu("Change port's name", e -> getSelectedElements().forEach(n -> {
 
             createTableForUpdate("Name",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's tenant id", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Tenant id",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's device id", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Device id",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's device owner", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Device owner",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's host id", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Host id",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's mac address", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("MAC",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's network id", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("Network id",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's state", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("State",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's vif type", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("VIF",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change port's nic type", e -> getSelectedElements().forEach(n -> {
+
+            createTableForUpdate("NIC",n);
 
         }), (a, b) -> b ==1, null));
 
@@ -79,7 +141,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
     }
 
-    public void createTableForUpdate(String key, OpenStackPort network) {
+    public void createTableForUpdate(String key, OpenStackPort port) {
         JFrame jfM = new JFrame(key);
         jfM.setLayout(null);
 
@@ -100,7 +162,34 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
             public void actionPerformed(ActionEvent e) {
                 switch(key){
                     case "Name":
-                        network.setName(os_text_change.getText());
+                        port.setName(os_text_change.getText());
+                        break;
+                    case "Tenant id":
+                        port.setPortTenantId(os_text_change.getText());
+                        break;
+                    case "Device id":
+                        port.setPortDeviceId(os_text_change.getText());
+                        break;
+                    case "Device owner":
+                        port.setPortDeviceOwner(os_text_change.getText());
+                        break;
+                    case "Host id":
+                        port.setPortHostId(os_text_change.getText());
+                        break;
+                    case "MAC":
+                        port.setPortMacAddress(os_text_change.getText());
+                        break;
+                    case "Network id":
+                        port.setPortNetworkId(os_text_change.getText());
+                        break;
+                    case "State":
+                        //port.set(os_text_change.getText());
+                        break;
+                    case "VIF":
+                        port.setPortVifType(os_text_change.getText());
+                        break;
+                    case "NIC":
+                        port.setPortvNicType(os_text_change.getText());
                         break;
 
 
@@ -130,5 +219,12 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     }
+    public void addPort(){
 
+        callback.getOpenStackNet().getOsnc().createOpenStackPort("name","networkid","deviceid","hostid","macaddress","secgroup");
+    }
+    public void removePort(OpenStackPort port){
+
+        callback.getOpenStackNet().getOsnd().deleteOpenStackPort(port.getId());
+    }
 }

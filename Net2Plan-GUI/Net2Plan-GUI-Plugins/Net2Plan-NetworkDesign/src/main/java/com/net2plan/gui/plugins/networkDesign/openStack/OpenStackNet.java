@@ -10,9 +10,8 @@ import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.interfaces.networkDesign.NetPlan;
-import com.net2plan.interfaces.networkDesign.Node;
+
 import java.awt.geom.Point2D;
-import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -39,6 +38,8 @@ public class OpenStackNet
     private GUINetworkDesign callback;
     private final NetPlan np;
     private OSClientV3 os;
+    private OpenStackNetCreate osnc;
+    private OpenStackNetDelete osnd;
 
     // Network
     public final List<OpenStackRouter> list_osRouters = new ArrayList<> ();
@@ -52,7 +53,7 @@ public class OpenStackNet
     public final List<OpenStackDomain> list_osDomains = new ArrayList<> ();
     public final List<OpenStackEndpoint> list_osEndpoints = new ArrayList<> ();
     public final List<OpenStackGroup> list_osGroups = new ArrayList<> ();
-    public final List<OpenStackPolice> list_osPolicies = new ArrayList<> ();
+    public final List<OpenStackPolicy> list_osPolicies = new ArrayList<> ();
     public final List<OpenStackProject> list_osProjects = new ArrayList<> ();
     public final List<OpenStackRegion> list_osRegions = new ArrayList<> ();
     public final List<OpenStackRole> list_osRoles = new ArrayList<> ();
@@ -61,7 +62,7 @@ public class OpenStackNet
     //Compute
     public final List<OpenStackExtension> list_osExtensions = new ArrayList<> ();
     public final List<OpenStackFlavor> list_osFlavours = new ArrayList<> ();
-    public final List<OpenStackFloatingIpDns> list_osFloatingIpDns = new ArrayList<> ();
+    public final List<OpenStackFloatingIp> list_osFloatingIpDns = new ArrayList<> ();
     public final List<OpenStackImage> list_osImages = new ArrayList<> ();
     public final List<OpenStackKeypair> list_osKeypairs = new ArrayList<> ();
     public final List<OpenStackLimit> list_osLimits = new ArrayList<> ();
@@ -84,6 +85,8 @@ public class OpenStackNet
         this.callback = callback;
         this.np = callback.getDesign();
         this.os=os;
+        this.osnc = new OpenStackNetCreate(os);
+        this.osnd = new OpenStackNetDelete(os);
     }
 
     public static OpenStackNet buildOpenStackNetFromServer(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
@@ -174,9 +177,9 @@ public class OpenStackNet
         list_osGroups.add(res);
         return res;
     }
-    public OpenStackPolice addOpenStackPolicy(String policyId,String policyUserId, String policyProjectId,String policyType,String policyBlob,Map<String,String> policyLinks)
+    public OpenStackPolicy addOpenStackPolicy(String policyId, String policyUserId, String policyProjectId, String policyType, String policyBlob, Map<String,String> policyLinks)
     {
-        final OpenStackPolice res = OpenStackPolice.createFromAddPolicy(this,policyId,policyUserId,policyProjectId,policyType,policyBlob,policyLinks);
+        final OpenStackPolicy res = OpenStackPolicy.createFromAddPolicy(this,policyId,policyUserId,policyProjectId,policyType,policyBlob,policyLinks);
         if(list_osPolicies.contains(res)) return res;
         list_osPolicies.add(res);
         return res;
@@ -227,9 +230,9 @@ public class OpenStackNet
         list_osFlavours.add(res);
         return res;
     }
-    public OpenStackFloatingIpDns addOpenStackFloatingIP(String floatingIPId,String floatingIPInstanceId,String floatingIPPool, String floatingIPFloatingIpAddress,String floatingIPFixedIpAddress)
+    public OpenStackFloatingIp addOpenStackFloatingIP(String floatingIPId, String floatingIPInstanceId, String floatingIPPool, String floatingIPFloatingIpAddress, String floatingIPFixedIpAddress)
     {
-        final OpenStackFloatingIpDns res = OpenStackFloatingIpDns.createFromAddFloatingIp(this,floatingIPId,floatingIPInstanceId,floatingIPPool,floatingIPFloatingIpAddress,floatingIPFixedIpAddress);
+        final OpenStackFloatingIp res = OpenStackFloatingIp.createFromAddFloatingIp(this,floatingIPId,floatingIPInstanceId,floatingIPPool,floatingIPFloatingIpAddress,floatingIPFixedIpAddress);
         if(list_osFloatingIpDns.contains(res)) return res;
         list_osFloatingIpDns.add(res);
         return res;
@@ -301,6 +304,10 @@ public class OpenStackNet
         if(!list_osInformation.contains(res)) {
             list_osInformation.add(res);
         }
+        res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"Subnet", list_osSubnets.size());
+        if(!list_osInformation.contains(res)) {
+            list_osInformation.add(res);
+        }
         return res;
     }
 
@@ -317,14 +324,14 @@ public class OpenStackNet
     public List<OpenStackGeneralInformation> getOpenStackInformation () { return Collections.unmodifiableList(list_osInformation); }
     public List<OpenStackDomain> getOpenStackDomains () { return Collections.unmodifiableList(list_osDomains); }
     public List<OpenStackEndpoint> getOpenStackEndpoints () { return Collections.unmodifiableList(list_osEndpoints); }
-    public List<OpenStackPolice> getOpenStackPolicies () { return Collections.unmodifiableList(list_osPolicies); }
+    public List<OpenStackPolicy> getOpenStackPolicies () { return Collections.unmodifiableList(list_osPolicies); }
     public List<OpenStackProject> getOpenStackProjects () { return Collections.unmodifiableList(list_osProjects); }
     public List<OpenStackRegion> getOpenStackRegions () { return Collections.unmodifiableList(list_osRegions); }
     public List<OpenStackRole> getOpenStackRoles () { return Collections.unmodifiableList(list_osRoles); }
     public List<OpenStackService> getOpenStackServices () { return Collections.unmodifiableList(list_osServices); }
     public List<OpenStackExtension> getOpenStackExtensions () { return Collections.unmodifiableList(list_osExtensions); }
     public List<OpenStackFlavor> getOpenStackFlavor () { return Collections.unmodifiableList(list_osFlavours); }
-    public List<OpenStackFloatingIpDns> getOpenStackFloatingIpDns () { return Collections.unmodifiableList(list_osFloatingIpDns); }
+    public List<OpenStackFloatingIp> getOpenStackFloatingIpDns () { return Collections.unmodifiableList(list_osFloatingIpDns); }
     public List<OpenStackImage> getOpenStackImages () { return Collections.unmodifiableList(list_osImages); }
     public List<OpenStackKeypair> getOpenStackKeypairs () { return Collections.unmodifiableList(list_osKeypairs); }
     public List<OpenStackLimit> getOpenStackLimits () { return Collections.unmodifiableList(list_osLimits); }
@@ -437,14 +444,12 @@ public class OpenStackNet
         updateSubnetTable();
 
     }
-    public void createNewUser (String userName, String userDescription,String password,String email){
 
-        this.os.identity().users().create(Builders.user()
-                .name(userName)
-                .description(userDescription)
-                .password(password)
-                .email(email)
-                .domainId(this.os.getToken().getUser().getDomainId())
-                .build());
+    public OpenStackNetCreate getOsnc(){
+        return this.osnc;
     }
+    public OpenStackNetDelete getOsnd(){
+        return this.osnd;
+    }
+
 }

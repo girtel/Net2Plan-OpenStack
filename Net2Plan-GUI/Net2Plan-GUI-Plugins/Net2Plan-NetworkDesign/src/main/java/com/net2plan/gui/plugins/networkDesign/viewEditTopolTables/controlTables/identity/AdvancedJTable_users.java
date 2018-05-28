@@ -40,6 +40,8 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
                 null, n -> n.getDescription(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Object", "",
                 null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackUser>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }
@@ -49,11 +51,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add new user", e -> getSelectedElements().forEach(n -> {
-
-            addNewUser(n);
-
-        }), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add new user", e->cago(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove user", e -> getSelectedElements().forEach(n -> {
 
@@ -80,6 +78,18 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
         return res;
 
+    }
+    public void cago() {
+        List<String> newList = new ArrayList<>();
+
+        newList.add("x");
+        newList.add("x");
+        newList.add("x");
+        newList.add("x");
+        newList.add("x");
+        newList.add("x"); newList.add("x");
+        newList.add("x");
+        generalAddTable("Add user",newList);
     }
 
     public void createTableForUpdate(String key, OpenStackUser user){
@@ -174,7 +184,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                callback.getOpenStackNet().createNewUser(os_name_change.getText(),os_description_change.getText(),os_password_change.getText(),os_email_change.getText());
+               // callback.getOpenStackNet().createNewUser(os_name_change.getText(),os_description_change.getText(),os_password_change.getText(),os_email_change.getText());
 
                 callback.getOpenStackNet().updateUserTable();
                 final VisualizationState vs = callback.getVisualizationState();
@@ -213,6 +223,74 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         callback.addNetPlanChange();
     }
 
+    public void generalAddTable (String title,List<String> headers){
+        JFrame jfM = new JFrame(title);
+        jfM.setLayout(null);
 
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(headers.size()+1, 2, 15, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+
+        JLabel l6 = new JLabel("Properties", SwingConstants.LEFT);
+        jp1.add(l6);
+        JLabel label = new JLabel("", SwingConstants.LEFT);
+        jp1.add(label);
+        for(int i= 0; i < headers.size(); i ++){
+            JLabel jlabel = new JLabel(headers.get(i), SwingConstants.LEFT);
+            jp1.add(jlabel);
+            JTextField jtextField = new JTextField();
+            jp1.add(jtextField);
+            jtextField.setName(headers.get(i));
+        }
+
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 50*headers.size());
+        jbP1.setBounds(75, 70*headers.size(), 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Component [] components = jp1.getComponents();
+                List<String> response = new ArrayList<>();
+
+                for(int i = 3;i< components.length;i=i+2){
+
+                    response.add(((JTextField)components[i]).getText());
+                }
+
+                callback.getOpenStackNet().getOsnc().createOpenStackUser(response);
+                updateTab();
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        if(headers.size()<3) {
+            jfM.setSize(250, 130 * headers.size());
+        }else {
+            jfM.setSize(250, 80 * headers.size());
+        }
+
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    public void updateTab(){
+
+                callback.getOpenStackNet().updateAllTables();
+                final VisualizationState vs = callback.getVisualizationState();
+                Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                        vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                callback.updateVisualizationAfterNewTopology();
+                callback.addNetPlanChange();
+    }
 
 }

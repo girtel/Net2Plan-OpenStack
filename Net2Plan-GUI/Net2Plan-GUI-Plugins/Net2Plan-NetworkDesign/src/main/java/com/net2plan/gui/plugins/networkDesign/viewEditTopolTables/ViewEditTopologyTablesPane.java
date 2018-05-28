@@ -20,7 +20,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
@@ -110,21 +109,16 @@ public class ViewEditTopologyTablesPane extends JPanel
         upperText.setLineWrap(true);
         upperText.setEditable(false);
         upperText.setWrapStyleWord(true);
-        upperText.setText("Identity Service (Keystone) V3"+ NEWLINE+NEWLINE
-        +"The Identity (Keystone) V3 service provides the central directory of users, groups, region, service, endpoints, role management and authorization."+ NEWLINE
-                +"This API is responsible for authenticating and providing access to all the other OpenStack services. "+NEWLINE
-                +"The API also enables administrators to configured centralized access policies, users, domains and projects."+ NEWLINE
-                +NEWLINE+NEWLINE
-                +"Network (Neutron)" + NEWLINE+NEWLINE
-                +"Neutron is the Network service for OpenStack. Unlike Nova Networking, Neutron is broken up into the following abstractions: Networks, Subnets and Routers."+NEWLINE
-                +"Each has functionality that mimics the physical layers.");
+        upperText.setAutoscrolls(true);
+        upperText.setText("Initial text");
 
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                updateText(viewEditHighLevelTabbedPane.getSelectedIndex(),null);
+                updateViewOfTextAfterOneClick(null);
             }
         });
+
         final JSplitPane splitPane = new JSplitPane();
         splitPane.setLeftComponent(viewEditHighLevelTabbedPane);
         splitPane.setBottomComponent(upperText);
@@ -137,13 +131,9 @@ public class ViewEditTopologyTablesPane extends JPanel
         for (AJTableType ajType : AJTableType.values())
             ajTables.put(ajType, createPanelComponentInfo(ajType));
 
-
         this.identityDifferentTypesLevel2Pane = new JTabbedPane();
         this.computeDifferentTypesLevel2Pane = new JTabbedPane();
         this.networkDifferentTypesLevel2Pane = new JTabbedPane();
-
-
-
 
         for(AJTableType type : Arrays.asList(AJTableType.USERS,AJTableType.CREDENTIALS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.PROJECTS,AJTableType.REGIONS,AJTableType.ROLES,AJTableType.SERVICES)){
             identityDifferentTypesLevel2Pane.addTab(type.getTabName(), null, ajTables.get(type).getSecond(), "Does nothing");
@@ -226,7 +216,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 table = new AdvancedJTable_flavors(callback);
                 break;
             case FLOATINGIPS:
-                table = new AdvancedJTable_floatingIpDns(callback);
+                table = new AdvancedJTable_floatingIp(callback);
                 break;
             case IMAGES:
                 table = new AdvancedJTable_images(callback);
@@ -274,12 +264,10 @@ public class ViewEditTopologyTablesPane extends JPanel
 
 
 
+
         if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
     }
 
-    public JTabbedPane getNetworkDifferentTypesLevel2Pane (){
-        return this.networkDifferentTypesLevel2Pane;
-    }
     /**
      * Shows the tab corresponding associated to a network element.
      *
@@ -320,69 +308,83 @@ public class ViewEditTopologyTablesPane extends JPanel
         }
     }
 
-    public void updateText(int type,Object ope){
-        if(callback.getOpenStackNet().getOpenStackUsers().size() == 0) return;
-        switch (type){
-            case 0:
-                upperText.setText("In this tab you can see the information about the routers of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackRouters().get(0).get50CharactersDescription()
-                );
-                break;
-            case 1:
-                upperText.setText("In this tab you can see the information about the users of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackUsers().get(0).get50CharactersDescription()
-                );
-                break;
-            case 2:
-                upperText.setText("In this tab you can see the information about the networks of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackNetworks().get(0).get50CharactersDescription()
-                );
-                break;
-            case 3:
-                upperText.setText("In this tab you can see the information about the subnets of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackSubnets().get(0).get50CharactersDescription()
-                );
-                break;
-            case 4:
-                upperText.setText(((OpenStackNetworkElement) ope).get50CharactersDescription());
-                break;
-            case 5:
+    public void updateViewOfTextAfterOneClick(String text){
 
+        if(text!=null) {
+            upperText.setText(text);
+        }else {
+            int indexTab = viewEditHighLevelTabbedPane.getSelectedIndex();
+
+            switch (indexTab){
+                case 0:
+                    upperText.setText("Identity Service (Keystone) V3"+ NEWLINE+NEWLINE
+                            +"The Identity (Keystone) V3 service provides the central directory of users, groups, region, service, endpoints, role management and authorization."+ NEWLINE
+                            +"This API is responsible for authenticating and providing access to all the other OpenStack services. "+NEWLINE
+                            +"The API also enables administrators to configured centralized access policies, users, domains and projects."+ NEWLINE
+                            );
+                    break;
+                case 1:
+                    upperText.setText("Network (Neutron)" + NEWLINE+NEWLINE
+                            +"Neutron is the Network service for OpenStack. Unlike Nova Networking, Neutron is broken up into the following abstractions: Networks, Subnets and Routers."+NEWLINE
+                            +"Each has functionality that mimics the physical layers.");
+                    break;
+                case 2:
+                    upperText.setText("Network (Neutron)" + NEWLINE+NEWLINE
+                            +"Neutron is the Network service for OpenStack. Unlike Nova Networking, Neutron is broken up into the following abstractions: Networks, Subnets and Routers."+NEWLINE
+                            +"Each has functionality that mimics the physical layers.");
+                    break;
+
+                    default:
+                        upperText.setText("Nothing to show");
+
+
+            }
+        }
+    }
+
+    public void updateViewOfTabAfterDoubleClick (AJTableType ajTableType,Object value, String type, Integer indexSubTab){
+
+        final FilteredTablePanel filteredTablePanel;
+
+        switch (ajTableType){
+            case NETWORKS:
+            case PORTS:
+            case SUBNETS:
+            case ROUTERS:
+                this.networkDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
+                filteredTablePanel = (FilteredTablePanel) this.networkDifferentTypesLevel2Pane.getSelectedComponent();
                 break;
+            case USERS:
+            case CREDENTIALS:
+            case DOMAINS:
+            case ENDPOINTS:
+            case GROUPS:
+            case POLICIES:
+            case PROJECTS:
+            case REGIONS:
+            case ROLES:
+            case SERVICES:
+                this.identityDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
+                filteredTablePanel = (FilteredTablePanel) this.identityDifferentTypesLevel2Pane.getSelectedComponent();
+                break;
+            case EXTENSIONS:
+            case FLAVORS:
+            case FLOATINGIPS:
+            case IMAGES:
+            case KEYPAIRS:
+            case LIMITS:
+            case QUOTAS:
+            case SECURITYGROUPS:
+            case SERVERS:
+                this.computeDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
+                filteredTablePanel = (FilteredTablePanel) this.computeDifferentTypesLevel2Pane.getSelectedComponent();
+                break;
+            default:
+                 filteredTablePanel = (FilteredTablePanel) this.networkDifferentTypesLevel2Pane.getSelectedComponent();
         }
 
-    }
-
-    public void updateViewOfNetworkTabAfterDoubleClick (Object value, String type, Integer indexSubTab){
-
-        this.networkDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
-        FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.networkDifferentTypesLevel2Pane.getSelectedComponent();
         updateView();
         filteredTablePanel.updateTableSelection(type,value);
     }
 
-    public void updateViewOfIdentityTabAfterDoubleClick (Object value, String type, Integer indexSubTab){
-
-        this.identityDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
-        FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.identityDifferentTypesLevel2Pane.getSelectedComponent();
-        updateView();
-        filteredTablePanel.updateTableSelection(type,value);
-    }
-
-    public void updateViewOfComputeTabAfterDoubleClick (Object value, String type, Integer indexSubTab){
-
-        this.computeDifferentTypesLevel2Pane.setSelectedIndex(indexSubTab);
-        FilteredTablePanel filteredTablePanel = (FilteredTablePanel) this.computeDifferentTypesLevel2Pane.getSelectedComponent();
-        updateView();
-        filteredTablePanel.updateTableSelection(type,value);
-    }
-
-    public void updateViewOfText(Object ope){
-
-        updateText(4, ope);
-    }
 }

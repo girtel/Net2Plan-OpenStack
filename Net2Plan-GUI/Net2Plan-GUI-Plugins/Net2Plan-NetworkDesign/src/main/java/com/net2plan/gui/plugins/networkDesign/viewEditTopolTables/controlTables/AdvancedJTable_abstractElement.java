@@ -196,6 +196,8 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
         this.setTips(visibleTableColumnsInTableModelOrder);
         this.getModel().fireTableDataChanged();
 
+        this.getColumnModel().getColumn(this.getModel().getColumnCount()-5).setPreferredWidth(0);
+        this.getColumnModel().getColumn(this.getModel().getColumnCount()-5).setResizable(false);
 
         /* Enable the table before returning */
         this.setEnabled(true);

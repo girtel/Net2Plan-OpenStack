@@ -44,6 +44,8 @@ public class AdvancedJTable_images extends AdvancedJTable_networkElement<OpenSta
                 null, n -> n.isImageSnapshot(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackImage>(this, List.class, null, "Links", "Image links",
                 null, n -> n.getImageLinks(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackImage>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
 
         return res;

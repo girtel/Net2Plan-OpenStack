@@ -26,6 +26,8 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
         res.add(new AjtColumnInfo<OpenStackLimit>(this, String.class, null, "ID", "Credential ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimit>(this, String.class, null, "Limit absolute", "Credential project ID", null, n -> n.getLimitAbsolute(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimit>(this, String.class, null, "Limit rate", "Credential project ID", null, n -> n.getLimitRate(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackLimit>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }

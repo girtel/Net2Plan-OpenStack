@@ -46,7 +46,7 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Credentials" + this.getId();
+        return "Security group" + this.getId();
     }
 
 

@@ -68,9 +68,9 @@ public class OpenStackRouter extends OpenStackNetworkElement
         return "Router" + this.getId();
     }
 
-    public void setRouterName (String value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().name(value).build()); }
+    public void setName (String value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().name(value).build()); }
     public void setRouterTenantId (String value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().tenantId(value).build()); }
-    public void routerIsAdminStateUp (boolean value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().adminStateUp(value).build()); }
-    public void routerIsDistributed (boolean value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().distributed(value).build()); }
-    public void getRouterExternalGatewayInfo (ExternalGateway value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().externalGateway(value).build()); }
+    public void isAdminStateUp (boolean value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().adminStateUp(value).build()); }
+    public void isDistributed (boolean value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().distributed(value).build()); }
+    public void setRouterExternalGatewayInfo (ExternalGateway value) { this.osn.getOs().networking().router().update(osRouter.toBuilder().externalGateway(value).build()); }
 }

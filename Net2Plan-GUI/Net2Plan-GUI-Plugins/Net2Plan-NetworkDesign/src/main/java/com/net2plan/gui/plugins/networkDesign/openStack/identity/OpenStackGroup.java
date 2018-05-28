@@ -50,7 +50,7 @@ public class OpenStackGroup  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Endpoint" + this.getId();
+        return "Group" + this.getId();
     }
 
 

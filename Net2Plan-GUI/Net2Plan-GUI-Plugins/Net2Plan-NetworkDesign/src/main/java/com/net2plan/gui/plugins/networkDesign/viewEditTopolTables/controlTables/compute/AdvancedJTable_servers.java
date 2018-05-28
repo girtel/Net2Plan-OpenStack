@@ -29,6 +29,8 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Project ID", "Credential project ID", null, n -> n.getServerAddresses(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Project ID", "Credential project ID", null, n -> n.getServerAdminPass(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Project ID", "Credential project ID", null, n -> n.getServerName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackServer>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }
@@ -39,13 +41,16 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
     {final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Add server", e -> addServer(), (a, b) -> true, null));
 
 
-        }), (a, b) -> b ==1, null));
 
         return res;
 
+    }
+    public void addServer(){
+
+        callback.getOpenStackNet().getOsnc().createOpenStackServer("name","flavorid","imageid","keypairid","userdata",null);
     }
 
 

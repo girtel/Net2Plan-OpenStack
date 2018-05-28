@@ -71,7 +71,7 @@ public class OpenStackQuota  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Credentials" + this.getId();
+        return "Quota" + this.getId();
     }
 
 

@@ -61,7 +61,7 @@ public class OpenStackService  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Endpoint" + this.getId();
+        return "Service" + this.getId();
     }
 
 

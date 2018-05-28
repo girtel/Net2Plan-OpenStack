@@ -59,7 +59,7 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Credentials" + this.getId();
+        return "Keypair" + this.getId();
     }
 
 

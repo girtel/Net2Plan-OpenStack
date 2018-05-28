@@ -37,12 +37,12 @@ public class OpenStackRegion  extends OpenStackNetworkElement
     public String getRegionParentRegionId () { return this.regionParentRegionId; }
 
     public void setRegionDescription (String value) { this.osn.getOs().identity().regions().update(osRegion.toBuilder().description(value).build());  }
-    public void setRegionParentRegionId (String value) { this.osn.getOs().identity().regions().update(osRegion.toBuilder().parentRegionId(value).build());  }
+    public void setParentRegionId (String value) { this.osn.getOs().identity().regions().update(osRegion.toBuilder().parentRegionId(value).build());  }
 
     @Override
     public String get50CharactersDescription()
     {
-        return "Endpoint" + this.getId();
+        return "Region" + this.getId();
     }
 
 

@@ -7,7 +7,7 @@ import org.openstack4j.model.identity.v3.Policy;
 import java.util.List;
 import java.util.Map;
 
-public class OpenStackPolice extends OpenStackNetworkElement
+public class OpenStackPolicy extends OpenStackNetworkElement
 {
 
     private String policyId;
@@ -19,9 +19,9 @@ public class OpenStackPolice extends OpenStackNetworkElement
 
     private Policy osPolicy;
 
-    public static OpenStackPolice createFromAddPolicy (OpenStackNet osn , String policyId,String policyUserId, String policyProjectId,String policyType,String policyBlob,Map<String,String> policyLinks)
+    public static OpenStackPolicy createFromAddPolicy (OpenStackNet osn , String policyId, String policyUserId, String policyProjectId, String policyType, String policyBlob, Map<String,String> policyLinks)
     {
-        final OpenStackPolice res = new OpenStackPolice(osn);
+        final OpenStackPolicy res = new OpenStackPolicy(osn);
         res.policyId= policyId;
         res.policyUserId=policyUserId;
         res.policyProjectId=policyProjectId;
@@ -31,7 +31,7 @@ public class OpenStackPolice extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackPolice (OpenStackNet osn )
+    private OpenStackPolicy(OpenStackNet osn )
     {
         super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.list_osPolicies);
         if(this.policyId != null)
@@ -54,7 +54,7 @@ public class OpenStackPolice extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Endpoint" + this.getId();
+        return "Police" + this.getId();
     }
 
 

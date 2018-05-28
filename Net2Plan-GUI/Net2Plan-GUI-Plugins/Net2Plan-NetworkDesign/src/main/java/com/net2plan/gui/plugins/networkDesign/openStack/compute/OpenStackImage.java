@@ -69,7 +69,7 @@ public class OpenStackImage  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Credentials" + this.getId();
+        return "Image" + this.getId();
     }
 
 

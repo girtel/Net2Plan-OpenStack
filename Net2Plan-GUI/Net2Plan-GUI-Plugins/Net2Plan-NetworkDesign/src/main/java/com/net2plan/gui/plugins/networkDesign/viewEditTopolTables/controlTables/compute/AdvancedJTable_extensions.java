@@ -35,6 +35,8 @@ public class AdvancedJTable_extensions extends AdvancedJTable_networkElement<Ope
                 null, n -> n.getExtensionUpdated(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackExtension>(this, List.class, null, "Links", "Credentials links",
                 null, n -> n.getExtensionLinks(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackExtension>(this, Object.class, null, " ", "", null, n -> n, AGTYPE.NOAGGREGATION, null, null));
+
 
         return res;
     }
@@ -53,7 +55,6 @@ public class AdvancedJTable_extensions extends AdvancedJTable_networkElement<Ope
         return res;
 
     }
-
 
 
 }

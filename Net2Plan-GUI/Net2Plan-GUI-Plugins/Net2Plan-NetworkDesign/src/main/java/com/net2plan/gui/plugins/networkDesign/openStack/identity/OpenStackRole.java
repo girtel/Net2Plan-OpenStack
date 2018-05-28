@@ -46,7 +46,7 @@ public class OpenStackRole  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Endpoint" + this.getId();
+        return "Role" + this.getId();
     }
 
 
