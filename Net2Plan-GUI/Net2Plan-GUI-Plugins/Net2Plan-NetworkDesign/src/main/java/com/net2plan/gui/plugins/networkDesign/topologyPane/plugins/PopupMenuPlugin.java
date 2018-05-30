@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackUser;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;
@@ -28,6 +27,7 @@ import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.internal.Constants.NetworkElementType;
 import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
+import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 
 import javax.swing.*;
@@ -128,8 +128,8 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         if (netPlan.getNumberOfNodes() > 1)
         {
             actions.add(new JPopupMenu.Separator());
-            JMenu unidirectionalMenu = new JMenu("Create unidirectional link");
-            JMenu bidirectionalMenu = new JMenu("Create bidirectional link");
+            /*JMenu unidirectionalMenu = new JMenu("Create unidirectional link");
+            JMenu bidirectionalMenu = new JMenu("Create bidirectional link");*/
 
             String nodeName = node.getName() == null ? "" : node.getName();
             String nodeString = Long.toString(node.getId()) + (nodeName.isEmpty() ? "" : " (" + nodeName + ")");
@@ -143,14 +143,14 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
                 String auxNodeString = Long.toString(auxNode.getId()) + (auxNodeName.isEmpty() ? "" : " (" + auxNodeName + ")");
 
                 AbstractAction unidirectionalAction = new AddLinkAction(nodeString + " => " + auxNodeString, layer, node, auxNode);
-                unidirectionalMenu.add(unidirectionalAction);
+                //unidirectionalMenu.add(unidirectionalAction);
 
                 AbstractAction bidirectionalAction = new AddLinkBidirectionalAction(nodeString + " <=> " + auxNodeString, layer, node, auxNode);
-                bidirectionalMenu.add(bidirectionalAction);
+               // bidirectionalMenu.add(bidirectionalAction);
             }
 
-            actions.add(unidirectionalMenu);
-            actions.add(bidirectionalMenu);
+          /*  actions.add(unidirectionalMenu);
+            actions.add(bidirectionalMenu);*/
         }
 
         return actions;
@@ -319,18 +319,6 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         jp1.add(labelName);
         JTextField os_name_change = new JTextField();
         jp1.add(os_name_change);
-        JLabel labelDescription = new JLabel("Gateway", SwingConstants.LEFT);
-        jp1.add(labelDescription);
-        JTextField os_description_change = new JTextField();
-        jp1.add(os_description_change);
-        JLabel labelPassword = new JLabel("Password", SwingConstants.LEFT);
-        jp1.add(labelPassword);
-        JTextField os_password_change = new JTextField();
-        jp1.add(os_password_change);
-        JLabel labelEmail = new JLabel("Email", SwingConstants.LEFT);
-        jp1.add(labelEmail);
-        JTextField os_email_change = new JTextField();
-        jp1.add(os_email_change);
 
         jp1.setVisible(true);
         jp1.setBounds(10, 10, 200, 200);
@@ -339,10 +327,12 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                callback.getOpenStackNet().getOs().networking().router().create("name"
-                        ,true);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Name",os_name_change.getText());
+                callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRouter(jsonObject);
 
-                callback.getOpenStackNet().updateRouterTable();
+                callback.getOpenStackNet().refreshListTable();
+                callback.getViewEditTopTables().updateView();
 
                 final VisualizationState vs = callback.getVisualizationState();
                 Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
@@ -370,10 +360,12 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
     public void removeRouter(Node node){
 
 
+        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackRouter(node.getName());
 
-                callback.getOpenStackNet().getOs().networking().router().delete(node.getName());
-                callback.getOpenStackNet().updateRouterTable();
-                final VisualizationState vs = callback.getVisualizationState();
+        callback.getOpenStackNet().refreshListTable();
+        callback.getViewEditTopTables().updateView();
+
+        final VisualizationState vs = callback.getVisualizationState();
                 Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
                         vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
                 vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());

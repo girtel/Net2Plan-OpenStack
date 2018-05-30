@@ -479,6 +479,9 @@ import java.util.List;
             undoRedoManager.addNetPlanChange();
         }
 
+        public ViewEditTopologyTablesPane getViewEditTopTables(){
+            return this.viewEditTopTables;
+        }
         public AboutIt getAboutIt(){
             return this.aboutIt;
         }

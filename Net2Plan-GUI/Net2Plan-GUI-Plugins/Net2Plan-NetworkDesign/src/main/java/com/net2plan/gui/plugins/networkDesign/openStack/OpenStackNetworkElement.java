@@ -3,6 +3,8 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkElement;
+
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -90,5 +92,8 @@ public abstract class OpenStackNetworkElement implements Comparable<OpenStackNet
         return Long.compare(this.getInternalId(), o.getInternalId());
     }
 
+    public  void logPanel(){
+        JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
+    }
 }
 

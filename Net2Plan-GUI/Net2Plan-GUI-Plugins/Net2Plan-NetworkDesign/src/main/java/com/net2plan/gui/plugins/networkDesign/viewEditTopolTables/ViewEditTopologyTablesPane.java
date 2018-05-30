@@ -22,6 +22,10 @@ import javax.swing.event.ChangeListener;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
@@ -31,11 +35,13 @@ import com.net2plan.utils.Pair;
 public class ViewEditTopologyTablesPane extends JPanel
 {
     public enum AJTableType
+
+
     {
-        INFORMATION("INFORMATION"),
-        USERS("USERS"),
-        ROUTERS("ROUTERS"),
+        //Network (Neutron)
         NETWORKS("NETWORKS"),
+        ROUTERS("ROUTERS"),
+        PORTS("PORTS"),
         SUBNETS("SUBNETS");
 
         private final String tabName;
@@ -56,6 +62,8 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final Map<AJTableType, Pair<AdvancedJTable_networkElement, FilteredTablePanel>> ajTables = new EnumMap<>(AJTableType.class);
     private final JTabbedPane viewEditHighLevelTabbedPane;
 
+    //Network (Neutron) TabbedPane
+    private final JTabbedPane networkTabbedPane;
     private final JMenuBar menuBar;
     private JTextArea upperText;
 
@@ -89,9 +97,13 @@ public class ViewEditTopologyTablesPane extends JPanel
                 +"Each has functionality that mimics the physical layers.");
 
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
+
+        //Inicialice network tabbed pane
+        this.networkTabbedPane = new JTabbedPane();
+
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                updateText(viewEditHighLevelTabbedPane.getSelectedIndex());
+                updateText("");
             }
         });
         final JSplitPane splitPane = new JSplitPane();
@@ -111,10 +123,10 @@ public class ViewEditTopologyTablesPane extends JPanel
 
 
         /* The rest of high level tabs */
-        for (AJTableType type : Arrays.asList(AJTableType.ROUTERS,AJTableType.USERS, AJTableType.NETWORKS,
-                AJTableType.SUBNETS))
-            viewEditHighLevelTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+        for (AJTableType type : Arrays.asList(AJTableType.NETWORKS, AJTableType.SUBNETS,AJTableType.ROUTERS,AJTableType.PORTS))
+            networkTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
+        viewEditHighLevelTabbedPane.addTab("NETWORK",networkTabbedPane);
 
         menuBar = new JMenuBar();
 
@@ -126,21 +138,17 @@ public class ViewEditTopologyTablesPane extends JPanel
         AdvancedJTable_networkElement table = null;
         switch (type)
         {
-
-            case USERS:
-                table = new AdvancedJTable_users(callback);
+            case NETWORKS:
+                table = new AdvancedJTable_networks(callback);
                 break;
             case ROUTERS:
                 table = new AdvancedJTable_routers(callback);
                 break;
-            case NETWORKS:
-                table = new AdvancedJTable_networks(callback);
+            case PORTS:
+                table = new AdvancedJTable_ports(callback);
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
-                break;
-            case INFORMATION:
-                table = new AdvancedJTable_informationProject(callback);
                 break;
             default:
                 assert false;
@@ -183,10 +191,9 @@ public class ViewEditTopologyTablesPane extends JPanel
         switch (type)
         {
             case ROUTERS:
-            case USERS:
             case NETWORKS:
-            case INFORMATION:
             case SUBNETS:
+            case PORTS:
                 viewEditHighLevelTabbedPane.setSelectedComponent(ajTables.get(type).getSecond());
                 break;
             default:
@@ -195,38 +202,29 @@ public class ViewEditTopologyTablesPane extends JPanel
         }
     }
 
-    public void updateText(int type){
-        if(callback.getOpenStackNet().getOpenStackUsers().size() == 0) return;
-        switch (type){
-            case 0:
-                upperText.setText("In this tab you can see the information about the routers of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackRouters().get(0).get50CharactersDescription()
-                );
-                break;
-            case 1:
-                upperText.setText("In this tab you can see the information about the users of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackUsers().get(0).get50CharactersDescription()
-                );
-                break;
-            case 2:
-                upperText.setText("In this tab you can see the information about the networks of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackNetworks().get(0).get50CharactersDescription()
-                );
-                break;
-            case 3:
-                upperText.setText("In this tab you can see the information about the subnets of OpenStack"+NEWLINE
-                        + "Table description: " + NEWLINE
-                        + callback.getOpenStackNet().getOpenStackSubnets().get(0).get50CharactersDescription()
-                );
-                break;
-            case 4:
-            case 5:
-
-                break;
-        }
+    public void updateText(String text){ this.upperText.setText(text);
 
     }
+
+    public void updateViewOfTabAfterDoubleClick (AJTableType ajTableType,Object value, String type, Integer indexSubTab){
+
+        final FilteredTablePanel filteredTablePanel;
+
+        switch (ajTableType){
+            case NETWORKS:
+            case PORTS:
+            case SUBNETS:
+            case ROUTERS:
+                this.networkTabbedPane.setSelectedIndex(indexSubTab);
+                filteredTablePanel = (FilteredTablePanel) this.networkTabbedPane.getSelectedComponent();
+                break;
+
+            default:
+                filteredTablePanel = (FilteredTablePanel) this.networkTabbedPane.getSelectedComponent();
+        }
+
+        updateView();
+        filteredTablePanel.updateTableSelection(type,value);
+    }
+
 }

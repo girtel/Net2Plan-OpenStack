@@ -3,19 +3,18 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
-import com.net2plan.interfaces.networkDesign.Link;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
 import com.net2plan.interfaces.networkDesign.NetPlan;
-import com.net2plan.interfaces.networkDesign.Node;
 import java.awt.geom.Point2D;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.openstack4j.api.OSClient.OSClientV3;
-import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.network.*;
+
+import javax.swing.*;
 
 /**
  *
@@ -27,13 +26,17 @@ public class OpenStackNet
     private GUINetworkDesign callback;
     private final NetPlan np;
     private OSClientV3 os;
-    final List<OpenStackRouter> list_osRouters = new ArrayList<> ();
-    final List<OpenStackUser> list_osUsers = new ArrayList<> ();
-    final List<OpenStackNetwork> list_osNetworks = new ArrayList<> ();
-    final List<OpenStackSubnet> list_osSubnets = new ArrayList<> ();
-    final List<OpenStackGeneralInformation> list_osInformation = new ArrayList<> ();
+    private OpenStackNetCreate openStackNetCreate;
+    private OpenStackNetDelete openStackNetDelete;
 
-    final  NetPlan getNetPlan () { return np; }
+    /*List of OpenStackNetworkElements of NEUTRON*/
+    public final List<OpenStackNetwork> openStackNetworks = new ArrayList<> ();
+    public final List<OpenStackSubnet> openStackSubnets = new ArrayList<> ();
+    public final List<OpenStackRouter> openStackRouters = new ArrayList<> ();
+    public final List<OpenStackPort> openStackPorts = new ArrayList<> ();
+
+
+    public final  NetPlan getNetPlan () { return np; }
 
     public OpenStackNet()
     {
@@ -45,6 +48,8 @@ public class OpenStackNet
         this.callback = callback;
         this.np = callback.getDesign();
         this.os=os;
+        this.openStackNetCreate = new OpenStackNetCreate(os);
+        this.openStackNetDelete = new OpenStackNetDelete(os);
     }
 
     public static OpenStackNet buildOpenStackNetFromServer(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
@@ -62,75 +67,65 @@ public class OpenStackNet
     }
 
 
-    public OSClientV3 getOs(){
+    public OSClientV3 getOSClientV3(){
         return this.os;
     }
 
-    public OpenStackUser addOpenStackUser (User user,String userId, String userName, String userDomainId, String userEmail, String userDescription)
+    public OpenStackNetCreate getOpenStackNetCreate(){ return this.openStackNetCreate; }
+
+    public OpenStackNetDelete getOpenStackNetDelete(){ return this.openStackNetDelete; }
+
+    /*OpenStackNetworkElements of Neutron*/
+    public OpenStackNetwork addOpenStackNetwork(Network network)
     {
-        final OpenStackUser res = OpenStackUser.createFromAddUser(this ,user, userId, userName, userDomainId, userEmail, userDescription);
-        if(list_osUsers.contains(res)) return res;
-        list_osUsers.add(res);
+        final OpenStackNetwork res = OpenStackNetwork.createFromAddNetwork(this ,network);
+        if(openStackNetworks.contains(res)) return res;
+        openStackNetworks.add(res);
         return res;
     }
 
-    public OpenStackNetwork addOpenStackNetwork(String networkId,String networkName,State networkStatus,NetworkType networkType,List<? extends Subnet> networkNeutronSubnets,String networkProviderPhyNet,String networkProviderSegID,List <String> networkSubnets,String networkTenantId,boolean networkIsAdminStateUp,boolean networkIsRouterExternal, boolean networkIsShared)
+    public OpenStackSubnet addOpenStackSubnet (Subnet subnet)
     {
-        final OpenStackNetwork res = OpenStackNetwork.createFromAddNetwork(this , networkId, networkName, networkStatus, networkType, networkNeutronSubnets,networkProviderPhyNet,networkProviderSegID,networkSubnets,networkTenantId,networkIsAdminStateUp,networkIsRouterExternal,networkIsShared);
-        if(list_osNetworks.contains(res)) return res;
-        list_osNetworks.add(res);
+        final OpenStackSubnet res = OpenStackSubnet.createFromAddSubnet(this,subnet);
+        if(openStackSubnets.contains(res)) return res;
+        openStackSubnets.add(res);
         return res;
     }
 
-    public OpenStackSubnet addOpenStackSubnet (String subnetId,String subnetName,List<? extends Pool> subnetAllocationPools,String subnetCidr,List<String> subnetDnsNames,String subnetGateway,List<? extends HostRoute> subnetHostRoutes,IPVersionType subnetIpVersion,Ipv6AddressMode subnetIpv6AddressMode,Ipv6RaMode subnetIpv6RaMode,String subnetNetworkId,String subnetTenantId,boolean subnetIsDHCPEnabled)
+    public OpenStackRouter addOpenStackRouter(Router router)
     {
-        final OpenStackSubnet res = OpenStackSubnet.createFromAddSubnet(this,subnetId, subnetName, subnetAllocationPools, subnetCidr, subnetDnsNames, subnetGateway,subnetHostRoutes,subnetIpVersion,subnetIpv6AddressMode,subnetIpv6RaMode,subnetNetworkId,subnetTenantId,subnetIsDHCPEnabled);
-        if(list_osSubnets.contains(res)) return res;
-        list_osSubnets.add(res);
+        final OpenStackRouter res = OpenStackRouter.createFromAddRouter(this,router);
+        if(openStackRouters.contains(res)) return res;
+        openStackRouters.add(res);
         return res;
     }
 
-    public OpenStackRouter addOpenStackRouter(String nodeId,String nodeName,String nodeTenantId, State nodeStatus,boolean nodeIsAdminStateUp,boolean nodeDistributed,List<? extends HostRoute> nodeRoutes, ExternalGateway nodeExternalGatewayInfo)
+    public OpenStackPort addOpenStackPort(Port port)
     {
-        final OpenStackRouter res = OpenStackRouter.createFromAddNode(this,nodeId, nodeName,nodeTenantId, nodeStatus, nodeIsAdminStateUp, nodeDistributed, nodeRoutes,nodeExternalGatewayInfo);
-        if(list_osRouters.contains(res)) return res;
-        list_osRouters.add(res);
+        final OpenStackPort res = OpenStackPort.createFromAddPort(this,port);
+        if(openStackPorts.contains(res)) return res;
+        openStackPorts.add(res);
         return res;
     }
 
-    public OpenStackGeneralInformation addOpenStackInformation()
-    {
-        String projectID = os.getToken().getProject().getId();
-         OpenStackGeneralInformation res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"User", list_osUsers.size());
-        if(!list_osInformation.contains(res)) {
-            list_osInformation.add(res);
-        }
-
-        res = OpenStackGeneralInformation.createFromAddInformation(this,projectID,"Network", list_osNetworks.size());
-        if(!list_osInformation.contains(res)) {
-            list_osInformation.add(res);
-        }
-        return res;
-    }
 
     public String getTopologyName () { return np.getNetPlan().getNetworkName(); }
     public String getTopologyDescription () { return np.getNetPlan().getNetworkDescription(); }
     public void setTopologyName (String name) { this.np.getNetPlan().setNetworkName(name); }
 
-    public List<OpenStackRouter> getOpenStackRouters () { return Collections.unmodifiableList(list_osRouters); }
-    public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(list_osUsers); }
-    public List<OpenStackNetwork> getOpenStackNetworks () { return Collections.unmodifiableList(list_osNetworks); }
-    public List<OpenStackSubnet> getOpenStackSubnets () { return Collections.unmodifiableList(list_osSubnets); }
-    public List<OpenStackGeneralInformation> getOpenStackInformation () { return Collections.unmodifiableList(list_osInformation); }
+    public List<OpenStackNetwork> getOpenStackNetworks () { return Collections.unmodifiableList(openStackNetworks); }
+    public List<OpenStackSubnet> getOpenStackSubnets () { return Collections.unmodifiableList(openStackSubnets); }
+    public List<OpenStackRouter> getOpenStackRouters () { return Collections.unmodifiableList(openStackRouters); }
+    public List<OpenStackPort> getOpenStackPorts () { return Collections.unmodifiableList(openStackPorts); }
 
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId)
     {
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
-        allOpenStackNetworkElements.addAll(list_osRouters);
-        allOpenStackNetworkElements.addAll(list_osUsers);
-        allOpenStackNetworkElements.addAll(list_osNetworks);
-        allOpenStackNetworkElements.addAll(list_osSubnets);
-        allOpenStackNetworkElements.addAll(list_osInformation);
+        /*OpenStackNetworkElements of Neutron*/
+        allOpenStackNetworkElements.addAll(openStackNetworks);
+        allOpenStackNetworkElements.addAll(openStackSubnets);
+        allOpenStackNetworkElements.addAll(openStackRouters);
+        allOpenStackNetworkElements.addAll(openStackPorts);
 
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getId() == openStackId).findFirst();
         if (element.isPresent()) return element.get();
@@ -159,21 +154,47 @@ public class OpenStackNet
 
     }
 
-    public void updateUserTable(){
-        list_osUsers.clear();
-        List<User> users = (List<User>) os.identity().users().list();
-        for (User user : users)
-            addOpenStackUser(user,user.getId(), user.getName(), user.getDomainId(), user.getEmail(), user.getDescription());
-    }
-
     public void updateRouterTable(){
-        list_osRouters.clear();
+        openStackRouters.clear();
 
         callback.getDesign().removeAllNodes();
         List<Router> routers = (List<Router>) os.networking().router().list();
         for (Router router : routers)
-            addOpenStackRouter(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
+            addOpenStackRouter(router);
 
         distributeTopologyOverCircle();
     }
+
+    public void refreshListTable(){
+        openStackNetworks.clear();
+        openStackRouters.clear();
+        openStackPorts.clear();
+        openStackSubnets.clear();
+        callback.getDesign().removeAllNodes();
+        /* Get elements of Network(NEUTRON)*/
+        final List<Network> networks = (List<Network>) os.networking().network().list();
+        final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
+        final List<Router> routers = (List<Router>) os.networking().router().list();
+        final List<Port> ports = (List<Port>) os.networking().port().list();
+
+        /* Create OpenStackNetworkElement of Neutron Elements*/
+        /* Create networks objects */
+        for (Network net : networks)
+            addOpenStackNetwork(net);
+
+        /* Create subnets objects */
+        for (Subnet subnet : subnets)
+            addOpenStackSubnet(subnet);
+
+        /* Create routers objects */
+        for (Router router : routers)
+            addOpenStackRouter(router);
+        /* Create routers objects */
+        for (Port port : ports)
+            addOpenStackPort(port);
+
+        distributeTopologyOverCircle();
+    }
+
+
 }

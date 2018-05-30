@@ -11,34 +11,34 @@
 
 
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables;
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackRouter;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
+import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.utils.JScrollPopupMenu;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkElement;
+import com.net2plan.interfaces.networkDesign.NetworkLayer;
+import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
+import org.json.JSONObject;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -156,9 +156,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
             if (rowModelIndexOfClickOrMinus1IfOut == -1) return;
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
+
+            /*Update focus panel with object description*/
+            this.callback.getViewEditTopTables().updateText(((OpenStackNetworkElement) selectedElements.iterator().next()).get50CharactersDescription());
+
             if (value instanceof OpenStackNetworkElement)
             {
-                //pickSelection(Sets.newHashSet((OpenStackNetworkElement) value));
+
             }
             else if (value instanceof Collection)
             {
@@ -171,6 +175,12 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
         } else if (numClicks >= 2)
         {
+            final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
+
+            if(value.getClass().equals(Boolean.class)) changeValueOfBoolean(columnModelIndexOfClickOrMinus1IfOut);
+
+            pickSelectionHyperLink(value,columnModelIndexOfClickOrMinus1IfOut);
+
             SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
         }
 
@@ -207,6 +217,238 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         return completeListIncludingCommonColumns;
     }
 
+    public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
+
+        switch (ajtType) {
+            case NETWORKS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 10) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",3);
+                }
+                break;
+            case PORTS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 10) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
+                }
+                break;
+            case SUBNETS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 6)
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
+                break;
+
+        }
+    }
+
+    @Override
+    public void generalTableForm(String title,List<String> headers){
+        JFrame jfM = new JFrame(title);
+        jfM.setLayout(null);
+
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(headers.size()+1, 2, 15, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+
+        JLabel l6 = new JLabel("Properties", SwingConstants.LEFT);
+        jp1.add(l6);
+        JLabel label = new JLabel("", SwingConstants.LEFT);
+        jp1.add(label);
+        for(int i= 0; i < headers.size(); i ++){
+            JLabel jlabel = new JLabel(headers.get(i), SwingConstants.LEFT);
+            jp1.add(jlabel);
+            JTextField jtextField = new JTextField();
+            jp1.add(jtextField);
+        }
+
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 50*headers.size());
+        jbP1.setBounds(75, 60*headers.size(), 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Component [] components = jp1.getComponents();
+                JSONObject jsonObject = new JSONObject();
+
+                for(int i = 3;i< components.length;i=i+2){
+
+                    jsonObject.put( ((JLabel)components[i-1]).getText(),((JTextField)components[i]).getText());
+                 }
+
+                switch (ajtType){
+                    case PORTS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackPort(jsonObject);
+                        break;
+                    case NETWORKS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackNetwork(jsonObject);
+                        break;
+                    case SUBNETS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackSubnet(jsonObject);
+                        break;
+                    case ROUTERS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRouter(jsonObject);
+                        break;
+
+                }
+
+                updateTab();
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        if(headers.size()<3) {
+            jfM.setSize(250, 130 * headers.size());
+        }else {
+            jfM.setSize(250, 80 * headers.size());
+        }
+
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+
+    @Override
+    public void updateTab(){
+
+        callback.getDesign().removeAllNodes();
+        callback.getOpenStackNet().refreshListTable();
+        callback.getOpenStackNet().distributeTopologyOverCircle();
+        final VisualizationState vs = callback.getVisualizationState();
+        Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+        vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+        callback.updateVisualizationAfterNewTopology();
+        callback.addNetPlanChange();
+
+    }
+
+    @Override
+    public void generalTableUpdate(String key, OpenStackNetworkElement osne){
+        JFrame jfM = new JFrame(key);
+        jfM.setLayout(null);
+
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        JLabel l6 = new JLabel(key, SwingConstants.LEFT);
+        jp1.add(l6);
+        JTextField os_text_change = new JTextField();
+        jp1.add(os_text_change);
+
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 200);
+        jbP1.setBounds(75, 90, 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                switch(ajtType){
+                    case PORTS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackPort)osne).setName(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case NETWORKS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackNetwork)osne).setName(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case ROUTERS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackRouter)osne).setName(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case SUBNETS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackSubnet)osne).setName(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                }
+                updateTab();
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        jfM.setSize(250, 160);
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+    }
+
+    public void changeValueOfBoolean(int columnModelIndexOfClickOrMinus1IfOut){
+        System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
+        final SortedSet<T> selectedElements = this.getSelectedElements();
+        switch (ajtType){
+            case NETWORKS:
+                OpenStackNetwork network = ((OpenStackNetwork)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 11){
+                    network.isNetworkIsAdminStateUp(!network.isNetworkIsAdminStateUp());
+                }else if(columnModelIndexOfClickOrMinus1IfOut == 12){
+                    //network.i(!network.isNetworkIsRouterExternal());
+                }else if(columnModelIndexOfClickOrMinus1IfOut == 13){
+                    network.isNetworkIsShared(!network.isNetworkIsShared());
+                }else{
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+            case SUBNETS:
+                OpenStackSubnet subnet = ((OpenStackSubnet)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 12){
+                  subnet.isSubnetIsDHCPEnabled(!subnet.isSubnetIsDHCPEnabled());
+                }else{
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+            case ROUTERS:
+                OpenStackRouter router = ((OpenStackRouter)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 7){
+                    router.isAdminStateUp(!router.isRouterIsAdminStateUp());
+                }else if(columnModelIndexOfClickOrMinus1IfOut == 8){
+                    router.isDistributed(!router.isRouterIsDistributed());
+                } else {
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+            case PORTS:
+                OpenStackPort port = ((OpenStackPort)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 15){
+                    port.isAdminStateUp(!port.isAdminStateUp());
+                }else if(columnModelIndexOfClickOrMinus1IfOut == 16){
+                    port.isPortSecurityEnable(!port.isPortSecurityEnable());
+                } else {
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+        }
+        updateTab();
+    }
 
 
 }

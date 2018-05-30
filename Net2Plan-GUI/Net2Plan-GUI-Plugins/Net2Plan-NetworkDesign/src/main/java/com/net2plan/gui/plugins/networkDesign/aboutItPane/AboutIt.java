@@ -20,6 +20,10 @@ import javax.swing.*;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
@@ -80,8 +84,8 @@ public class AboutIt extends JPanel
 
 
         /* The rest of high level tabs */
-        for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.INFORMATION))
-            aboutIt.addTab(type.getTabName(), ajTables.get(type).getSecond());
+       /* for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.INFORMATION))
+            aboutIt.addTab(type.getTabName(), ajTables.get(type).getSecond());*/
 
 
         menuBar = new JMenuBar();
@@ -95,20 +99,18 @@ public class AboutIt extends JPanel
         switch (type)
         {
 
-            case USERS:
-                table = new AdvancedJTable_users(callback);
-                break;
-            case ROUTERS:
-                table = new AdvancedJTable_routers(callback);
-                break;
+            /*OpenStackNetworkElements of Neutron*/
             case NETWORKS:
                 table = new AdvancedJTable_networks(callback);
                 break;
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
                 break;
-            case INFORMATION:
-                table = new AdvancedJTable_informationProject(callback);
+            case ROUTERS:
+                table = new AdvancedJTable_routers(callback);
+                break;
+            case PORTS:
+                table = new AdvancedJTable_ports(callback);
                 break;
             default:
                 assert false;
@@ -139,11 +141,11 @@ public class AboutIt extends JPanel
     public void updateText(){
         upperText.setText("In this tab you can see the information about the project and the user who has connected OpenStack"+NEWLINE
                         + "Project information: " + NEWLINE
-                        + "ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getId()+ NEWLINE
-                        + "DESCRIPTION : " + callback.getOpenStackNet().getOs().getToken().getProject().getDescription()+ NEWLINE
-                        + "DOMAIN ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getDomainId()+ NEWLINE
-                        + "NAME : " + callback.getOpenStackNet().getOs().getToken().getProject().getName()+ NEWLINE
-                        + "PARENT ID : " + callback.getOpenStackNet().getOs().getToken().getProject().getParentId()+ NEWLINE
+                        + "ID : " + callback.getOpenStackNet().getOSClientV3().getToken().getProject().getId()+ NEWLINE
+                        + "DESCRIPTION : " + callback.getOpenStackNet().getOSClientV3().getToken().getProject().getDescription()+ NEWLINE
+                        + "DOMAIN ID : " + callback.getOpenStackNet().getOSClientV3().getToken().getProject().getDomainId()+ NEWLINE
+                        + "NAME : " + callback.getOpenStackNet().getOSClientV3().getToken().getProject().getName()+ NEWLINE
+                        + "PARENT ID : " + callback.getOpenStackNet().getOSClientV3().getToken().getProject().getParentId()+ NEWLINE
         );
     }
 

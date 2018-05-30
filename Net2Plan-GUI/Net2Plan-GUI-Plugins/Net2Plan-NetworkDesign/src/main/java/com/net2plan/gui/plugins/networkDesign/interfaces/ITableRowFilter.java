@@ -101,16 +101,16 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
-			case ROUTERS:
-				return os.getOpenStackRouters();
-			case USERS:
-				return os.getOpenStackUsers();
+
+			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();
 			case SUBNETS:
 				return os.getOpenStackSubnets();
-			case INFORMATION:
-				return os.getOpenStackInformation();
+			case ROUTERS:
+				return os.getOpenStackRouters();
+			case PORTS:
+				return os.getOpenStackPorts();
 			default:
 				assert false;
 				return new ArrayList<>();
@@ -121,16 +121,15 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
-			case ROUTERS:
-				return os.getOpenStackRouters();
-			case USERS:
-				return os.getOpenStackUsers();
+			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();
 			case SUBNETS:
 				return os.getOpenStackSubnets();
-			case INFORMATION:
-				return os.getOpenStackInformation();
+			case ROUTERS:
+				return os.getOpenStackRouters();
+			case PORTS:
+				return os.getOpenStackPorts();
 			default:
 				assert false;
 				return new ArrayList<>();

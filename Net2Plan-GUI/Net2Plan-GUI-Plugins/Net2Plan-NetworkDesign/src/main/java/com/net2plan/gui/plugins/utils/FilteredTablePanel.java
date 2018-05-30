@@ -3,6 +3,8 @@ package com.net2plan.gui.plugins.utils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -97,5 +99,29 @@ public class FilteredTablePanel extends JPanel
         }
         else
             numEntriesLabel.setText("Number of entries: " + numEntries);
+    }
+
+    public void updateTableSelection(String type,Object value){
+        if(type.equals("String")){
+            String openStackNetworkElementId = ((String) value);
+            if(openStackNetworkElementId!=null){
+                for(int i = 0; i< table.getModel().getRowCount();i++) {
+                    System.out.println(openStackNetworkElementId + "= " + table.getModel().getValueAt(i, 0));
+                    if((openStackNetworkElementId).equals(table.getModel().getValueAt(i, 0))){
+                        table.getSelectionModel().addSelectionInterval(i, i);
+                    }
+                }
+            }
+        }
+        if(type.equals("ArrayList")) {
+            List<String> openStackNetworkElementId = (ArrayList<String>) value;
+            if(openStackNetworkElementId!=null){
+                for (int i = 0; i < table.getModel().getRowCount(); i++) {
+                    if ((openStackNetworkElementId).contains(table.getModel().getValueAt(i, 0))) {
+                        table.getSelectionModel().addSelectionInterval(i, i);
+                    }
+                }
+            }
+        }
     }
 }

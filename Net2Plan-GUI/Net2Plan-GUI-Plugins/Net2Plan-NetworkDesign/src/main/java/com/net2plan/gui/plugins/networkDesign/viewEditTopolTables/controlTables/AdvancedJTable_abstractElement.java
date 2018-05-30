@@ -42,6 +42,7 @@ import com.net2plan.gui.plugins.networkDesign.CellRenderers;
 import com.net2plan.gui.plugins.networkDesign.LastRowAggregatedValue;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.TableColumnComparator;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.utils.AdvancedJTable;
 import com.net2plan.gui.utils.ClassAwareTableModel;
 import com.net2plan.gui.utils.ColumnHeaderToolTips;
@@ -226,6 +227,12 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
     }
 
     protected abstract List<T> getAllAbstractElementsInTable();
+
+    public abstract void generalTableForm(String title,List<String> headers);
+
+    public abstract void updateTab();
+
+    public abstract  void generalTableUpdate(String key, OpenStackNetworkElement osne);
 
     @Override
     public DefaultTableModel getModel()

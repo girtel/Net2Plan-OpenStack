@@ -8,6 +8,7 @@ import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.network.Network;
+import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.OSFactory;
@@ -39,36 +40,30 @@ class TopologyCreator
         /* Empty NetPlan */
         final OpenStackNet osn = new OpenStackNet(callback,os);
 
-        /* Get elements */
-        final List<User> users = (List<User>) os.identity().users().list();
+        /* Get elements of Network(NEUTRON)*/
         final List<Network> networks = (List<Network>) os.networking().network().list();
         final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
         final List<Router> routers = (List<Router>) os.networking().router().list();
+        final List<Port> ports = (List<Port>) os.networking().port().list();
 
 
-        /* Create users objects */
-        for (User user : users)
-            osn.addOpenStackUser(user,user.getId(), user.getName(), user.getDomainId(), user.getEmail(), user.getDescription());
-
+        /* Create OpenStackNetworkElement of Neutron Elements*/
         /* Create networks objects */
         for (Network net : networks)
-            osn.addOpenStackNetwork(net.getId(),net.getName(),net.getStatus(),net.getNetworkType(),net.getNeutronSubnets(),net.getProviderPhyNet(),net.getProviderSegID(),net.getSubnets(),net.getTenantId(),net.isAdminStateUp(),net.isRouterExternal(),net.isShared());
+            osn.addOpenStackNetwork(net);
 
         /* Create subnets objects */
         for (Subnet subnet : subnets)
-            osn.addOpenStackSubnet(subnet.getId(),subnet.getName(),subnet.getAllocationPools(),subnet.getCidr(),subnet.getDnsNames(),subnet.getGateway(),subnet.getHostRoutes(),subnet.getIpVersion(),subnet.getIpv6AddressMode(),subnet.getIpv6RaMode(),subnet.getNetworkId(),subnet.getTenantId(),subnet.isDHCPEnabled());
+            osn.addOpenStackSubnet(subnet);
 
         /* Create routers objects */
-        for (Router router : routers) {
-            osn.addOpenStackRouter(router.getId(), router.getName(), router.getTenantId(), router.getStatus(), router.isAdminStateUp(), router.getDistributed(), router.getRoutes(), router.getExternalGatewayInfo());
-        }
-
-
-        osn.addOpenStackInformation();
-
+        for (Router router : routers)
+            osn.addOpenStackRouter(router);
+        /* Create routers objects */
+        for (Port port : ports)
+            osn.addOpenStackPort(port);
 
         if (routers.isEmpty()) throw new Net2PlanException("The OpenStack topology is empty");
-
 
         osn.distributeTopologyOverCircle();
 
