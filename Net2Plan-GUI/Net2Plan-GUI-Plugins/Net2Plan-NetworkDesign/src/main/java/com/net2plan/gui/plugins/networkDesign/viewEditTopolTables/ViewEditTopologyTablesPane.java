@@ -22,6 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
@@ -38,6 +39,18 @@ public class ViewEditTopologyTablesPane extends JPanel
 
 
     {
+        //Identity (Keystone)
+        USERS("USERS"),
+        PROJECTS("PROJECTS"),
+        DOMAINS("DOMAINS"),
+        ENDPOINTS("ENDPOINTS"),
+        SERVICES("SERVICES"),
+        REGIONS("REGIONS"),
+        CREDENTIALS("CREDENTIALS"),
+        GROUPS("GROUPS"),
+        POLICIES("POLICIES"),
+        ROLES("ROLES"),
+
         //Network (Neutron)
         NETWORKS("NETWORKS"),
         ROUTERS("ROUTERS"),
@@ -62,8 +75,11 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final Map<AJTableType, Pair<AdvancedJTable_networkElement, FilteredTablePanel>> ajTables = new EnumMap<>(AJTableType.class);
     private final JTabbedPane viewEditHighLevelTabbedPane;
 
+    //Identity (Keystone) TabbedPane
+    private final JTabbedPane identityTabbedPane;
     //Network (Neutron) TabbedPane
     private final JTabbedPane networkTabbedPane;
+
     private final JMenuBar menuBar;
     private JTextArea upperText;
 
@@ -98,8 +114,9 @@ public class ViewEditTopologyTablesPane extends JPanel
 
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
 
-        //Inicialice network tabbed pane
+        //Inicialice network-identity tabbed pane
         this.networkTabbedPane = new JTabbedPane();
+        this.identityTabbedPane = new JTabbedPane();
 
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
@@ -122,10 +139,16 @@ public class ViewEditTopologyTablesPane extends JPanel
             ajTables.put(ajType, createPanelComponentInfo(ajType));
 
 
-        /* The rest of high level tabs */
+        /* Identity tabs */
+        for (AJTableType type : Arrays.asList(AJTableType.USERS, AJTableType.PROJECTS,AJTableType.DOMAINS,AJTableType.ENDPOINTS
+                ,AJTableType.SERVICES,AJTableType.REGIONS,AJTableType.CREDENTIALS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.ROLES))
+            identityTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+
+        /* Network tabs */
         for (AJTableType type : Arrays.asList(AJTableType.NETWORKS, AJTableType.SUBNETS,AJTableType.ROUTERS,AJTableType.PORTS))
             networkTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
+        viewEditHighLevelTabbedPane.addTab("IDENTITY",identityTabbedPane);
         viewEditHighLevelTabbedPane.addTab("NETWORK",networkTabbedPane);
 
         menuBar = new JMenuBar();
@@ -138,6 +161,39 @@ public class ViewEditTopologyTablesPane extends JPanel
         AdvancedJTable_networkElement table = null;
         switch (type)
         {
+            /*IDENTITY*/
+            case USERS:
+                table = new AdvancedJTable_users(callback);
+                break;
+            case PROJECTS:
+                table = new AdvancedJTable_projects(callback);
+                break;
+            case DOMAINS:
+                table = new AdvancedJTable_domains(callback);
+                break;
+            case ENDPOINTS:
+                table = new AdvancedJTable_endpoints(callback);
+                break;
+            case SERVICES:
+                table = new AdvancedJTable_services(callback);
+                break;
+            case REGIONS:
+                table = new AdvancedJTable_regions(callback);
+                break;
+            case CREDENTIALS:
+                table = new AdvancedJTable_credentials(callback);
+                break;
+            case GROUPS:
+                table = new AdvancedJTable_groups(callback);
+                break;
+            case POLICIES:
+                table = new AdvancedJTable_policies(callback);
+                break;
+            case ROLES:
+                table = new AdvancedJTable_roles(callback);
+                break;
+
+            /*NETWORK*/
             case NETWORKS:
                 table = new AdvancedJTable_networks(callback);
                 break;
@@ -190,9 +246,20 @@ public class ViewEditTopologyTablesPane extends JPanel
     {
         switch (type)
         {
-            case ROUTERS:
+            case USERS:
+            case PROJECTS:
+            case DOMAINS:
+            case ENDPOINTS:
+            case SERVICES:
+            case REGIONS:
+            case CREDENTIALS:
+            case GROUPS:
+            case POLICIES:
+            case ROLES:
+
             case NETWORKS:
             case SUBNETS:
+            case ROUTERS:
             case PORTS:
                 viewEditHighLevelTabbedPane.setSelectedComponent(ajTables.get(type).getSecond());
                 break;
@@ -202,15 +269,28 @@ public class ViewEditTopologyTablesPane extends JPanel
         }
     }
 
-    public void updateText(String text){ this.upperText.setText(text);
-
-    }
+    public void updateText(String text){ this.upperText.setText(text);}
 
     public void updateViewOfTabAfterDoubleClick (AJTableType ajTableType,Object value, String type, Integer indexSubTab){
 
         final FilteredTablePanel filteredTablePanel;
 
         switch (ajTableType){
+
+            case USERS:
+            case PROJECTS:
+            case DOMAINS:
+            case ENDPOINTS:
+            case SERVICES:
+            case REGIONS:
+            case CREDENTIALS:
+            case GROUPS:
+            case POLICIES:
+            case ROLES:
+                this.identityTabbedPane.setSelectedIndex(indexSubTab);
+                filteredTablePanel = (FilteredTablePanel) this.identityTabbedPane.getSelectedComponent();
+                break;
+
             case NETWORKS:
             case PORTS:
             case SUBNETS:

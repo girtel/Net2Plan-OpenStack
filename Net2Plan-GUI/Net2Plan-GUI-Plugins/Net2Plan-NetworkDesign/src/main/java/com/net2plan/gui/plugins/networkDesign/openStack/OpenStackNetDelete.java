@@ -12,6 +12,38 @@ public class OpenStackNetDelete {
         this.osClientV3 = osClientV3;
     }
 
+    //Identity
+    public void deleteOpenStackUser(String id){
+        this.osClientV3.identity().users().delete(id);
+    }
+    public void deleteOpenStackDomain(String id){
+        this.osClientV3.identity().domains().delete(id);
+    }
+    public void deleteOpenStackEndpoint(String id){
+        this.osClientV3.identity().serviceEndpoints().deleteEndpoint(id);
+    }
+    public void deleteOpenStackGroup(String id){
+        this.osClientV3.identity().groups().delete(id);
+    }
+    public void deleteOpenStackPolicy(String id){
+        this.osClientV3.identity().policies().delete(id);
+    }
+    public void deleteOpenStackProject(String id){
+        this.osClientV3.identity().projects().delete(id);
+    }
+    public void deleteOpenStackRegion(String id){
+        this.osClientV3.identity().regions().delete(id);
+    }
+    public void deleteOpenStackRole(String id){
+        this.osClientV3.identity().roles().delete(id);
+    }
+    public void deleteOpenStackService(String id){
+        this.osClientV3.identity().serviceEndpoints().delete(id);
+    }
+    public void deleteOpenStackCredential(String id){
+        this.osClientV3.identity().credentials().delete(id);
+    }
+
     //Network
     public void deleteOpenStackRouter(String id){
         try{
@@ -53,6 +85,7 @@ public class OpenStackNetDelete {
 
         }
     }
+
     public  void logPanel(){
         JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
     }

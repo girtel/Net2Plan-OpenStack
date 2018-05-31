@@ -101,6 +101,27 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
+			/*OpenStackNetworkElements of KEYSTONE*/
+			case USERS:
+				return os.getOpenStackUsers();
+			case PROJECTS:
+				return os.getOpenStackProjects();
+			case DOMAINS:
+				return os.getOpenStackDomains();
+			case ENDPOINTS:
+				return os.getOpenStackEndpoints();
+			case SERVICES:
+				return os.getOpenStackServices();
+			case REGIONS:
+				return os.getOpenStackRegions();
+			case CREDENTIALS:
+				return os.getOpenStackCredentials();
+			case GROUPS:
+				return os.getOpenStackGroups();
+			case POLICIES:
+				return os.getOpenStackPolicies();
+			case ROLES:
+				return os.getOpenStackRoles();
 
 			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
@@ -121,6 +142,28 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
+			/*OpenStackNetworkElements of KEYSTONE*/
+			case USERS:
+				return os.getOpenStackUsers();
+			case PROJECTS:
+				return os.getOpenStackProjects();
+			case DOMAINS:
+				return os.getOpenStackDomains();
+			case ENDPOINTS:
+				return os.getOpenStackEndpoints();
+			case SERVICES:
+				return os.getOpenStackServices();
+			case REGIONS:
+				return os.getOpenStackRegions();
+			case CREDENTIALS:
+				return os.getOpenStackCredentials();
+			case GROUPS:
+				return os.getOpenStackGroups();
+			case POLICIES:
+				return os.getOpenStackPolicies();
+			case ROLES:
+				return os.getOpenStackRoles();
+
 			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();

@@ -23,6 +23,7 @@ import javax.swing.*;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
@@ -177,11 +178,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         {
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
 
-            if(value.getClass().equals(Boolean.class)) changeValueOfBoolean(columnModelIndexOfClickOrMinus1IfOut);
+            if(value != null) {
+                if (value.getClass().equals(Boolean.class)) changeValueOfBoolean(columnModelIndexOfClickOrMinus1IfOut);
 
-            pickSelectionHyperLink(value,columnModelIndexOfClickOrMinus1IfOut);
+                pickSelectionHyperLink(value, columnModelIndexOfClickOrMinus1IfOut);
 
-            SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
+                SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
+            }
         }
 
     }
@@ -220,6 +223,61 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
 
         switch (ajtType) {
+
+            /*IDENTITY*/
+            case USERS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
+                }
+                break;
+            case PROJECTS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 6) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
+                }
+                break;
+
+            case ENDPOINTS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 7) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",5);
+                }
+                if (columnModelIndexOfClickOrMinus1IfOut == 8) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",4);
+                }
+                break;
+            case SERVICES:
+                if (columnModelIndexOfClickOrMinus1IfOut == 8) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",3);
+                }
+                break;
+            case CREDENTIALS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 3)
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
+
+                if (columnModelIndexOfClickOrMinus1IfOut == 4)
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",1);
+                break;
+            case GROUPS:
+                if (columnModelIndexOfClickOrMinus1IfOut == 5) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
+                }
+                break;
+            case POLICIES:
+                if (columnModelIndexOfClickOrMinus1IfOut == 3) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
+                }
+                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",1);
+                }
+                break;
+
+            case ROLES:
+                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
+                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
+                }
+                break;
+
+
+            /*NETWORK*/
             case NETWORKS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 10) {
                     callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",3);
@@ -234,6 +292,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 if (columnModelIndexOfClickOrMinus1IfOut == 6)
                     callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
                 break;
+
 
         }
     }
@@ -274,6 +333,40 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                  }
 
                 switch (ajtType){
+
+                    /*IDENTIY*/
+                    case USERS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackUser(jsonObject);
+                        break;
+                    case PROJECTS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackProject(jsonObject);
+                        break;
+                    case DOMAINS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackDomain(jsonObject);
+                        break;
+                    case ENDPOINTS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackEndpoint(jsonObject);
+                        break;
+                    case SERVICES:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackService(jsonObject);
+                        break;
+                    case REGIONS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRegion(jsonObject);
+                        break;
+                    case CREDENTIALS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackCredential(jsonObject);
+                        break;
+                    case GROUPS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackGroup(jsonObject);
+                        break;
+                    case POLICIES:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackPolicy(jsonObject);
+                        break;
+                    case ROLES:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRole(jsonObject);
+                        break;
+
+                    /*NETWORK*/
                     case PORTS:
                         callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackPort(jsonObject);
                         break;
@@ -288,8 +381,12 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                         break;
 
                 }
+try {
+    updateTab();
+}catch(Exception ex){
+                    ex.printStackTrace();
 
-                updateTab();
+}
                 jfM.dispose();
             }});
 
@@ -349,6 +446,155 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 switch(ajtType){
+
+                    /*IDENTITY*/
+                    case USERS:
+                        switch (key){
+                            case "Name":
+                                ((OpenStackUser)osne).updateUserName(os_text_change.getText());
+                                break;
+                        }
+                        break;
+                    case PROJECTS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackProject)osne).setProjectName(os_text_change.getText());
+                                break;
+                            case "Parent id":
+                                ((OpenStackProject)osne).setProjectParentId(os_text_change.getText());
+                                break;
+                            case "Domain id":
+                                ((OpenStackProject)osne).setProjectDomainId(os_text_change.getText());
+                                break;
+                            case "Description":
+                                ((OpenStackProject)osne).setProjectDescription(os_text_change.getText());
+                                break;
+                            case "Parents":
+                                ((OpenStackProject)osne).setProjectParents(os_text_change.getText());
+                                break;
+                            case "Subtree":
+                                ((OpenStackProject)osne).setProjectSubtree(os_text_change.getText());
+                                break;
+
+
+                        }
+                        break;
+                    case DOMAINS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackDomain)osne).setDomainName(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case ENDPOINTS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackEndpoint)osne).setEndpointName(os_text_change.getText());
+                                break;
+                            case "Region id":
+                                ((OpenStackEndpoint)osne).setEndpointRegionId(os_text_change.getText());
+                                break;
+                            case "Service id":
+                                ((OpenStackEndpoint)osne).setEndpointServiceId(os_text_change.getText());
+                                break;
+                            case "Type":
+                                ((OpenStackEndpoint)osne).setEndpointType(os_text_change.getText());
+                                break;
+                            case "Description":
+                                ((OpenStackEndpoint)osne).setEndpointDescription(os_text_change.getText());
+                                break;
+                            case "Region name":
+                                ((OpenStackEndpoint)osne).setEndpointRegion(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case SERVICES:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackService)osne).setServiceName(os_text_change.getText());
+                                break;
+                            case "Description":
+                                ((OpenStackService)osne).setServiceDescription(os_text_change.getText());
+                                break;
+                            case "Type":
+                                ((OpenStackService)osne).setServiceType(os_text_change.getText());
+                                break;
+
+
+                        }
+                        break;
+                    case REGIONS:
+                        switch(key){
+                            case "Description":
+                                ((OpenStackRegion)osne).setRegionDescription(os_text_change.getText());
+                                break;
+                            case "Parent id":
+                                ((OpenStackRegion)osne).setParentRegionId(os_text_change.getText());
+                                break;
+
+
+                        }
+                        break;
+                    case CREDENTIALS:
+                        switch(key){
+                            case "Type":
+                                ((OpenStackCredential)osne).setCredentialType(os_text_change.getText());
+                                break;
+                            case "User ID":
+                                ((OpenStackCredential)osne).setCredentialUserId(os_text_change.getText());
+                                break;
+                            case "Project ID":
+                                ((OpenStackCredential)osne).setCredentialProjectId(os_text_change.getText());
+                                break;
+                            case "Blob":
+                                ((OpenStackCredential)osne).setCredentialBlob(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case GROUPS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackGroup)osne).setGroupName(os_text_change.getText());
+                                break;
+                            case "Domain ID":
+                                ((OpenStackGroup)osne).setGroupDomainId(os_text_change.getText());
+                                break;
+                            case "Description":
+                                ((OpenStackGroup)osne).setGroupDescription(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    case POLICIES:
+                        switch(key){
+                            case "User ID":
+                                ((OpenStackPolicy)osne).setPolicyUserId(os_text_change.getText());
+                                break;
+                            case "Project id":
+                                ((OpenStackPolicy)osne).setPolicyProjectId(os_text_change.getText());
+                                break;
+                            case "Type":
+                                ((OpenStackPolicy)osne).setPolicyType(os_text_change.getText());
+                                break;
+                            case "Blob":
+                                ((OpenStackPolicy)osne).setPolicyBlob(os_text_change.getText());
+                                break;
+
+
+                        }
+                        break;
+                    case ROLES:
+                        switch (key){
+                            case "Name":
+                                ((OpenStackRole)osne).setRoleName(os_text_change.getText());
+                                break;
+
+                        }
+                        break;
+                    /*NETWORK*/
                     case PORTS:
                         switch(key){
                             case "Name":
@@ -406,6 +652,38 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
         final SortedSet<T> selectedElements = this.getSelectedElements();
         switch (ajtType){
+            case USERS:
+                OpenStackUser user = ((OpenStackUser)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 7){
+                    user.isUserEnable(!user.isUserEnable());
+                }else{
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+            case DOMAINS:
+                OpenStackDomain domain = ((OpenStackDomain)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 5){
+                    domain.isDomainEnabled(!domain.isDomainEnabled());
+                }else{
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+            case ENDPOINTS:
+                OpenStackEndpoint endpoint = ((OpenStackEndpoint)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 11){
+                   endpoint.isEndpointEnabled(!endpoint.isEndpointEnabled());
+                }else{
+                    System.out.println("No boolean avaliable");
+                }
+                break;
+            case SERVICES:
+                OpenStackService service = ((OpenStackService)selectedElements.iterator().next());
+                if(columnModelIndexOfClickOrMinus1IfOut == 7){
+                    service.isServiceEnabled(!service.isServiceEnabled());
+                }else{
+                    System.out.println("No boolean avaliable");
+                }
+                break;
             case NETWORKS:
                 OpenStackNetwork network = ((OpenStackNetwork)selectedElements.iterator().next());
                 if(columnModelIndexOfClickOrMinus1IfOut == 11){

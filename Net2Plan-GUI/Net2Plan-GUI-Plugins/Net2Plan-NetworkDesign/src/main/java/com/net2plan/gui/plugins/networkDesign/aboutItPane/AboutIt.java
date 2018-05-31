@@ -20,6 +20,7 @@ import javax.swing.*;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
@@ -98,19 +99,50 @@ public class AboutIt extends JPanel
         AdvancedJTable_networkElement table = null;
         switch (type)
         {
+            /*IDENTITY*/
+            case USERS:
+                table = new AdvancedJTable_users(callback);
+                break;
+            case PROJECTS:
+                table = new AdvancedJTable_projects(callback);
+                break;
+            case DOMAINS:
+                table = new AdvancedJTable_domains(callback);
+                break;
+            case ENDPOINTS:
+                table = new AdvancedJTable_endpoints(callback);
+                break;
+            case SERVICES:
+                table = new AdvancedJTable_services(callback);
+                break;
+            case REGIONS:
+                table = new AdvancedJTable_regions(callback);
+                break;
+            case CREDENTIALS:
+                table = new AdvancedJTable_credentials(callback);
+                break;
+            case GROUPS:
+                table = new AdvancedJTable_groups(callback);
+                break;
+            case POLICIES:
+                table = new AdvancedJTable_policies(callback);
+                break;
+            case ROLES:
+                table = new AdvancedJTable_roles(callback);
+                break;
 
-            /*OpenStackNetworkElements of Neutron*/
+            /*NETWORK*/
             case NETWORKS:
                 table = new AdvancedJTable_networks(callback);
-                break;
-            case SUBNETS:
-                table = new AdvancedJTable_subnets(callback);
                 break;
             case ROUTERS:
                 table = new AdvancedJTable_routers(callback);
                 break;
             case PORTS:
                 table = new AdvancedJTable_ports(callback);
+                break;
+            case SUBNETS:
+                table = new AdvancedJTable_subnets(callback);
                 break;
             default:
                 assert false;

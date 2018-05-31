@@ -37,14 +37,13 @@ public class OpenStackRouter extends OpenStackNetworkElement
 
         if(router.getName().equals("router1")) {
             try {
-                System.out.println("Nsme");
+
                 npNode2.setUrlNodeIcon( osn.getNetPlan().getNetworkLayerDefault(),new URL("https://findicons.com/files/icons/1035/human_o2/128/router_gnome_netstatus_75_100.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
             try {
-                System.out.println("Nsme");
                 npNode2.setUrlNodeIcon( osn.getNetPlan().getNetworkLayerDefault(),new URL("http://www.myiconfinder.com/uploads/iconsets/256-256-ab5e2d6a7b779ce5a246fb00a5f163f6-router.png"));
             } catch (Exception e) {
                 e.printStackTrace();
