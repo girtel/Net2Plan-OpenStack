@@ -86,6 +86,21 @@ public class OpenStackNetDelete {
         }
     }
 
+    //Compute
+    public void deleteOpenStackFlavor(String id){
+        this.osClientV3.compute().flavors().delete(id);
+    }
+    public void deleteOpenStackFloatingIp(String id){
+        this.osClientV3.compute().floatingIps().removeFloatingIP(id,"");
+    }
+    public void deleteOpenStackKeypair(String id){
+        this.osClientV3.compute().keypairs().delete(id);
+    }
+    public void deleteOpenStackSecurityGroup(String id){
+        this.osClientV3.compute().securityGroups().delete(id);
+    }
+
+
     public  void logPanel(){
         JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
     }

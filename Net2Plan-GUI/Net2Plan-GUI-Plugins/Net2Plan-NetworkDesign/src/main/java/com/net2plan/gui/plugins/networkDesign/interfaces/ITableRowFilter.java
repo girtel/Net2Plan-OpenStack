@@ -132,6 +132,28 @@ public abstract class ITableRowFilter
 				return os.getOpenStackRouters();
 			case PORTS:
 				return os.getOpenStackPorts();
+
+			/*OpenStackNetworkElements of NOVA*/
+			case SERVERS:
+				return os.getOpenStackServers();
+			case FLAVORS:
+				return os.getOpenStackFlavor();
+			case IMAGES:
+				return os.getOpenStackImages();
+			case FLOATINGIPS:
+				return os.getOpenStackFloatingIpDns();
+			case KEYPAIRS:
+				return os.getOpenStackKeypairs();
+			case SECURITYGROUPS:
+				return os.getOpenStackSecurityGroups();
+
+			/*OpenStackNetworkElements of INFORMATION*/
+			case THISPROJECT:
+				return os.getOpenStackInformationProject();
+			case THISUSER:
+				return os.getOpenStackInformationUser();
+			case SUMMARY:
+				return os.getOpenStackSummary();
 			default:
 				assert false;
 				return new ArrayList<>();
@@ -173,6 +195,30 @@ public abstract class ITableRowFilter
 				return os.getOpenStackRouters();
 			case PORTS:
 				return os.getOpenStackPorts();
+
+			/*OpenStackNetworkElements of NOVA*/
+			case SERVERS:
+				return os.getOpenStackServers();
+			case FLAVORS:
+				return os.getOpenStackFlavor();
+			case IMAGES:
+				return os.getOpenStackImages();
+			case FLOATINGIPS:
+				return os.getOpenStackFloatingIpDns();
+			case KEYPAIRS:
+				return os.getOpenStackKeypairs();
+			case SECURITYGROUPS:
+				return os.getOpenStackSecurityGroups();
+
+
+			/*OpenStackNetworkElements of INFORMATION*/
+			case THISPROJECT:
+				return os.getOpenStackInformationProject();
+			case THISUSER:
+				return os.getOpenStackInformationUser();
+			case SUMMARY:
+				return os.getOpenStackSummary();
+
 			default:
 				assert false;
 				return new ArrayList<>();

@@ -4,8 +4,12 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import java.util.List;
+
+import org.openstack4j.api.OSClient;
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.api.OSClient.OSClientV2;
 import org.openstack4j.model.common.Identifier;
+import org.openstack4j.model.compute.*;
 import org.openstack4j.model.identity.v3.*;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
@@ -24,12 +28,13 @@ class TopologyCreator
 
     TopologyCreator(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name, String os_user_domain_name , String os_project_domain_id)
     {
-
+        OSFactory.enableHttpLoggingFilter(true);
             os = OSFactory.builderV3()
                     .endpoint(os_auth_url)
                     .credentials(os_username, os_password, Identifier.byName(os_user_domain_name))
                     .scopeToProject(Identifier.byName(os_project_name), Identifier.byId(os_project_domain_id))
                     .authenticate();
+
 
             this.callback = callback;
     }
@@ -58,8 +63,16 @@ class TopologyCreator
         final List<Router> routers = (List<Router>) os.networking().router().list();
         final List<Port> ports = (List<Port>) os.networking().port().list();
 
+        /*Get elements of Compute(NOVA)*/
+        final List<Server> servers = (List<Server>) os.compute().servers().list();
+        final List<Flavor> flavors = (List<Flavor>) os.compute().flavors().list();
+        final List<? extends FloatingIP> floatingIPS = (List<? extends FloatingIP>) os.compute().floatingIps().list();
+        final List<Image> images = (List<Image>) os.compute().images().list();
+        final List<Keypair> keypairs = (List<Keypair>) os.compute().keypairs().list();
+        final List<? extends SecGroupExtension> secGroupExtensions = os.compute().securityGroups().list();
 
-        /* Create OpenStackNetworkElement of Keystone Elements*/
+
+         /* Create OpenStackNetworkElement of Keystone Elements*/
         /* Create User objects */
         for (User user : users)
             osn.addOpenStackUser(user);
@@ -115,6 +128,37 @@ class TopologyCreator
         /* Create routers objects */
         for (Port port : ports)
             osn.addOpenStackPort(port);
+
+        /* Create OpenStackNetworkElement of Nova Elements*/
+        /* Create server objects */
+        for (Server server : servers) {
+            osn.addOpenStackServer(server);
+        }
+        /* Create flavor objects */
+       for (Flavor flavor : flavors) {
+            osn.addOpenStackFlavor(flavor);
+        }
+        /* Create image objects */
+        for (Image image : images) {
+            osn.addOpenStackImage(image);
+        }
+        /* Create fIP objects */
+        for (FloatingIP floatingIP : floatingIPS) {
+            osn.addOpenStackFloatingIP(floatingIP);
+        }
+        /* Create keypair objects */
+        for (Keypair keypair : keypairs) {
+            osn.addOpenStackKeypair(keypair);
+        }
+        /* Create secgroup objects */
+        for (SecGroupExtension secGroupExtension : secGroupExtensions) {
+            osn.addOpenStackSecurityGroup(secGroupExtension);
+        }
+
+
+        osn.addInformationOfThisProject();
+        osn.addInformationOfThisUser();
+        osn.addSummary();
 
         if (routers.isEmpty()) throw new Net2PlanException("The OpenStack topology is empty");
 

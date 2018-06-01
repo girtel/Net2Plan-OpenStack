@@ -20,7 +20,11 @@ import javax.swing.*;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_summary;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisProject;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisUser;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
@@ -48,6 +52,10 @@ public class AboutIt extends JPanel
     private final JTabbedPane aboutIt;
     private final JMenuBar menuBar;
 
+    //Information TabbedPane
+    private final JTabbedPane informationTabbedPane;
+    private final JTabbedPane summaryTabbedPane;
+
     public AboutIt(GUINetworkDesign callback)
     {
         super();
@@ -67,6 +75,8 @@ public class AboutIt extends JPanel
         this.setLayout(new BorderLayout());
 
         this.aboutIt = new JTabbedPane();
+        this.informationTabbedPane = new JTabbedPane();
+        this.summaryTabbedPane = new JTabbedPane();
 
         final JSplitPane splitPane = new JSplitPane();
         splitPane.setBottomComponent(upperText);
@@ -85,9 +95,15 @@ public class AboutIt extends JPanel
 
 
         /* The rest of high level tabs */
-       /* for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.INFORMATION))
-            aboutIt.addTab(type.getTabName(), ajTables.get(type).getSecond());*/
+       for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.THISPROJECT,ViewEditTopologyTablesPane.AJTableType.THISUSER))
+            informationTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
+        /* The rest of high level tabs */
+        for (ViewEditTopologyTablesPane.AJTableType type : Arrays.asList(ViewEditTopologyTablesPane.AJTableType.SUMMARY))
+            aboutIt.addTab(type.getTabName(), ajTables.get(type).getSecond());
+
+       aboutIt.addTab("INFORMATION",informationTabbedPane);
+     //  aboutIt.addTab("SUMMARY",summaryTabbedPane);
 
         menuBar = new JMenuBar();
 
@@ -144,6 +160,39 @@ public class AboutIt extends JPanel
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
                 break;
+
+
+            /*COMPUTE*/
+            case SERVERS:
+                table = new AdvancedJTable_servers(callback);
+                break;
+            case FLAVORS:
+                table = new AdvancedJTable_flavors(callback);
+                break;
+            case IMAGES:
+                table = new AdvancedJTable_images(callback);
+                break;
+            case FLOATINGIPS:
+                table = new AdvancedJTable_floatingIp(callback);
+                break;
+            case KEYPAIRS:
+                table = new AdvancedJTable_keypairs(callback);
+                break;
+            case SECURITYGROUPS:
+                table = new AdvancedJTable_securityGroups(callback);
+                break;
+
+            /*INFORMATION*/
+            case THISPROJECT:
+                table = new AdvancedJTable_thisProject(callback);
+                break;
+            case THISUSER:
+                table = new AdvancedJTable_thisUser(callback);
+                break;
+            case SUMMARY:
+                table = new AdvancedJTable_summary(callback);
+                break;
+
             default:
                 assert false;
         }
@@ -151,6 +200,7 @@ public class AboutIt extends JPanel
 
         return Pair.of(table, new FilteredTablePanel(callback, table.getTableScrollPane()));
     }
+
 
     public void updateView()
     {

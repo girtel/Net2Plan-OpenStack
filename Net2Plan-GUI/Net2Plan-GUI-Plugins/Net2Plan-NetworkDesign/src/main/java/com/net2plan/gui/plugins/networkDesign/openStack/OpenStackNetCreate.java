@@ -4,9 +4,15 @@ import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.Facing;
+import org.openstack4j.model.common.Payload;
+import org.openstack4j.model.common.Payloads;
+import org.openstack4j.model.image.ContainerFormat;
+import org.openstack4j.model.image.DiskFormat;
+import org.openstack4j.model.image.Image;
 import org.openstack4j.model.network.IPVersionType;
 
 import javax.swing.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -218,7 +224,59 @@ public class OpenStackNetCreate{
 
         }
     }
+
+
+    //Create compute elements in OpenStack
+    public void createOpenStackServer(JSONObject information){
+
+        String serverName = information.getString("Name");
+
+        this.osClientV3.compute().servers().serverBuilder()
+                .name(serverName)
+                .build();
+    }
+    public void createOpenStackFlavor(JSONObject information){
+
+        String flavorName= information.getString("Name");
+        int flavorRam= Integer.parseInt(information.getString("Ram"));
+        int flavorVcpus= Integer.parseInt(information.getString("Vcpus"));
+        this.osClientV3.compute().flavors().create(Builders.flavor()
+                .name(flavorName)
+                .vcpus(flavorVcpus)
+                .ram(flavorRam)
+                .build());
+    }
+    public void createOpenStackFloatingIp(JSONObject information){
+        String floIpServerIp = information.getString("Server IP");
+        String floIp = information.getString("Floating IP");
+        this.osClientV3.compute().floatingIps().addFloatingIP(floIpServerIp,floIp);
+    }
+    public void createOpenStackKeypair(JSONObject information){
+        String keypairName = information.getString("Name");
+        this.osClientV3.compute().keypairs().create(keypairName,null);
+    }
+    public void createOpenStackSecurityGroup(JSONObject information){
+        String securityGroupName = information.getString("Name");
+        String securityGroupDescription = information.getString("Description");
+        this.osClientV3.compute().securityGroups().create(securityGroupName,securityGroupDescription);
+    }
+    public void createOpenStackImage(){
+        Payload<URL> payload = null;
+        try {
+            payload = Payloads.create(new URL(new File("").toString()));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Image image = this.osClientV3.images().create(Builders.image()
+                .name("Cirros 0.3.0 x64")
+                .isPublic(true)
+                .containerFormat(ContainerFormat.BARE)
+                .diskFormat(DiskFormat.QCOW2)
+                .build(), payload);
+    }
     public  void logPanel(){
         JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
     }
+
 }

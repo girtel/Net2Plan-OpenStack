@@ -3,7 +3,11 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.information.OpenStackInformationProject;
+import com.net2plan.gui.plugins.networkDesign.openStack.information.OpenStackInformationUser;
+import com.net2plan.gui.plugins.networkDesign.openStack.information.OpenStackSummary;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import java.awt.geom.Point2D;
@@ -13,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.model.compute.*;
+import org.openstack4j.model.compute.FloatingIP;
+import org.openstack4j.model.compute.SecurityGroup;
 import org.openstack4j.model.identity.v3.*;
 import org.openstack4j.model.network.*;
 
@@ -49,7 +56,18 @@ public class OpenStackNet
     public final List<OpenStackRouter> openStackRouters = new ArrayList<> ();
     public final List<OpenStackPort> openStackPorts = new ArrayList<> ();
 
+    /*List of OpenStackNetworkElements of NOVA*/
+    public final List<OpenStackServer> openStackServers = new ArrayList<> ();
+    public final List<OpenStackFlavor> openStackFlavors = new ArrayList<> ();
+    public final List<OpenStackFloatingIp> openStackFloatingIps = new ArrayList<> ();
+    public final List<OpenStackImage> openStackImages = new ArrayList<> ();
+    public final List<OpenStackKeypair> openStackKeypairs = new ArrayList<> ();
+    public final List<OpenStackSecurityGroup> openStackSecurityGroups = new ArrayList<> ();
 
+    /*List of openstacknetworkelements of information*/
+    public final List<OpenStackInformationProject> openStackInformationProject = new ArrayList<> ();
+    public final List<OpenStackInformationUser> openStackInformationUser = new ArrayList<> ();
+    public final List<OpenStackSummary> openStackSummaries = new ArrayList<> ();
     public final  NetPlan getNetPlan () { return np; }
 
     public OpenStackNet()
@@ -203,6 +221,73 @@ public class OpenStackNet
         return res;
     }
 
+    /* Add OpenStackNetworkElements of Neutron*/
+    public OpenStackServer addOpenStackServer(Server server)
+    {
+        final OpenStackServer res = OpenStackServer.createFromAddServer(this,server);
+        if(openStackServers.contains(res)) return res;
+        openStackServers.add(res);
+        return res;
+    }
+    public OpenStackFlavor addOpenStackFlavor(Flavor flavor)
+    {
+        final OpenStackFlavor res = OpenStackFlavor.createFromAddFlavor(this,flavor);
+        if(openStackFlavors.contains(res)) return res;
+        openStackFlavors.add(res);
+        return res;
+    }
+    public OpenStackImage addOpenStackImage(Image image)
+    {
+        final OpenStackImage res = OpenStackImage.createFromAddImage(this,image);
+        if(openStackImages.contains(res)) return res;
+        openStackImages.add(res);
+        return res;
+    }
+    public OpenStackFloatingIp addOpenStackFloatingIP(FloatingIP floatingIP)
+    {
+        final OpenStackFloatingIp res = OpenStackFloatingIp.createFromAddFloatingIp(this,floatingIP);
+        if(openStackFloatingIps.contains(res)) return res;
+        openStackFloatingIps.add(res);
+        return res;
+    }
+
+    public OpenStackKeypair addOpenStackKeypair(Keypair keypair)
+    {
+
+        final OpenStackKeypair res = OpenStackKeypair.createFromAddKeypair(this,keypair);
+        if(openStackKeypairs.contains(res)) return res;
+        openStackKeypairs.add(res);
+        return res;
+    }
+
+    public OpenStackSecurityGroup addOpenStackSecurityGroup(SecGroupExtension securityGroup)
+    {
+        final OpenStackSecurityGroup res = OpenStackSecurityGroup.createFromAddSegurityGroup(this,securityGroup);
+        if(openStackSecurityGroups.contains(res)) return res;
+        openStackSecurityGroups.add(res);
+        return res;
+    }
+
+
+    /*Information*/
+    public OpenStackInformationProject addInformationOfThisProject(){
+        final OpenStackInformationProject res = OpenStackInformationProject.createFromAddInformationProject(this,this.os.getToken().getProject());
+        if(openStackInformationProject.contains(res)) return res;
+        openStackInformationProject.add(res);
+        return res;
+    }
+    public OpenStackInformationUser addInformationOfThisUser(){
+        final OpenStackInformationUser res = OpenStackInformationUser.createFromAddInformationUser(this,this.os.getToken().getUser());
+        if(openStackInformationUser.contains(res)) return res;
+        openStackInformationUser.add(res);
+        return res;
+    }
+    public OpenStackSummary addSummary(){
+        final OpenStackSummary res = OpenStackSummary.createFromAddSummary(this,this.os);
+        if(openStackSummaries.contains(res)) return res;
+        openStackSummaries.add(res);
+        return res;
+    }
 
     public String getTopologyName () { return np.getNetPlan().getNetworkName(); }
     public String getTopologyDescription () { return np.getNetPlan().getNetworkDescription(); }
@@ -228,6 +313,19 @@ public class OpenStackNet
     public List<OpenStackRouter> getOpenStackRouters () { return Collections.unmodifiableList(openStackRouters); }
     public List<OpenStackPort> getOpenStackPorts () { return Collections.unmodifiableList(openStackPorts); }
 
+    /*Get list from OpenStackNetworkElements of NEUTRON*/
+    public List<OpenStackServer> getOpenStackServers () { return Collections.unmodifiableList(openStackServers); }
+    public List<OpenStackFlavor> getOpenStackFlavor () { return Collections.unmodifiableList(openStackFlavors); }
+    public List<OpenStackImage> getOpenStackImages () { return Collections.unmodifiableList(openStackImages); }
+    public List<OpenStackFloatingIp> getOpenStackFloatingIpDns () { return Collections.unmodifiableList(openStackFloatingIps); }
+    public List<OpenStackKeypair> getOpenStackKeypairs () { return Collections.unmodifiableList(openStackKeypairs); }
+    public List<OpenStackSecurityGroup> getOpenStackSecurityGroups () { return Collections.unmodifiableList(openStackSecurityGroups); }
+
+    /*Get list from OpenStackNetworkElements of information*/
+    public List<OpenStackInformationProject> getOpenStackInformationProject () { return Collections.unmodifiableList(openStackInformationProject); }
+    public List<OpenStackInformationUser> getOpenStackInformationUser () { return Collections.unmodifiableList(openStackInformationUser); }
+    public List<OpenStackSummary> getOpenStackSummary () { return Collections.unmodifiableList(openStackSummaries); }
+
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId)
     {
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
@@ -250,6 +348,19 @@ public class OpenStackNet
         allOpenStackNetworkElements.addAll(openStackSubnets);
         allOpenStackNetworkElements.addAll(openStackRouters);
         allOpenStackNetworkElements.addAll(openStackPorts);
+
+        /*OpenStackNetworkElements of Neutron*/
+        allOpenStackNetworkElements.addAll(openStackServers);
+        allOpenStackNetworkElements.addAll(openStackFlavors);
+        allOpenStackNetworkElements.addAll(openStackImages);
+        allOpenStackNetworkElements.addAll(openStackFloatingIps);
+        allOpenStackNetworkElements.addAll(openStackKeypairs);
+        allOpenStackNetworkElements.addAll(openStackSecurityGroups);
+
+        /*OpenStackNetworkElements of information*/
+        allOpenStackNetworkElements.addAll(openStackInformationProject);
+        allOpenStackNetworkElements.addAll(openStackInformationUser);
+        allOpenStackNetworkElements.addAll(openStackSummaries);
 
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getId() == openStackId).findFirst();
         if (element.isPresent()) return element.get();
@@ -298,6 +409,19 @@ public class OpenStackNet
         openStackPorts.clear();
         openStackSubnets.clear();
 
+        /*Clear Nova list*/
+        openStackServers.clear();
+        openStackFlavors.clear();
+        openStackImages.clear();
+        openStackFloatingIps.clear();
+        openStackKeypairs.clear();
+        openStackSecurityGroups.clear();
+
+        /*Clear information list*/
+        openStackInformationUser.clear();
+        openStackInformationProject.clear();
+        openStackSummaries.clear();
+
         callback.getDesign().removeAllNodes();
 
         /* Get elements of Identity(Keystone)*/
@@ -317,6 +441,14 @@ public class OpenStackNet
         final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
         final List<Router> routers = (List<Router>) os.networking().router().list();
         final List<Port> ports = (List<Port>) os.networking().port().list();
+
+        /*Get elements of Compute(NOVA)*/
+        final List<Server> servers = (List<Server>) os.compute().servers().list();
+        final List<Flavor> flavors = (List<Flavor>) os.compute().flavors().list();
+        final List<? extends FloatingIP> floatingIPS = (List<? extends FloatingIP>) os.compute().floatingIps().list();
+        final List<Image> images = (List<Image>) os.compute().images().list();
+        final List<Keypair> keypairs = (List<Keypair>) os.compute().keypairs().list();
+        final List<? extends SecGroupExtension> secGroupExtensions = os.compute().securityGroups().list();
 
         /* Create OpenStackNetworkElement of Keystone Elements*/
         /* Create User objects */
@@ -374,6 +506,36 @@ public class OpenStackNet
         /* Create routers objects */
         for (Port port : ports)
             addOpenStackPort(port);
+
+        /* Create OpenStackNetworkElement of Nova Elements*/
+        /* Create server objects */
+        for (Server server : servers) {
+            addOpenStackServer(server);
+        }
+        /* Create flavor objects */
+        for (Flavor flavor : flavors) {
+            addOpenStackFlavor(flavor);
+        }
+        /* Create image objects */
+        for (Image image : images) {
+            addOpenStackImage(image);
+        }
+        /* Create fIP objects */
+        for (FloatingIP floatingIP : floatingIPS) {
+            addOpenStackFloatingIP(floatingIP);
+        }
+        /* Create keypair objects */
+        for (Keypair keypair : keypairs) {
+            addOpenStackKeypair(keypair);
+        }
+        /* Create secgroup objects */
+        for (SecGroupExtension secGroupExtension : secGroupExtensions) {
+            addOpenStackSecurityGroup(secGroupExtension);
+        }
+
+        addInformationOfThisProject();
+        addInformationOfThisUser();
+        addSummary();
 
         distributeTopologyOverCircle();
     }

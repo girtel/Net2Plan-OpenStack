@@ -380,6 +380,23 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                         callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRouter(jsonObject);
                         break;
 
+                    /*COMPUTE*/
+                    case SERVERS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackServer(jsonObject);
+                        break;
+                    case FLAVORS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackFlavor(jsonObject);
+                        break;
+                    case FLOATINGIPS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackFloatingIp(jsonObject);
+                        break;
+                    case KEYPAIRS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackKeypair(jsonObject);
+                        break;
+                    case SECURITYGROUPS:
+                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackSecurityGroup(jsonObject);
+                        break;
+
                 }
 try {
     updateTab();

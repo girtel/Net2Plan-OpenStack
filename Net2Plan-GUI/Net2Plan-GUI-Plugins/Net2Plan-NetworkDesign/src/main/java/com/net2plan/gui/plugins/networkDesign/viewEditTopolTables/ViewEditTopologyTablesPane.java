@@ -22,7 +22,11 @@ import javax.swing.event.ChangeListener;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_summary;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisProject;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisUser;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
@@ -31,6 +35,7 @@ import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
 
 @SuppressWarnings("unchecked")
 public class ViewEditTopologyTablesPane extends JPanel
@@ -55,7 +60,22 @@ public class ViewEditTopologyTablesPane extends JPanel
         NETWORKS("NETWORKS"),
         ROUTERS("ROUTERS"),
         PORTS("PORTS"),
-        SUBNETS("SUBNETS");
+        SUBNETS("SUBNETS"),
+
+        //Compute (Nova)
+        SERVERS("SERVERS"),
+        FLAVORS("FLAVORS"),
+        IMAGES("IMAGES"),
+        FLOATINGIPS("FLOATINGIPS"),
+        KEYPAIRS("KEYPAIRS"),
+        SECURITYGROUPS("SEGURITYGROUPS"),
+
+
+        //Information
+        THISPROJECT("PROJECT"),
+        THISUSER("USER"),
+        SUMMARY("SUMMARY")
+        ;
 
         private final String tabName;
 
@@ -79,6 +99,8 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final JTabbedPane identityTabbedPane;
     //Network (Neutron) TabbedPane
     private final JTabbedPane networkTabbedPane;
+    //Compute (Nova) TabbedPane
+    private final JTabbedPane computeTabbedPane;
 
     private final JMenuBar menuBar;
     private JTextArea upperText;
@@ -114,9 +136,10 @@ public class ViewEditTopologyTablesPane extends JPanel
 
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
 
-        //Inicialice network-identity tabbed pane
+        //Inicialice network-identity-compute tabbed pane
         this.networkTabbedPane = new JTabbedPane();
         this.identityTabbedPane = new JTabbedPane();
+        this.computeTabbedPane = new JTabbedPane();
 
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
@@ -148,8 +171,13 @@ public class ViewEditTopologyTablesPane extends JPanel
         for (AJTableType type : Arrays.asList(AJTableType.NETWORKS, AJTableType.SUBNETS,AJTableType.ROUTERS,AJTableType.PORTS))
             networkTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
+        /* Compute tabs */
+        for (AJTableType type : Arrays.asList(AJTableType.SERVERS, AJTableType.FLAVORS,AJTableType.IMAGES,AJTableType.FLOATINGIPS,AJTableType.KEYPAIRS,AJTableType.SECURITYGROUPS))
+            computeTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+
         viewEditHighLevelTabbedPane.addTab("IDENTITY",identityTabbedPane);
         viewEditHighLevelTabbedPane.addTab("NETWORK",networkTabbedPane);
+        viewEditHighLevelTabbedPane.addTab("COMPUTE",computeTabbedPane);
 
         menuBar = new JMenuBar();
 
@@ -206,6 +234,39 @@ public class ViewEditTopologyTablesPane extends JPanel
             case SUBNETS:
                 table = new AdvancedJTable_subnets(callback);
                 break;
+
+
+            /*COMPUTE*/
+            case SERVERS:
+                table = new AdvancedJTable_servers(callback);
+                break;
+            case FLAVORS:
+                table = new AdvancedJTable_flavors(callback);
+                break;
+            case IMAGES:
+                table = new AdvancedJTable_images(callback);
+                break;
+            case FLOATINGIPS:
+                table = new AdvancedJTable_floatingIp(callback);
+                break;
+            case KEYPAIRS:
+                table = new AdvancedJTable_keypairs(callback);
+                break;
+            case SECURITYGROUPS:
+                table = new AdvancedJTable_securityGroups(callback);
+                break;
+
+
+            /*INFORMATION*/
+            case THISPROJECT:
+                table = new AdvancedJTable_thisProject(callback);
+                break;
+            case THISUSER:
+                table = new AdvancedJTable_thisUser(callback);
+                break;
+            case SUMMARY:
+                table = new AdvancedJTable_summary(callback);
+                break;
             default:
                 assert false;
         }
@@ -246,6 +307,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     {
         switch (type)
         {
+            /*identity*/
             case USERS:
             case PROJECTS:
             case DOMAINS:
@@ -257,12 +319,29 @@ public class ViewEditTopologyTablesPane extends JPanel
             case POLICIES:
             case ROLES:
 
+            /*network*/
             case NETWORKS:
             case SUBNETS:
             case ROUTERS:
             case PORTS:
+
+            /*compute*/
+            case SERVERS:
+            case FLAVORS:
+            case IMAGES:
+            case FLOATINGIPS:
+            case KEYPAIRS:
+            case SECURITYGROUPS:
+
+            case THISPROJECT:
+            case THISUSER:
+            case SUMMARY:
+
                 viewEditHighLevelTabbedPane.setSelectedComponent(ajTables.get(type).getSecond());
                 break;
+
+
+
             default:
                 System.out.println(type);
                 assert false;
@@ -297,6 +376,17 @@ public class ViewEditTopologyTablesPane extends JPanel
             case ROUTERS:
                 this.networkTabbedPane.setSelectedIndex(indexSubTab);
                 filteredTablePanel = (FilteredTablePanel) this.networkTabbedPane.getSelectedComponent();
+                break;
+
+            /*compute*/
+            case SERVERS:
+            case FLAVORS:
+            case IMAGES:
+            case FLOATINGIPS:
+            case KEYPAIRS:
+            case SECURITYGROUPS:
+                this.computeTabbedPane.setSelectedIndex(indexSubTab);
+                filteredTablePanel = (FilteredTablePanel) this.computeTabbedPane.getSelectedComponent();
                 break;
 
             default:
