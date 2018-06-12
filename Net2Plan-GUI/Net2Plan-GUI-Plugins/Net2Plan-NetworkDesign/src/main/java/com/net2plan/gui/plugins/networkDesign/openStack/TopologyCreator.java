@@ -3,11 +3,15 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.api.OSClient.OSClientV2;
+import org.openstack4j.api.types.Facing;
+import org.openstack4j.core.transport.Config;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.compute.*;
 import org.openstack4j.model.identity.v3.*;
@@ -16,6 +20,10 @@ import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.OSFactory;
+import org.openstack4j.openstack.identity.v2.domain.KeystoneService;
+
+import static edu.emory.mathcs.utils.ConcurrencyUtils.setNumberOfThreads;
+import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 /**
  *
@@ -23,31 +31,50 @@ import org.openstack4j.openstack.OSFactory;
  */
 class TopologyCreator
 {
-    private final OSClientV3 os;
+    private  OSClientV3 os,os_admin,os_public,os_internal;
     private final GUINetworkDesign callback;
 
     TopologyCreator(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name, String os_user_domain_name , String os_project_domain_id)
     {
         OSFactory.enableHttpLoggingFilter(true);
+
+
             os = OSFactory.builderV3()
                     .endpoint(os_auth_url)
+                    .perspective(Facing.INTERNAL)
                     .credentials(os_username, os_password, Identifier.byName(os_user_domain_name))
                     .scopeToProject(Identifier.byName(os_project_name), Identifier.byId(os_project_domain_id))
                     .authenticate();
 
+         Token token = os.getToken();
 
-            this.callback = callback;
+        /* MyRunnable newR = new MyRunnable(token);
+         submit(newR);
+
+         os_admin=os;
+         os_public=os;
+         os_internal= newR.getClientV3();*/
+
+        os_admin=os;
+        os_public=os;
+        os_internal= os;
+        this.callback = callback;
     }
 
 
+
+    public void change(OSClientV3 clientV3){
+        this.os_internal=clientV3;
+    }
+
     OpenStackNet getOpenStackNet()
     {
-        /* Empty NetPlan */
+         /* Empty NetPlan */
         final OpenStackNet osn = new OpenStackNet(callback,os);
 
         /* Get elements of Identity(Keystone)*/
         final List<User> users = (List<User>) os.identity().users().list();
-        final List<? extends Project> projects = (List<? extends Project>)os.identity().tokens().getProjectScopes(os.getToken().getUser().getId());
+        final List<? extends Project> projects = os.identity().projects().list();
         final List<Domain> domains = (List<Domain>) os.identity().domains().list();
         final List<Endpoint> endpoints = (List<Endpoint>) os.identity().serviceEndpoints().listEndpoints();
         final List<Service> services = (List<Service>) os.identity().serviceEndpoints().list();
@@ -58,18 +85,18 @@ class TopologyCreator
         final List<Role> roles = (List<Role>)os.identity().roles().list();
 
         /* Get elements of Network(NEUTRON)*/
-        final List<Network> networks = (List<Network>) os.networking().network().list();
-        final List<Subnet> subnets = (List<Subnet>) os.networking().subnet().list();
-        final List<Router> routers = (List<Router>) os.networking().router().list();
-        final List<Port> ports = (List<Port>) os.networking().port().list();
+        final List<Network> networks = (List<Network>) os_internal.networking().network().list();
+        final List<Subnet> subnets = (List<Subnet>) os_internal.networking().subnet().list();
+        final List<Router> routers = (List<Router>) os_internal.networking().router().list();
+        final List<Port> ports = (List<Port>) os_internal.networking().port().list();
 
         /*Get elements of Compute(NOVA)*/
-        final List<Server> servers = (List<Server>) os.compute().servers().list();
-        final List<Flavor> flavors = (List<Flavor>) os.compute().flavors().list();
-        final List<? extends FloatingIP> floatingIPS = (List<? extends FloatingIP>) os.compute().floatingIps().list();
-        final List<Image> images = (List<Image>) os.compute().images().list();
-        final List<Keypair> keypairs = (List<Keypair>) os.compute().keypairs().list();
-        final List<? extends SecGroupExtension> secGroupExtensions = os.compute().securityGroups().list();
+        final List<Server> servers = (List<Server>) os_internal.compute().servers().list();
+        final List<Flavor> flavors = (List<Flavor>) os_internal.compute().flavors().list();
+        final List<? extends FloatingIP> floatingIPS = (List<? extends FloatingIP>) os_internal.compute().floatingIps().list();
+        final List<Image> images = (List<Image>) os_internal.compute().images().list();
+        final List<Keypair> keypairs = (List<Keypair>) os_internal.compute().keypairs().list();
+        final List<? extends SecGroupExtension> secGroupExtensions = os_internal.compute().securityGroups().list();
 
 
          /* Create OpenStackNetworkElement of Keystone Elements*/
@@ -160,7 +187,7 @@ class TopologyCreator
         osn.addInformationOfThisUser();
         osn.addSummary();
 
-        if (routers.isEmpty()) throw new Net2PlanException("The OpenStack topology is empty");
+        //if (routers.isEmpty()) throw new Net2PlanException("The OpenStack topology is empty");
 
         osn.distributeTopologyOverCircle();
 

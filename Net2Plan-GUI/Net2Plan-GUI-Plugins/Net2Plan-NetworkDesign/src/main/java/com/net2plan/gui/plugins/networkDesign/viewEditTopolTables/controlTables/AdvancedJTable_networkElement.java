@@ -161,7 +161,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             /*Update focus panel with object description*/
             this.callback.getViewEditTopTables().updateText(((OpenStackNetworkElement) selectedElements.iterator().next()).get50CharactersDescription());
 
-            if (value instanceof OpenStackNetworkElement)
+            if (value instanceof String)
             {
 
             }

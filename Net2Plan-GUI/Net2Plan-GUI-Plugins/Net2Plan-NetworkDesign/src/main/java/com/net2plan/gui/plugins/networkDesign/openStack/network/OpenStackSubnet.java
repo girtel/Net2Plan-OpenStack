@@ -6,7 +6,6 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Resource;
 import java.util.List;
 
-import com.sun.tools.internal.ws.wsdl.document.soap.SOAPUse;
 import org.openstack4j.model.network.*;
 
 /**

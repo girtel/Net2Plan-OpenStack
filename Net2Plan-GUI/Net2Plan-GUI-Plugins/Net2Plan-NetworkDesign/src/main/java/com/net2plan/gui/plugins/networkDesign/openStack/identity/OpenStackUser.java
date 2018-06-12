@@ -43,6 +43,7 @@ public class OpenStackUser extends OpenStackNetworkElement
         super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.openStackUsers);
         this.user = user;
 
+
     }
 
     @Override
