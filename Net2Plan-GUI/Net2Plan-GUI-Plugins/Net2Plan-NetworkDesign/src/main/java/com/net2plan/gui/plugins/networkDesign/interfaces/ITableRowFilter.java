@@ -147,6 +147,22 @@ public abstract class ITableRowFilter
 			case SECURITYGROUPS:
 				return os.getOpenStackSecurityGroups();
 
+			/*OpenStackNetworkElements of GLANCE*/
+			case IMAGESV2:
+				return os.getOpenStackImageV2();
+			case TASKS:
+				return os.getOpenStackTask();
+
+			/*OpenStackNetworkElements of HEAT*/
+			case STACKS:
+				return os.getOpenStackStacks();
+			case TEMPLATES:
+				return os.getOpenStackTemplates();
+			case RESOURCES:
+				return os.getOpenStackResources();
+			case EVENTS:
+				return os.getOpenStackEvents();
+
 			/*OpenStackNetworkElements of INFORMATION*/
 			case THISPROJECT:
 				return os.getOpenStackInformationProject();
@@ -210,7 +226,22 @@ public abstract class ITableRowFilter
 			case SECURITYGROUPS:
 				return os.getOpenStackSecurityGroups();
 
+			/*OpenStackNetworkElements of GLANCE*/
+			case IMAGESV2:
+				return os.getOpenStackImageV2();
+			case TASKS:
+				return os.getOpenStackTask();
 
+			/*OpenStackNetworkElements of HEAT*/
+			case STACKS:
+				return os.getOpenStackStacks();
+			case TEMPLATES:
+				return os.getOpenStackTemplates();
+			case RESOURCES:
+				return os.getOpenStackResources();
+			case EVENTS:
+				return os.getOpenStackEvents();
+				
 			/*OpenStackNetworkElements of INFORMATION*/
 			case THISPROJECT:
 				return os.getOpenStackInformationProject();

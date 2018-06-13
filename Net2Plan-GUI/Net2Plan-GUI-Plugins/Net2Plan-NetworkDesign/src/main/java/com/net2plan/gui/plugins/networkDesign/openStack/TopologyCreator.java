@@ -101,7 +101,7 @@ class TopologyCreator
             final List<org.openstack4j.model.image.v2.Image> imagesV2 = (List<org.openstack4j.model.image.v2.Image>) os.imagesV2().list();
             final List<Task> tasks = (List<Task>) os.imagesV2().tasks().list();
 
-
+        System.out.println(imagesV2);
             /*Get elements of Orchestation(Heat)*/
             final List<Stack> stacks = (List<Stack>) os.heat().stacks().list();
             List<Map<String,Object>> templates = new ArrayList<>();
