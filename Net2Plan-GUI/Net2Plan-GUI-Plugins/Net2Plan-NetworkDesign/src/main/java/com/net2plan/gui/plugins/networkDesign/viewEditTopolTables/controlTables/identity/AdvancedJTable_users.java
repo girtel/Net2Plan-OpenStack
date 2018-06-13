@@ -7,10 +7,14 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.openstack4j.api.types.Facing;
+import org.openstack4j.model.identity.v3.Token;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStackUser>
 {
@@ -54,6 +58,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
         res.add(new AjtRcMenu("Change the user's name", e -> getSelectedElements().forEach(n -> {
 
+            callback.getOpenStackNet().changeOs(Facing.INTERNAL);
             generalTableUpdate("Name",n);
 
         }), (a, b) -> b ==1, null));

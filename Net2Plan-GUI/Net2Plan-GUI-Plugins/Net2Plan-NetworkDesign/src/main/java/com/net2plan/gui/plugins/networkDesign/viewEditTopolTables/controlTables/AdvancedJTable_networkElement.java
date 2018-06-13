@@ -398,12 +398,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                         break;
 
                 }
-try {
-    updateTab();
-}catch(Exception ex){
-                    ex.printStackTrace();
 
-}
+                try {
+                    updateTab();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+
                 jfM.dispose();
             }});
 

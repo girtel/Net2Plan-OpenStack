@@ -6,6 +6,7 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
+import org.openstack4j.model.identity.v3.Token;
 import org.openstack4j.model.image.ContainerFormat;
 import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
@@ -17,17 +18,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
+
 public class OpenStackNetCreate{
 
     private OSClient.OSClientV3 osClientV3;
+    private String system;
 
-    public OpenStackNetCreate(OSClient.OSClientV3 osClientV3){
+    public OpenStackNetCreate(OSClient.OSClientV3 osClientV3,String system){
         this.osClientV3 = osClientV3;
+        this.system=system;
     }
 
     //Identity
     public void createOpenStackUser(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String userName = information.getString("Name");
     try{
         this.osClientV3.identity().users().create(Builders.user()
@@ -42,7 +47,7 @@ public class OpenStackNetCreate{
     }
     }
     public void createOpenStackProject(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String projectName = information.getString("Name");
         String projectDomainId = information.getString("Domain ID");
     try{
@@ -63,7 +68,7 @@ public class OpenStackNetCreate{
     }
     }
     public void createOpenStackDomain(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String domainName = information.getString("Name");
 
         this.osClientV3.identity().domains().create(Builders.domain()
@@ -71,7 +76,7 @@ public class OpenStackNetCreate{
                 .build());
     }
     public void createOpenStackEndpoint(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String endpointName = information.getString("Name");
         String endpointServiceId = information.getString("Service ID");
         String endpointUrl = information.getString("URL");
@@ -88,7 +93,7 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackService(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String serviceName = information.getString("Name");
         String serviceType = information.getString("Type");
         this.osClientV3.identity().serviceEndpoints().create(Builders.service()
@@ -97,13 +102,14 @@ public class OpenStackNetCreate{
                 .build());
     }
     public void createOpenStackRegion(JSONObject information){
+        changeOs(Facing.INTERNAL);
         String regionDescription = information.getString("Description");
         this.osClientV3.identity().regions().create(Builders.region()
                 .description(regionDescription)
                 .build());
     }
     public void createOpenStackCredential(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String credentialUserId = information.getString("User ID");
         String credentialProjectId = information.getString("Project ID");
         String credentialType = information.getString("Type");
@@ -117,6 +123,7 @@ public class OpenStackNetCreate{
                 .build());
     }
     public void createOpenStackGroup(JSONObject information){
+        changeOs(Facing.INTERNAL);
         try {
             String groupName = information.getString("Name");
             String groupDomainId = information.getString("Domain ID");
@@ -130,7 +137,7 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackPolicy(JSONObject information){
-
+        changeOs(Facing.INTERNAL);
         String policyUserId = information.getString("User ID");
         String policyProjectId = information.getString("Project ID");
         String policyType = information.getString("Type");
@@ -144,6 +151,7 @@ public class OpenStackNetCreate{
                 .build());
     }
     public void createOpenStackRole(JSONObject information){
+        changeOs(Facing.INTERNAL);
         String roleName = information.getString("Name");
         this.osClientV3.identity().roles().create(Builders.role()
                 .name(roleName)
@@ -152,7 +160,7 @@ public class OpenStackNetCreate{
 
     //Create networks elements in OpenStack
     public void createOpenStackRouter(JSONObject information){
-
+        changeOs(Facing.PUBLIC);
         String routerName = information.getString("Name");
 
         try{
@@ -169,7 +177,7 @@ public class OpenStackNetCreate{
 
     }
     public void createOpenStackNetwork(JSONObject information){
-
+        changeOs(Facing.PUBLIC);
         String networkName = information.getString("Name");
         try{
             this.osClientV3.networking().network().create(Builders.network()
@@ -183,7 +191,7 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackSubnet(JSONObject information){
-
+        changeOs(Facing.PUBLIC);
         String subnetName = information.getString("Name");
         String subnetNetworkId = information.getString("Network ID");
         IPVersionType versionType;
@@ -209,7 +217,7 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackPort(JSONObject information){
-
+        changeOs(Facing.PUBLIC);
         String subnetName = information.getString("Name");
         String subnetNetworkId = information.getString("Network ID");
         try {
@@ -228,7 +236,7 @@ public class OpenStackNetCreate{
 
     //Create compute elements in OpenStack
     public void createOpenStackServer(JSONObject information){
-
+        changeOs(Facing.PUBLIC);
         String serverName = information.getString("Name");
 
         this.osClientV3.compute().servers().serverBuilder()
@@ -236,7 +244,7 @@ public class OpenStackNetCreate{
                 .build();
     }
     public void createOpenStackFlavor(JSONObject information){
-
+        changeOs(Facing.PUBLIC);
         String flavorName= information.getString("Name");
         int flavorRam= Integer.parseInt(information.getString("Ram"));
         int flavorVcpus= Integer.parseInt(information.getString("Vcpus"));
@@ -247,20 +255,24 @@ public class OpenStackNetCreate{
                 .build());
     }
     public void createOpenStackFloatingIp(JSONObject information){
+        changeOs(Facing.PUBLIC);
         String floIpServerIp = information.getString("Server IP");
         String floIp = information.getString("Floating IP");
         this.osClientV3.compute().floatingIps().addFloatingIP(floIpServerIp,floIp);
     }
     public void createOpenStackKeypair(JSONObject information){
+        changeOs(Facing.PUBLIC);
         String keypairName = information.getString("Name");
         this.osClientV3.compute().keypairs().create(keypairName,null);
     }
     public void createOpenStackSecurityGroup(JSONObject information){
+        changeOs(Facing.PUBLIC);
         String securityGroupName = information.getString("Name");
         String securityGroupDescription = information.getString("Description");
         this.osClientV3.compute().securityGroups().create(securityGroupName,securityGroupDescription);
     }
     public void createOpenStackImage(){
+        changeOs(Facing.PUBLIC);
         Payload<URL> payload = null;
         try {
             payload = Payloads.create(new URL(new File("").toString()));
@@ -278,5 +290,15 @@ public class OpenStackNetCreate{
     public  void logPanel(){
         JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
     }
+    public void changeOs(Facing facing){
+        Token token = osClientV3.getToken();
+        MyRunnable newR;
 
+                if(system.equals("ubuntu")) {
+                    newR = new MyRunnable(token, facing);
+                    submit(newR);
+                    this.osClientV3 = newR.getOs();
+                }
+
+    }
 }

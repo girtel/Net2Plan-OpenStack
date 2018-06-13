@@ -70,9 +70,10 @@ public class TopologyPanel extends JPanel implements ActionListener
     private JTextField os_username, os_auth_url,os_project_name,os_user_domain_name,os_project_domain_id;
     private JPasswordField os_password;
     private JFrame jfM;
-    private JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain,labelPDomain;
+    private JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain,labelPDomain,labelSystem;
     private FileChooserNetworkDesign fc_netPlan;
-
+    private JComboBox systemList;
+    private String[] systems = { "ubuntu", "rhel", "centOs"};
     /**
      * Simplified constructor that does not require to indicate default locations
      * for {@code .n2p} files.
@@ -303,7 +304,7 @@ public class TopologyPanel extends JPanel implements ActionListener
     public void loadCredentials(){
 
         jfM = new JFrame("Credentials");
-        jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        jp1 = new JPanel(new GridLayout(7, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
 
         jfM.setLayout(null);
 
@@ -313,6 +314,7 @@ public class TopologyPanel extends JPanel implements ActionListener
         labelProject = new JLabel("OS_PROJECT_NAME",  SwingConstants.LEFT);
         labelUDomain = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
         labelPDomain = new JLabel("OS_P_DOMAIN_ID ", SwingConstants.LEFT);
+        labelSystem= new JLabel("SO ", SwingConstants.LEFT);
 
 
         os_username = new JTextField(10);
@@ -340,17 +342,24 @@ public class TopologyPanel extends JPanel implements ActionListener
         jp1.add(labelPDomain);
         jp1.add(os_project_domain_id);
 
+
+
+        systemList = new JComboBox(systems);
+        systemList.setSelectedIndex(0);
+
+        jp1.add(labelSystem);
+        jp1.add(systemList);
         jp1.setVisible(true);
 
         jbP1 = new JButton("Enter");
         jbP2 = new JButton("Load");
         jbP3 = new JButton("Generate");
 
-        jp1.setBounds(10, 10, 200, 200);
+        jp1.setBounds(10, 10, 200, 250);
 
-        jbP1.setBounds(75, 250, 90, 20);
-        jbP2.setBounds(25, 225, 90, 20);
-        jbP3.setBounds(125, 225, 90, 20);
+        jbP1.setBounds(75, 300, 90, 20);
+        jbP2.setBounds(25, 275, 90, 20);
+        jbP3.setBounds(125, 275, 90, 20);
 
         jbP1.addActionListener(this);
         jbP2.addActionListener(this);
@@ -365,7 +374,7 @@ public class TopologyPanel extends JPanel implements ActionListener
         jfM.setIconImage(img.getImage());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-        jfM.setSize(250, 320);
+        jfM.setSize(250, 370);
         jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
 
         jfM.setResizable(false);
@@ -381,7 +390,7 @@ public class TopologyPanel extends JPanel implements ActionListener
 
         if(src.equals(jbP1)){
 
-            callback.connectToOpenStack(os_auth_url.getText(), os_username.getText(), String.valueOf(os_password.getPassword()), os_project_name.getText(), os_user_domain_name.getText(), os_project_domain_id.getText());
+            callback.connectToOpenStack(os_auth_url.getText(), os_username.getText(), String.valueOf(os_password.getPassword()), os_project_name.getText(), os_user_domain_name.getText(), os_project_domain_id.getText(),systems[systemList.getSelectedIndex()]);
 
             final VisualizationState vs = callback.getVisualizationState();
             Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
@@ -419,6 +428,7 @@ public class TopologyPanel extends JPanel implements ActionListener
                 os_project_name.setText(jsonObject.getString("os_project_name"));
                 os_user_domain_name.setText(jsonObject.getString("os_user_domain_name"));
                 os_project_domain_id.setText(jsonObject.getString("os_project_domain_id"));
+                systemList.setSelectedIndex(jsonObject.getInt("so"));
 
 
             } catch (Exception ex) {
@@ -440,6 +450,7 @@ public class TopologyPanel extends JPanel implements ActionListener
                 jsonObject.put("os_project_name",os_project_name.getText());
                 jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
                 jsonObject.put("os_project_domain_id",os_project_domain_id.getText());
+                jsonObject.put("so",systemList.getSelectedIndex());
 
                 try  {
 

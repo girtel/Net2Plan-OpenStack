@@ -30,3 +30,4 @@ doc/gen/
 *.stackdump
 
 # Test
+Net2Plan-GUI/Net2Plan-GUI-Plugins/Net2Plan-NetworkDesign/src/main/java/com/net2plan/gui/plugins/networkDesign/aboutItPane/controlTables/AdvancedJTable_projectInformation.java

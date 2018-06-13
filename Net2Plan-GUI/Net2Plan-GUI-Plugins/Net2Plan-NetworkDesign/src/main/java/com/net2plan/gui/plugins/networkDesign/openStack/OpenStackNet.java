@@ -5,25 +5,35 @@ import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
+import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackTask;
 import com.net2plan.gui.plugins.networkDesign.openStack.information.OpenStackInformationProject;
 import com.net2plan.gui.plugins.networkDesign.openStack.information.OpenStackInformationUser;
 import com.net2plan.gui.plugins.networkDesign.openStack.information.OpenStackSummary;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.orchestration.OpenStackEvent;
+import com.net2plan.gui.plugins.networkDesign.openStack.orchestration.OpenStackResource;
+import com.net2plan.gui.plugins.networkDesign.openStack.orchestration.OpenStackStack;
+import com.net2plan.gui.plugins.networkDesign.openStack.orchestration.OpenStackTemplate;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.compute.*;
 import org.openstack4j.model.compute.FloatingIP;
 import org.openstack4j.model.compute.SecurityGroup;
+import org.openstack4j.model.heat.Event;
+import org.openstack4j.model.heat.Resource;
+import org.openstack4j.model.heat.Stack;
 import org.openstack4j.model.identity.v3.*;
+import org.openstack4j.model.image.v2.Task;
 import org.openstack4j.model.network.*;
 
 import javax.swing.*;
+
+import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 /**
  *
@@ -37,7 +47,7 @@ public class OpenStackNet
     private OSClientV3 os;
     private OpenStackNetCreate openStackNetCreate;
     private OpenStackNetDelete openStackNetDelete;
-
+    private String system;
     /*List of OpenStackNetworkElements of KEYSTONE*/
     public final List<OpenStackUser> openStackUsers = new ArrayList<> ();
     public final List<OpenStackProject> openStackProjects = new ArrayList<> ();
@@ -64,6 +74,16 @@ public class OpenStackNet
     public final List<OpenStackKeypair> openStackKeypairs = new ArrayList<> ();
     public final List<OpenStackSecurityGroup> openStackSecurityGroups = new ArrayList<> ();
 
+    /*List of OpenStackNetworkElements of GLANCE*/
+    public final List<OpenStackImageV2> openStackImageV2 = new ArrayList<> ();
+    public final List<OpenStackTask> openStackTasks = new ArrayList<> ();
+
+    /*List of OpenStackNetworkElements of HEAT*/
+    public final List<OpenStackStack> openStackStacks = new ArrayList<> ();
+    public final List<OpenStackTemplate> openStackTemplates= new ArrayList<> ();
+    public final List<OpenStackResource> openStackResources = new ArrayList<> ();
+    public final List<OpenStackEvent> openStackEvents = new ArrayList<> ();
+
     /*List of openstacknetworkelements of information*/
     public final List<OpenStackInformationProject> openStackInformationProject = new ArrayList<> ();
     public final List<OpenStackInformationUser> openStackInformationUser = new ArrayList<> ();
@@ -75,21 +95,22 @@ public class OpenStackNet
         this.np = new NetPlan();
     }
 
-    public OpenStackNet (GUINetworkDesign callback, OSClientV3 os )
+    public OpenStackNet (GUINetworkDesign callback, OSClientV3 os ,String system)
     {
         this.callback = callback;
         this.np = callback.getDesign();
         this.os=os;
-        this.openStackNetCreate = new OpenStackNetCreate(os);
-        this.openStackNetDelete = new OpenStackNetDelete(os);
+        this.openStackNetCreate = new OpenStackNetCreate(os,system);
+        this.openStackNetDelete = new OpenStackNetDelete(os,system);
+        this.system=system;
     }
 
-    public static OpenStackNet buildOpenStackNetFromServer(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
+    public static OpenStackNet buildOpenStackNetFromServer(GUINetworkDesign callback, String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id,String system)
     {
         try
         {
 
-            final OpenStackNet res = new TopologyCreator(callback, os_auth_url, os_username, os_password, os_project_name,os_user_domain_name,os_project_domain_id).getOpenStackNet();
+            final OpenStackNet res = new TopologyCreator(callback, os_auth_url, os_username, os_password, os_project_name,os_user_domain_name,os_project_domain_id).getOpenStackNet(system);
             return res;
         } catch (Exception e)
         {
@@ -269,6 +290,58 @@ public class OpenStackNet
     }
 
 
+    /* Add OpenStackNetworkElements of Glance*/
+    public OpenStackImageV2 addOpenStackImageV2(org.openstack4j.model.image.v2.Image image)
+    {
+        final OpenStackImageV2 res = OpenStackImageV2.createFromAddImageV2(this ,image);
+        if(openStackImageV2.contains(res)) return res;
+        openStackImageV2.add(res);
+        return res;
+    }
+
+        public OpenStackTask addOpenStackTask(Task task)
+    {
+        final OpenStackTask res = OpenStackTask.createFromAddTask(this,task);
+        if(openStackTasks.contains(res)) return res;
+        openStackTasks.add(res);
+        return res;
+    }
+
+
+    /* Add OpenStackNetworkElements of Heat*/
+    public OpenStackStack addOpenStackStack(Stack stack)
+    {
+        final OpenStackStack res = OpenStackStack.createFromAddStack(this ,stack);
+        if(openStackStacks.contains(res)) return res;
+        openStackStacks.add(res);
+        return res;
+    }
+
+    public OpenStackTemplate addOpenStackTemplate (Map<String,Object> template)
+    {
+        final OpenStackTemplate res = OpenStackTemplate.createFromAddTemplate(this,template);
+        if(openStackTemplates.contains(res)) return res;
+        openStackTemplates.add(res);
+        return res;
+    }
+
+    public OpenStackResource addOpenStackResource(Resource resource)
+    {
+        final OpenStackResource res = OpenStackResource.createFromAddResource(this,resource);
+        if(openStackResources.contains(res)) return res;
+        openStackResources.add(res);
+        return res;
+    }
+
+    public OpenStackEvent addOpenStackEvent(Event event)
+    {
+        final OpenStackEvent res = OpenStackEvent.createFromAddEvent(this,event);
+        if(openStackEvents.contains(res)) return res;
+        openStackEvents.add(res);
+        return res;
+    }
+
+
     /*Information*/
     public OpenStackInformationProject addInformationOfThisProject(){
         final OpenStackInformationProject res = OpenStackInformationProject.createFromAddInformationProject(this,this.os.getToken().getProject());
@@ -320,6 +393,17 @@ public class OpenStackNet
     public List<OpenStackFloatingIp> getOpenStackFloatingIpDns () { return Collections.unmodifiableList(openStackFloatingIps); }
     public List<OpenStackKeypair> getOpenStackKeypairs () { return Collections.unmodifiableList(openStackKeypairs); }
     public List<OpenStackSecurityGroup> getOpenStackSecurityGroups () { return Collections.unmodifiableList(openStackSecurityGroups); }
+
+    /*Get list from OpenStackNetworkElements of Glance*/
+    public List<OpenStackImageV2> getOpenStackImageV2 () { return Collections.unmodifiableList(openStackImageV2); }
+    public List<OpenStackTask> getOpenStackTask () { return Collections.unmodifiableList(openStackTasks); }
+
+    /*Get list from OpenStackNetworkElements of Heat*/
+    public List<OpenStackStack> getOpenStackStacks () { return Collections.unmodifiableList(openStackStacks); }
+    public List<OpenStackTemplate> getOpenStackTemplates () { return Collections.unmodifiableList(openStackTemplates); }
+    public List<OpenStackResource> getOpenStackResources () { return Collections.unmodifiableList(openStackResources); }
+    public List<OpenStackEvent> getOpenStackEvents () { return Collections.unmodifiableList(openStackEvents); }
+
 
     /*Get list from OpenStackNetworkElements of information*/
     public List<OpenStackInformationProject> getOpenStackInformationProject () { return Collections.unmodifiableList(openStackInformationProject); }
@@ -424,6 +508,13 @@ public class OpenStackNet
 
         callback.getDesign().removeAllNodes();
 
+        Token token = os.getToken();
+        MyRunnable newR;
+        if(system.equals("ubuntu")) {
+            newR = new MyRunnable(token, Facing.INTERNAL);
+            submit(newR);
+            this.os = newR.getOs();
+        }
         /* Get elements of Identity(Keystone)*/
         final List<User> users = (List<User>) os.identity().users().list();
         final List<? extends Project> projects = (List<? extends Project>)os.identity().tokens().getProjectScopes(os.getToken().getUser().getId());
@@ -435,6 +526,12 @@ public class OpenStackNet
         final List<Group> groups = (List<Group>) os.identity().groups().list();
         final List<Policy> policies = (List<Policy>) os.identity().policies().list();
         final List<Role> roles = (List<Role>)os.identity().roles().list();
+
+        if(system.equals("ubuntu")) {
+            newR = new MyRunnable(token,Facing.PUBLIC);
+            submit(newR);
+            this.os=newR.getOs();
+        }
 
         /* Get elements of Network(NEUTRON)*/
         final List<Network> networks = (List<Network>) os.networking().network().list();
@@ -449,6 +546,32 @@ public class OpenStackNet
         final List<Image> images = (List<Image>) os.compute().images().list();
         final List<Keypair> keypairs = (List<Keypair>) os.compute().keypairs().list();
         final List<? extends SecGroupExtension> secGroupExtensions = os.compute().securityGroups().list();
+
+
+        if(system.equals("ubuntu")) {
+            newR = new MyRunnable(token,Facing.PUBLIC);
+            submit(newR);
+            this.os=newR.getOs();
+        }
+
+        /*Get elements of Image(Glance)*/
+        final List<org.openstack4j.model.image.v2.Image> imagesV2 = (List<org.openstack4j.model.image.v2.Image>) os.imagesV2().list();
+        final List<Task> tasks = (List<Task>) os.imagesV2().tasks().list();
+
+
+        /*Get elements of Orchestation(Heat)*/
+        final List<Stack> stacks = (List<Stack>) os.heat().stacks().list();
+        List<Map<String,Object>> templates = new ArrayList<>();
+        List<Resource> resources = new ArrayList<>();
+        List<Event> events = new ArrayList<>();
+        for(Stack stack:stacks) {
+            templates.add((Map<String,Object>) os.heat().templates().getTemplateAsMap(stack.getId()));
+            for (Resource resource : (List<Resource>) os.heat().resources().list(stack.getId()))
+                resources.add(resource);
+            for (Event event : (List<Event>) os.heat().events().list(stack.getName(),stack.getId()))
+                events.add(event);
+
+        }
 
         /* Create OpenStackNetworkElement of Keystone Elements*/
         /* Create User objects */
@@ -533,6 +656,35 @@ public class OpenStackNet
             addOpenStackSecurityGroup(secGroupExtension);
         }
 
+        /* Create OpenStackNetworkElement of Glance Elements*/
+        /* Create Image objects */
+        for (org.openstack4j.model.image.v2.Image imageV2 : imagesV2) {
+            addOpenStackImageV2(imageV2);
+        }
+        /* Create Task objects */
+        for (Task task : tasks) {
+            addOpenStackTask(task);
+        }
+
+        /* Create OpenStackNetworkElement of Heat Elements*/
+        /* Create Stack objects */
+        for (Stack stack : stacks) {
+            addOpenStackStack(stack);
+        }
+        /* Create Template objects */
+        for (Map<String,Object> template : templates) {
+            addOpenStackTemplate(template);
+        }
+        /* Create Resource objects */
+        for (Resource resource : resources) {
+            addOpenStackResource(resource);
+        }
+        /* Create Event objects */
+        for (Event event : events) {
+            addOpenStackEvent(event);
+        }
+
+
         addInformationOfThisProject();
         addInformationOfThisUser();
         addSummary();
@@ -540,5 +692,16 @@ public class OpenStackNet
         distributeTopologyOverCircle();
     }
 
+    public void changeOs(Facing facing){
+        Token token = os.getToken();
+        MyRunnable newR;
 
+                if(system.equals("ubuntu")) {
+                    newR = new MyRunnable(token, facing);
+                    submit(newR);
+                    this.os = newR.getOs();
+                }
+
+
+    }
 }

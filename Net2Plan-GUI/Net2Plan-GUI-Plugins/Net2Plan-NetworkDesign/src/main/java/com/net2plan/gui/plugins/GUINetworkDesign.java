@@ -272,9 +272,9 @@ import java.util.List;
             updateVisualizationAfterNewTopology();
         }
 
-        public void connectToOpenStack(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id)
+        public void connectToOpenStack(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id,String system)
         {
-            this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(this, os_auth_url,os_username,os_password,os_project_name,os_user_domain_name,os_project_domain_id);
+            this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(this, os_auth_url,os_username,os_password,os_project_name,os_user_domain_name,os_project_domain_id, system);
         }
 
 
