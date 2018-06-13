@@ -24,6 +24,8 @@ import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_imagesV2;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_tasks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_summary;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisProject;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisUser;
@@ -31,6 +33,10 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_events;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_resources;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_stacks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_templates;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
@@ -70,6 +76,15 @@ public class ViewEditTopologyTablesPane extends JPanel
         KEYPAIRS("KEYPAIRS"),
         SECURITYGROUPS("SEGURITYGROUPS"),
 
+        //Image (Glance)
+        IMAGESV2("IMAGESV2"),
+        TASKS("TASKS"),
+
+        //Orchestation (Heat)
+        STACKS("STACKS"),
+        TEMPLATES("TEMPLATES"),
+        RESOURCES("RESOURCES"),
+        EVENTS("EVENTS"),
 
         //Information
         THISPROJECT("PROJECT"),
@@ -101,6 +116,10 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final JTabbedPane networkTabbedPane;
     //Compute (Nova) TabbedPane
     private final JTabbedPane computeTabbedPane;
+    //Network (Glance) TabbedPane
+    private final JTabbedPane glanceTabbedPane;
+    //Compute (Heat) TabbedPane
+    private final JTabbedPane heatTabbedPane;
 
     private final JMenuBar menuBar;
     private JTextArea upperText;
@@ -140,6 +159,8 @@ public class ViewEditTopologyTablesPane extends JPanel
         this.networkTabbedPane = new JTabbedPane();
         this.identityTabbedPane = new JTabbedPane();
         this.computeTabbedPane = new JTabbedPane();
+        this.glanceTabbedPane = new JTabbedPane();
+        this.heatTabbedPane = new JTabbedPane();
 
         viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
@@ -175,9 +196,19 @@ public class ViewEditTopologyTablesPane extends JPanel
         for (AJTableType type : Arrays.asList(AJTableType.SERVERS, AJTableType.FLAVORS,AJTableType.IMAGES,AJTableType.FLOATINGIPS,AJTableType.KEYPAIRS,AJTableType.SECURITYGROUPS))
             computeTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
+        /* Network tabs */
+        for (AJTableType type : Arrays.asList(AJTableType.IMAGESV2, AJTableType.TASKS))
+            glanceTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+
+        /* Network tabs */
+        for (AJTableType type : Arrays.asList(AJTableType.STACKS, AJTableType.TEMPLATES,AJTableType.RESOURCES,AJTableType.EVENTS))
+            heatTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+
         viewEditHighLevelTabbedPane.addTab("IDENTITY",identityTabbedPane);
         viewEditHighLevelTabbedPane.addTab("NETWORK",networkTabbedPane);
         viewEditHighLevelTabbedPane.addTab("COMPUTE",computeTabbedPane);
+        viewEditHighLevelTabbedPane.addTab("GLANCE",glanceTabbedPane);
+        viewEditHighLevelTabbedPane.addTab("HEAT",heatTabbedPane);
 
         menuBar = new JMenuBar();
 
@@ -256,6 +287,28 @@ public class ViewEditTopologyTablesPane extends JPanel
                 table = new AdvancedJTable_securityGroups(callback);
                 break;
 
+            /*IMAGES*/
+            case IMAGESV2:
+                table = new AdvancedJTable_imagesV2(callback);
+                break;
+            case TASKS:
+                table = new AdvancedJTable_tasks(callback);
+                break;
+
+
+            /*ORCHESTATION*/
+            case STACKS:
+                table = new AdvancedJTable_stacks(callback);
+                break;
+            case TEMPLATES:
+                table = new AdvancedJTable_templates(callback);
+                break;
+            case RESOURCES:
+                table = new AdvancedJTable_resources(callback);
+                break;
+            case EVENTS:
+                table = new AdvancedJTable_events(callback);
+                break;
 
             /*INFORMATION*/
             case THISPROJECT:
@@ -332,6 +385,16 @@ public class ViewEditTopologyTablesPane extends JPanel
             case FLOATINGIPS:
             case KEYPAIRS:
             case SECURITYGROUPS:
+
+                /*glance*/
+            case IMAGESV2:
+            case TASKS:
+
+                /*heat*/
+            case STACKS:
+            case TEMPLATES:
+            case RESOURCES:
+            case EVENTS:
 
             case THISPROJECT:
             case THISUSER:

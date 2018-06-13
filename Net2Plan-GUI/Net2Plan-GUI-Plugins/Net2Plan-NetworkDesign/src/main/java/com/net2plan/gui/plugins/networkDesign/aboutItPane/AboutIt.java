@@ -22,6 +22,8 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_imagesV2;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_tasks;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_summary;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisProject;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.information.AdvancedJTable_thisUser;
@@ -29,6 +31,10 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_events;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_resources;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_stacks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.orchestration.AdvancedJTable_templates;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
@@ -182,6 +188,28 @@ public class AboutIt extends JPanel
                 table = new AdvancedJTable_securityGroups(callback);
                 break;
 
+            /*IMAGES*/
+            case IMAGESV2:
+                table = new AdvancedJTable_imagesV2(callback);
+                break;
+            case TASKS:
+                table = new AdvancedJTable_tasks(callback);
+                break;
+
+
+            /*ORCHESTATION*/
+            case STACKS:
+                table = new AdvancedJTable_stacks(callback);
+                break;
+            case TEMPLATES:
+                table = new AdvancedJTable_templates(callback);
+                break;
+            case RESOURCES:
+                table = new AdvancedJTable_resources(callback);
+                break;
+            case EVENTS:
+                table = new AdvancedJTable_events(callback);
+                break;
             /*INFORMATION*/
             case THISPROJECT:
                 table = new AdvancedJTable_thisProject(callback);
