@@ -8,9 +8,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import org.openstack4j.api.types.Facing;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_endpoints extends AdvancedJTable_networkElement<OpenStackEndpoint>
 {
@@ -71,10 +69,12 @@ public class AdvancedJTable_endpoints extends AdvancedJTable_networkElement<Open
 
     public void addEndpoint(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("Name");
-        newList.add("Service ID");
-        newList.add("URL");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Name","");
+        newList.put("Facing","Select");
+        newList.put("Service ID","Select");
+        newList.put("URL","");
+
         generalTableForm("Add endpoint",newList);
     }
     public void removeEndpoint(OpenStackEndpoint endpoint){

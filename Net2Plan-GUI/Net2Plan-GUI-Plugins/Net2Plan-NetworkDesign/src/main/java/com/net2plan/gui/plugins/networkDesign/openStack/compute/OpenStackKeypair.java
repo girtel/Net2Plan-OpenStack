@@ -27,14 +27,16 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
         final OpenStackKeypair res = new OpenStackKeypair(osn,keypair);
         res.keypairId= keypair.getId();
         res.keypairName=keypair.getName();
-        res.keypairUserId=keypair.getUserId();
-        res.keypairCreatedA=keypair.getCreatedAt();
-        res.keypairDeleted=keypair.getDeleted();
-        res.keypairDeletedAt=keypair.getDeletedAt();
-        res.keypairUpdatedAt=keypair.getUpdatedAt();
-        res.keypairFingerprint=keypair.getFingerprint();
-        res.keypairPrivateKey=keypair.getPrivateKey();
-        res.keypairPublicKey=keypair.getPublicKey();
+        try {
+            res.keypairUserId = keypair.getUserId();
+            res.keypairCreatedA = keypair.getCreatedAt();
+            res.keypairUpdatedAt = keypair.getUpdatedAt();
+            res.keypairFingerprint = keypair.getFingerprint();
+            res.keypairPrivateKey = keypair.getPrivateKey();
+            res.keypairPublicKey = keypair.getPublicKey();
+        }catch (Exception ex){
+            System.out.println(ex.toString());
+        }
         return res;
     }
 

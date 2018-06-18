@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement<OpenStackSecurityGroup>
 {
@@ -54,9 +52,9 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
 
     public void addSecurityGroup(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("Name");
-        newList.add("Description");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Name","");
+        newList.put("Description","");
         generalTableForm("Add security group",newList);
 
 

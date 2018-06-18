@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<OpenStackCredential>
 {
@@ -68,12 +66,12 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
 
     public void addCredential(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("User ID");
-        newList.add("Project ID");
-        newList.add("Type");
-        newList.add("Blob");
-        generalTableForm("Add credential",newList);
+        Map<String,String> newList = new HashMap<>();
+        newList.put("User ID","Select");
+        newList.put("Tenant ID","Select");
+        newList.put("Blob","Select");
+        newList.put("Type","Select");
+        generalTableForm("Add user",newList);
 
     }
     public void removeCredential(OpenStackCredential credential){

@@ -29,18 +29,22 @@ import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
+import org.openstack4j.api.types.Facing;
+import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.model.network.IPVersionType;
+import org.openstack4j.model.network.NetworkType;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Plugin for the popup menu of the canvas.
@@ -305,30 +309,164 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         }
     }
     public void addNewRouter(){
-        JFrame jfM = new JFrame("Add router");
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Name","");
+        headers.put("Tenant ID","Select");
+        headers.put("Network ID", "Select");
+        generalTableForm("Add router",headers);
+    }
+    public void generalTableForm(String title,Map<String,String> headers){
+        JFrame jfM = new JFrame(title);
         jfM.setLayout(null);
 
         JButton jbP1 = new JButton("Enter");
 
-        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        JPanel jp1 = new JPanel(new GridLayout(headers.size()+1, 2, 15, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+
         JLabel l6 = new JLabel("Properties", SwingConstants.LEFT);
         jp1.add(l6);
         JLabel label = new JLabel("", SwingConstants.LEFT);
         jp1.add(label);
-        JLabel labelName = new JLabel("Name", SwingConstants.LEFT);
-        jp1.add(labelName);
-        JTextField os_name_change = new JTextField();
-        jp1.add(os_name_change);
+
+        for(String key : headers.keySet()){
+            JLabel jlabel = new JLabel(key, SwingConstants.LEFT);
+            jp1.add(jlabel);
+            switch (headers.get(key)){
+
+                case "Boolean":
+                    JCheckBox jCheckBox = new JCheckBox();
+                    jp1.add(jCheckBox);
+                    break;
+                case "Select":
+                    JComboBox jComboBox;
+                    Object[] stockArr = new String[1];
+                    stockArr[0] = "empty";
+                    List<String> stockList = new ArrayList<>() ;
+                    switch (key){
+                        case "Network ID":
+                            stockList = callback.getOpenStackNet().openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Subnet ID":
+                            stockList = callback.getOpenStackNet().openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Tenant ID":
+                            if(callback.getOpenStackNet().openStackProjects.size()==0)break;
+                            stockList = callback.getOpenStackNet().openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "User ID":
+                            stockList = callback.getOpenStackNet().openStackUsers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Flavor ID":
+                            stockList = callback.getOpenStackNet().openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Image ID":
+                            stockList = callback.getOpenStackNet().openStackImageV2.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Port ID":
+                            stockList = callback.getOpenStackNet().openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Service ID":
+                            stockList = callback.getOpenStackNet().openStackServices.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Router ID":
+                            stockList = callback.getOpenStackNet().openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Domain ID":
+                            stockList = callback.getOpenStackNet().openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "IP version":
+                            stockArr = IPVersionType.values();
+                            break;
+                        case "Network type":
+                            stockArr = NetworkType.values();
+                            break;
+                        case "Service type":
+                            stockArr = ServiceType.values();
+                            break;
+                        case "Facing":
+                            stockArr = Facing.values();
+                            break;
+                    }
+
+                    jComboBox = new JComboBox(stockArr);
+                    jp1.add(jComboBox);
+                    break;
+                case "Special-ipv4masc":
+                    try {
+                        MaskFormatter mf = new MaskFormatter("###-###-###-###/##");
+                        JFormattedTextField f = new JFormattedTextField(mf);
+                        jp1.add(f);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "Special-ipv4":
+                    try {
+                        MaskFormatter mf = new MaskFormatter("###-###-###-###");
+                        JFormattedTextField f = new JFormattedTextField(mf);
+                        jp1.add(f);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    break;
+                default:
+                    JTextField jtextField = new JTextField();
+                    jp1.add(jtextField);
+                    break;
+            }
+
+        }
+
 
         jp1.setVisible(true);
-        jp1.setBounds(10, 10, 200, 200);
-        jbP1.setBounds(75, 200, 90, 25);
+        jp1.setBounds(10, 10, 200, 50*headers.size());
+        jbP1.setBounds(75, 60*headers.size(), 90, 25);
 
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                Component [] components = jp1.getComponents();
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("Name",os_name_change.getText());
+
+                for(int i = 3;i< components.length;i=i+2){
+
+                    switch (headers.get(((JLabel)components[i-1]).getText())){
+                        case "Select":
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JComboBox)components[i]).getSelectedItem().toString());
+                            break;
+                        case "Boolean":
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JCheckBox)components[i]).isSelected());
+                            break;
+                        case "IP version":
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JComboBox)components[i]).getSelectedItem());
+                            break;
+                        default:
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JTextField)components[i]).getText());
+                            break;
+                    }
+                }
+
                 callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRouter(jsonObject);
 
                 callback.getOpenStackNet().refreshListTable();
@@ -341,6 +479,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
                 callback.updateVisualizationAfterNewTopology();
                 callback.addNetPlanChange();
                 jfM.dispose();
+
             }});
 
         jfM.add(jbP1);
@@ -350,7 +489,12 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         jfM.setIconImage(img.getImage());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-        jfM.setSize(250, 275);
+        if(headers.size()<3) {
+            jfM.setSize(250, 130 * headers.size());
+        }else {
+            jfM.setSize(250, 80 * headers.size());
+        }
+
         jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
 
         jfM.setResizable(false);

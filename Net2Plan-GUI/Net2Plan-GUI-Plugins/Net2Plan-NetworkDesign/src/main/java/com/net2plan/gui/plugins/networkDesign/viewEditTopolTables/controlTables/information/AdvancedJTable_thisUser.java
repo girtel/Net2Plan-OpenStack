@@ -70,7 +70,7 @@ public class AdvancedJTable_thisUser extends AdvancedJTable_networkElement<OpenS
     public void addUser() {
         List<String> newList = new ArrayList<>();
         newList.add("Name");
-        generalTableForm("Add user",newList);
+        //generalTableForm("Add user",newList);
     }
 
 

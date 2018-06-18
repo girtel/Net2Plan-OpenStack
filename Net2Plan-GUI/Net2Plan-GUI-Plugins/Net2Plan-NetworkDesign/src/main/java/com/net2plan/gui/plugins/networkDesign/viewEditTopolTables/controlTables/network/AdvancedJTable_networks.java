@@ -1,9 +1,8 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
@@ -48,6 +47,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Router external", "Network router external", null, n -> n.isNetworkIsRouterExternal(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Shared", "Network shared", null, n -> n.isNetworkIsShared(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, Integer.class, null, "MTU", "Network MTU", null, n -> n.getNetworkMTU(), AGTYPE.NOAGGREGATION, null, null));
 
 
         return res;
@@ -78,8 +78,11 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
     public void addNetwork(){
 
-        List<String> headers = new ArrayList<>();
-        headers.add("Name");
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Name","");
+        headers.put("Tenant ID","Select");
+        headers.put("Network type","Select");
+        headers.put("IsExternal","Boolean");
         generalTableForm("Add network",headers);
 
     }

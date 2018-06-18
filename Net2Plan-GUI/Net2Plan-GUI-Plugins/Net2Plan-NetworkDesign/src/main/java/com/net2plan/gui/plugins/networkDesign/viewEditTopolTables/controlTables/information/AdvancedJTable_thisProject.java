@@ -69,7 +69,7 @@ public class AdvancedJTable_thisProject extends AdvancedJTable_networkElement<Op
         List<String> newList = new ArrayList<>();
         newList.add("Name");
         newList.add("Domain ID");
-        generalTableForm("Add project",newList);
+        //generalTableForm("Add project",newList);
     }
 
 

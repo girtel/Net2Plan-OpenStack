@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenStackGroup>
 {
@@ -63,9 +61,10 @@ public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenSta
 
     public void addGroup(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("Name");
-        newList.add("Domain ID");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Name","");
+        newList.put("Domain ID","Select");
+
         generalTableForm("Add group",newList);
     }
     public void removeGroup(OpenStackGroup group){

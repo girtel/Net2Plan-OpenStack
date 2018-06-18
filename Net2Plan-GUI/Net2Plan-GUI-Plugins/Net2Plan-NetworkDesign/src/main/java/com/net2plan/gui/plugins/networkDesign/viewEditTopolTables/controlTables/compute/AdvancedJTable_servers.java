@@ -78,7 +78,12 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
     }
     public void addServer(){
 
-      //  callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackServer("name","flavorid","imageid","keypairid","userdata",null);
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Name","");
+        headers.put("Flavor ID","Select");
+        headers.put("Image ID", "Select");
+        headers.put("Port ID","Select");
+        generalTableForm("Add server",headers);
     }
 
 

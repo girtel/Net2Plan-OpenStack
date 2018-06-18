@@ -501,6 +501,16 @@ public class OpenStackNet
         openStackKeypairs.clear();
         openStackSecurityGroups.clear();
 
+        /*Clear Glance list*/
+        openStackImageV2.clear();
+        openStackTasks.clear();
+
+        /*Clear Neutron list*/
+        openStackStacks.clear();
+        openStackTemplates.clear();
+        openStackResources.clear();
+        openStackEvents.clear();
+
         /*Clear information list*/
         openStackInformationUser.clear();
         openStackInformationProject.clear();
@@ -510,14 +520,10 @@ public class OpenStackNet
 
         Token token = os.getToken();
         MyRunnable newR;
-        if(system.equals("ubuntu")) {
-            newR = new MyRunnable(token, Facing.INTERNAL);
-            submit(newR);
-            this.os = newR.getOs();
-        }
+        changeOs(Facing.INTERNAL);
         /* Get elements of Identity(Keystone)*/
         final List<User> users = (List<User>) os.identity().users().list();
-        final List<? extends Project> projects = (List<? extends Project>)os.identity().tokens().getProjectScopes(os.getToken().getUser().getId());
+        final List<? extends Project> projects = (List<? extends Project>)os.identity().projects().list();
         final List<Domain> domains = (List<Domain>) os.identity().domains().list();
         final List<Endpoint> endpoints = (List<Endpoint>) os.identity().serviceEndpoints().listEndpoints();
         final List<Service> services = (List<Service>) os.identity().serviceEndpoints().list();
@@ -527,11 +533,8 @@ public class OpenStackNet
         final List<Policy> policies = (List<Policy>) os.identity().policies().list();
         final List<Role> roles = (List<Role>)os.identity().roles().list();
 
-        if(system.equals("ubuntu")) {
-            newR = new MyRunnable(token,Facing.PUBLIC);
-            submit(newR);
-            this.os=newR.getOs();
-        }
+        changeOs(Facing.PUBLIC);
+
 
         /* Get elements of Network(NEUTRON)*/
         final List<Network> networks = (List<Network>) os.networking().network().list();
@@ -548,11 +551,6 @@ public class OpenStackNet
         final List<? extends SecGroupExtension> secGroupExtensions = os.compute().securityGroups().list();
 
 
-        if(system.equals("ubuntu")) {
-            newR = new MyRunnable(token,Facing.PUBLIC);
-            submit(newR);
-            this.os=newR.getOs();
-        }
 
         /*Get elements of Image(Glance)*/
         final List<org.openstack4j.model.image.v2.Image> imagesV2 = (List<org.openstack4j.model.image.v2.Image>) os.imagesV2().list();

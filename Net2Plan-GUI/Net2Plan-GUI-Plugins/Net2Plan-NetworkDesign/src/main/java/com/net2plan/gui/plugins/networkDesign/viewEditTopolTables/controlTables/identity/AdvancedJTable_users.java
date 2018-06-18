@@ -10,9 +10,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.identity.v3.Token;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
@@ -78,8 +76,13 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
     }
 
     public void addUser() {
-        List<String> newList = new ArrayList<>();
-        newList.add("Name");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Name","");
+        newList.put("Password","");
+        newList.put("Domain ID","Select");
+        newList.put("Tenant ID","Select");
+        newList.put("Enable","Boolean");
+
         generalTableForm("Add user",newList);
     }
 

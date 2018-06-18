@@ -1,9 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network;
 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
@@ -79,11 +77,12 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
 
     public void addSubnet(){
 
-        List<String> headers = new ArrayList<>();
-        headers.add("Name");
-        headers.add("Network ID");
-        headers.add("IP version");
-        headers.add("Cidr");
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Name","");
+        headers.put("Network ID","Select");
+        headers.put("IP version","Select");
+        headers.put("Cidr","Special-ipv4masc");
+        headers.put("Tenant ID","Select");
         generalTableForm("Add subnet",headers);
 
     }

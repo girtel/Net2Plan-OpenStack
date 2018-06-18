@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenStackPolicy>
 {
@@ -65,11 +63,11 @@ public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenS
 
     public void addPolicy(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("User ID");
-        newList.add("Project ID");
-        newList.add("Type");
-        newList.add("Blob");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("User ID","Select");
+        newList.put("Tenant ID","Select");
+        newList.put("Blob","Select");
+        newList.put("Type","Select");
         generalTableForm("Add policy",newList);
     }
     public void removePolicy(OpenStackPolicy policy){

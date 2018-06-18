@@ -84,9 +84,11 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
     public void addPort(){
 
-        List<String> headers = new ArrayList<>();
-        headers.add("Name");
-        headers.add("Network ID");
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Name","");
+        headers.put("Network ID","Select");
+        headers.put("Fixed IP","Special-ipv4");
+        headers.put("Subnet ID","Select");
         generalTableForm("Add port",headers);
 
     }

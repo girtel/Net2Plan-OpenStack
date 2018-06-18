@@ -47,7 +47,16 @@ public class OpenStackDomain extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Domain: " + this.getId();
+         String description = "Domain: " +
+            this.NEWLINE + "ID " + this.getId() +
+            this.NEWLINE + "Name " + this.getDomainName() +
+            this.NEWLINE + "Description " + this.getDomainDescription() +
+            this.NEWLINE + "Enabled " + this.isDomainEnabled() +
+            this.NEWLINE + "Links" + this.NEWLINE;
+        for(String key : this.getDomainLinks().keySet()) {
+            description += key + " " + this.getDomainLinks().get(key) + NEWLINE;
+        }
+        return description;
     }
 
 

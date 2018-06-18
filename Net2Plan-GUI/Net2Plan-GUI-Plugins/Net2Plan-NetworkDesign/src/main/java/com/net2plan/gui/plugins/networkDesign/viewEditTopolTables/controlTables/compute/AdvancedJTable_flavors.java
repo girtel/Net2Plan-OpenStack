@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenStackFlavor>
 {
@@ -66,10 +64,10 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
 
     public void addFlavor(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("Name");
-        newList.add("Ram");
-        newList.add("Vcpus");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Name","");
+        newList.put("RAM","");
+        newList.put("CPUs","");
         generalTableForm("Add flavor",newList);
 
     }

@@ -20,10 +20,10 @@ public class OpenStackSummary  extends OpenStackNetworkElement {
     public static OpenStackSummary createFromAddSummary (OpenStackNet osn , OSClient.OSClientV3 osClientV3)
     {
         final OpenStackSummary res = new OpenStackSummary(osn,osClientV3);
-        res.numberOfProjects= 0;
-        res.numberOfUsers= osClientV3.identity().users().list().size();
-        res.numberOfNetworks=osClientV3.networking().network().list().size();
-        res.numberOfRouters=osClientV3.networking().router().list().size();
+        res.numberOfProjects=osn.openStackProjects.size();
+        res.numberOfUsers= osn.openStackUsers.size();
+        res.numberOfNetworks=osn.openStackNetworks.size();
+        res.numberOfRouters=osn.openStackRouters.size();
         res.projectId = osClientV3.getToken().getProject().getId();
         return res;
     }

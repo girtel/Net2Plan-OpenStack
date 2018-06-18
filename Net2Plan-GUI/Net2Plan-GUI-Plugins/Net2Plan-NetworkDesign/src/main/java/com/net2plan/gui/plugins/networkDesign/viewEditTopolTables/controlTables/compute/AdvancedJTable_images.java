@@ -55,7 +55,7 @@ public class AdvancedJTable_images extends AdvancedJTable_networkElement<OpenSta
     {final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Change the images's description", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Go to Glance", e -> getSelectedElements().forEach(n -> {
 
 
         }), (a, b) -> b ==1, null));

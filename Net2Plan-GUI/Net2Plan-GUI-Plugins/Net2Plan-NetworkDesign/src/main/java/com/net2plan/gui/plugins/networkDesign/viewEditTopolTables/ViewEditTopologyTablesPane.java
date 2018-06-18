@@ -204,9 +204,9 @@ public class ViewEditTopologyTablesPane extends JPanel
         for (AJTableType type : Arrays.asList(AJTableType.STACKS, AJTableType.TEMPLATES,AJTableType.RESOURCES,AJTableType.EVENTS))
             heatTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
-        viewEditHighLevelTabbedPane.addTab("IDENTITY",identityTabbedPane);
-        viewEditHighLevelTabbedPane.addTab("NETWORK",networkTabbedPane);
-        viewEditHighLevelTabbedPane.addTab("COMPUTE",computeTabbedPane);
+        viewEditHighLevelTabbedPane.addTab("KEYSTONE",identityTabbedPane);
+        viewEditHighLevelTabbedPane.addTab("NEUTRON",networkTabbedPane);
+        viewEditHighLevelTabbedPane.addTab("NOVA",computeTabbedPane);
         viewEditHighLevelTabbedPane.addTab("GLANCE",glanceTabbedPane);
         viewEditHighLevelTabbedPane.addTab("HEAT",heatTabbedPane);
 

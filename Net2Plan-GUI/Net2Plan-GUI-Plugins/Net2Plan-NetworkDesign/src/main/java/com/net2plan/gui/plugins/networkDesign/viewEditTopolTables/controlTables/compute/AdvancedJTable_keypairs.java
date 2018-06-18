@@ -7,10 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_keypairs extends AdvancedJTable_networkElement<OpenStackKeypair>
 {
@@ -57,8 +54,8 @@ public class AdvancedJTable_keypairs extends AdvancedJTable_networkElement<OpenS
 
     }
     public void addKeypair(){
-        List<String> newList = new ArrayList<>();
-        newList.add("Name");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Name","");
         generalTableForm("Add keypair",newList);
     }
     public void removeKeypair(OpenStackKeypair keypair){

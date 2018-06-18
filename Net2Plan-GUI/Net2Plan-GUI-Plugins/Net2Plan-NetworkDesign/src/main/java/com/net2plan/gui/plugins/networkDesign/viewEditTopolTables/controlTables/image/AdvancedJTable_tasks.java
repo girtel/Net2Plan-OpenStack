@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_tasks extends AdvancedJTable_networkElement<OpenStackTask>
 {
@@ -34,12 +32,17 @@ public class AdvancedJTable_tasks extends AdvancedJTable_networkElement<OpenStac
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {
         final List<AjtRcMenu> res = new ArrayList<>();
+        res.add(new AjtRcMenu("Create task", e ->addTask(), (a, b) -> b >=0, null));
 
 
         return res;
 
     }
-
+    public void addTask(){
+        Map<String,String> headers = new HashMap<>() ;
+        headers.put("Type","");
+        generalTableForm("Add task",headers);
+    }
 
 
 

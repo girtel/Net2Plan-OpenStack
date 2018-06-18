@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenStackRegion>
 {
@@ -63,8 +61,9 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
 
     public void addRegion(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("Description");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Region ID","");
+        newList.put("Description","");
         generalTableForm("Add region",newList);
     }
     public void removeRegion(OpenStackRegion region){

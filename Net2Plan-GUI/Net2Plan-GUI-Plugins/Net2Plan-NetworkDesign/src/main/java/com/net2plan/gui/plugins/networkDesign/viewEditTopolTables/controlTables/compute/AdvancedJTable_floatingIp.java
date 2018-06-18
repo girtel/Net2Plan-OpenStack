@@ -7,9 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<OpenStackFloatingIp>
 {
@@ -56,12 +54,11 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
 
     public void addFloatingIp(){
 
-        List<String> newList = new ArrayList<>();
-        newList.add("Server IP");
-        newList.add("Floating IP");
+        Map<String,String> newList = new HashMap<>();
+        newList.put("Server IP","Special-ipv4");
+        newList.put("Floating IP","Special-ipv4");
         generalTableForm("Add floating ip",newList);
 
-        //callback.getOpenStackNet().getOsnc().createOpenStackFloatingIp("serverip","floatingip");
     }
     public void removeFloatingIp(OpenStackFloatingIp floatingIp){
 

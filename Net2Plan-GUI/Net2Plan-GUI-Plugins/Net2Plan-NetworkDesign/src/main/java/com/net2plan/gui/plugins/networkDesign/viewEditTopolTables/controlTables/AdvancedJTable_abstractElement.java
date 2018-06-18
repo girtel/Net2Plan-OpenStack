@@ -228,7 +228,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
 
     protected abstract List<T> getAllAbstractElementsInTable();
 
-    public abstract void generalTableForm(String title,List<String> headers);
+    public abstract void generalTableForm(String title,Map<String,String> headers);
 
     public abstract void updateTab();
 

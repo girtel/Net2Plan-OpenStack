@@ -1,12 +1,18 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.FileChooserNetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.internal.Constants;
+import com.net2plan.internal.SystemUtils;
+import org.json.JSONObject;
 
+import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +42,29 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
         final List<AjtRcMenu> res = new ArrayList<>();
 
 
+        res.add(new AjtRcMenu("Create image", e ->addImage(), (a, b) -> b >=0, null));
+
+
         return res;
 
+    }
+    public void addImage(){
+        // File chooser default directory.
+        final File currentDir = SystemUtils.getCurrentDir();
+
+
+        // File chooser
+        JFileChooser chooser = new JFileChooser();
+
+        int returnVal = chooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            System.out.println("You chose to open this file: " +
+                    chooser.getSelectedFile().getName());
+            JSONObject information = new JSONObject();
+            information.put("PATH",chooser.getSelectedFile().getPath());
+            callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackImage(information);
+            updateTab();
+        }
     }
 
 

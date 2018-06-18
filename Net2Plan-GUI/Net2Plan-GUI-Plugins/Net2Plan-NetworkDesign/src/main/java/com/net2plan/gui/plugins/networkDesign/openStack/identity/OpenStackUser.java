@@ -60,7 +60,18 @@ public class OpenStackUser extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "User: " + this.getId();
+        String description = "User: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getName() +
+                this.NEWLINE + "Domain ID " + this.getDomainId() +
+                this.NEWLINE + "Email " + this.getEmail() +
+                this.NEWLINE + "Description " + this.getDescription() +
+                this.NEWLINE + "Enable " + this.isUserEnable() +
+                this.NEWLINE + "Links" + this.NEWLINE;
+        for(String key : this.getUserLinks().keySet()) {
+        description += key + " " + this.getUserLinks().get(key) + NEWLINE;
+        }
+        return description;
     }
 
     public void isUserEnable(Boolean value){

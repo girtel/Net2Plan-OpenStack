@@ -53,6 +53,7 @@ import sun.nio.ch.Net;
             res.networkIsShared=network.isShared();
             res.networkMTU=network.getMTU();
 
+
             return res;
         }
 
@@ -110,7 +111,8 @@ import sun.nio.ch.Net;
             }
         public void isNetworkIsShared (boolean value) {
             try{
-            this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().shared(value).build());
+
+                this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().shared(value).build());
 
             }catch(Exception ex){
 
