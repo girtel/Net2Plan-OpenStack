@@ -53,15 +53,15 @@ public class OpenStackPolicy extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        String description = "Credential: " +
+        String description = "Policy: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.getCredentialUserId() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
+                this.NEWLINE + "User ID " + this.getPolicyUserId() +
+                this.NEWLINE + "Project/Tenant ID " + this.getPolicyProjectId() +
+                this.NEWLINE + "Blob " + this.getPolicyBlob() +
+                this.NEWLINE + "Type " + this.getPolicyType() +
                 this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
+        for(String key : this.getPolicyLinks().keySet()) {
+            description += key + " " + this.getPolicyLinks().get(key) + NEWLINE;
         }
         return description;
     }

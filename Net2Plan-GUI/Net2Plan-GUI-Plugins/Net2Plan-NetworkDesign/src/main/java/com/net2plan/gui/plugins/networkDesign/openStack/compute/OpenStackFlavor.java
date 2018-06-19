@@ -65,7 +65,20 @@ public class OpenStackFlavor  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Flavor: " + this.getId();
+        String description = "Flavor: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getFlavorName() +
+                this.NEWLINE + "Disk " + this.getFlavorDisk() +
+                this.NEWLINE + "Ephemeral " + this.getFlavorEphemeral() +
+                this.NEWLINE + "RAM " + this.getFlavorRam() +
+                this.NEWLINE + "RxTx Capacity " + this.getFlavorRxtxCap() +
+                this.NEWLINE + "RxTx Factor " + this.getFlavorRxtxFactor() +
+                this.NEWLINE + "RxTx Quota " + this.getFlavorRxtxQuota() +
+                this.NEWLINE + "Swap " + this.getFlavorSwap() +
+                this.NEWLINE + "VCPUs " + this.getFlavorVcpus() +
+                this.NEWLINE + "Disabled " + this.isFlavorDisabled() +
+                this.NEWLINE + "Public " + this.isFlavorPublic() ;
+        return description;
     }
 
 

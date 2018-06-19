@@ -45,15 +45,13 @@ public class OpenStackRole  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        String description = "Credential: " +
+        String description = "Role: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.getCredentialUserId() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
+                this.NEWLINE + "Name " + this.getRoleName() +
+                this.NEWLINE + "Domain ID " + this.getRoleDomainId() +
                 this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
+        for(String key : this.getRoleLinks().keySet()) {
+            description += key + " " + this.getRoleLinks().get(key) + NEWLINE;
         }
         return description;
     }

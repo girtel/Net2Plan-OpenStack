@@ -41,16 +41,10 @@ public class OpenStackRegion  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        String description = "Credential: " +
+        String description = "Region: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.getCredentialUserId() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
-                this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
-        }
+                this.NEWLINE + "Parent ID " + this.getRegionParentRegionId() +
+                this.NEWLINE + "Description " + this.getRegionDescription() ;
         return description;
     }
 

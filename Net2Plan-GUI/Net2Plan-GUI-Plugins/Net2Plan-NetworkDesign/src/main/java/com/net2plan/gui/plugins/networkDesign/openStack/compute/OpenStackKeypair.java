@@ -22,6 +22,7 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     private String keypairPrivateKey;
     private String keypairPublicKey;
     private Keypair osKeypair;
+
     public static OpenStackKeypair createFromAddKeypair (OpenStackNet osn , Keypair keypair)
     {
         final OpenStackKeypair res = new OpenStackKeypair(osn,keypair);
@@ -63,7 +64,20 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Keypair: " + this.getId();
+        String description = "Keypair: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getKeypairName() +
+                this.NEWLINE + "Figerprint " + this.getKeypairFingerprint() +
+                this.NEWLINE + "Private key " + this.getKeypairPrivateKey() +
+                this.NEWLINE + "Public key " + this.getKeypairPublicKey() +
+                this.NEWLINE + "User ID " + this.getKeypairUserId() +
+                this.NEWLINE + "Created at " + this.getKeypairCreatedA() +
+                this.NEWLINE + "Delete at " + this.getKeypairDeletedAt() +
+                this.NEWLINE + "Update at " + this.getKeypairUpdatedAt()+
+                this.NEWLINE + "Is deleted " + this.isKeypairDeleted();
+
+
+        return description;
     }
 
 

@@ -67,7 +67,6 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
 
     public void setEndpointName (String value) {
 
-        System.out.println("in" + value);
         this.osEndpoint=Builders.endpoint()
                 .id(this.endpointId)
                 .url(this.endpointUrl)
@@ -81,9 +80,7 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
                 .description(this.endpointDescription)
                 .type(this.endpointType)
                 .build();
-        System.out.println(this.osEndpoint);
-        // Builders.endpoint().
-        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(this.osEndpoint);
+           this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(this.osEndpoint);
 
 
 
@@ -124,13 +121,17 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
     {
         String description = "Endpoint: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.get() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
-                this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
+                this.NEWLINE + "Endpoint name " + this.getEndpointName() +
+                this.NEWLINE + "Project/Tenant ID " + this.getEndpointDescription() +
+                this.NEWLINE + "Enable " + this.isEndpointEnabled() +
+                this.NEWLINE + "Region ID " + this.getEndpointRegionId() +
+                this.NEWLINE + "IFace " + this.getEndpointIface() +
+                this.NEWLINE + "Service ID " + this.getEndpointServiceId() +
+                this.NEWLINE + "Type " + this.getEndpointType() +
+                this.NEWLINE + "URL " + this.getEndpointUrl() +
+                this.NEWLINE + "Links " + this.NEWLINE;
+        for(String key : this.getEndpointLinks().keySet()) {
+            description += key + " " + this.getEndpointLinks().get(key) + NEWLINE;
         }
         return description;
     }

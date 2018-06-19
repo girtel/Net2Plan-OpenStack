@@ -81,7 +81,39 @@ public class OpenStackPort extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Port: " + this.getId();
+        String description = "Port: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getName() +
+                this.NEWLINE + "Router/Device ID " + this.getPortDeviceId() +
+                this.NEWLINE + "Router/Device owner " + this.getPortDeviceOwner() +
+                this.NEWLINE + "Host ID " + this.getPortHostId() +
+                this.NEWLINE + "MAC " + this.getPortMacAddress() +
+                this.NEWLINE + "Network ID " + this.getPortNetworkId() +
+                this.NEWLINE + "Project/Tenant ID " + this.getPortTenantId() +
+                this.NEWLINE + "State " + this.getPortState() +
+                this.NEWLINE + "Admin state up " + this.isAdminStateUp() +
+                this.NEWLINE + "Secrutiy Enable " + this.isPortSecurityEnable() ;
+
+                description+=this.NEWLINE + "Allowed Address Pair" + this.NEWLINE;
+                for(AllowedAddressPair allowedAddressPair : this.getPortAllowedAddressPair()) {
+                    description += allowedAddressPair + " " + NEWLINE;
+                }
+
+        description+=this.NEWLINE + "Fixep IPs" + this.NEWLINE;
+        for(IP ip : this.getPortFixedIps()) {
+            description += ip + " " + NEWLINE;
+        }
+
+        description+=this.NEWLINE + "Profile" + this.NEWLINE;
+        for(String key : this.getPortProfile().keySet()) {
+            description += key + " " + this.getPortProfile().get(key) + NEWLINE;
+        }
+
+        description+=this.NEWLINE + "Security groups" + this.NEWLINE;
+        for(String securityGroup : this.getPortSecurityGroups()) {
+            description += securityGroup + " " + NEWLINE;
+        }
+        return description;
     }
 
     public void setName (String value) {

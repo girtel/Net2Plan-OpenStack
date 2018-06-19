@@ -84,7 +84,21 @@ public class OpenStackRouter extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Router: " + this.getId();
+
+
+        String description = "Router: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getRouterName() +
+                this.NEWLINE + "Project/Tenant ID " + this.getRouterTenantId() +
+                this.NEWLINE + "State " + this.getRouterState() +
+                this.NEWLINE + "Is Distributed " + this.isRouterIsDistributed() +
+                this.NEWLINE + "Is Admin State Up " + this.isRouterIsAdminStateUp() +
+                this.NEWLINE + "Router external gateway info " + this.getRouterExternalGatewayInfo() +
+                this.NEWLINE + "Host Route" + this.NEWLINE;
+        for(HostRoute hostRoute : this.getRouterRoutes()) {
+            description += hostRoute + " " + NEWLINE;
+        }
+        return description;
     }
 
     public void setName (String value) {

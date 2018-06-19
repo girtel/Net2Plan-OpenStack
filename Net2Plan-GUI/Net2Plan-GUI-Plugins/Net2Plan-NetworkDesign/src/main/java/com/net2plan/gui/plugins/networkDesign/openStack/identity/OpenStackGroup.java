@@ -50,15 +50,14 @@ public class OpenStackGroup  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        String description = "Credential: " +
+        String description = "Group: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.getCredentialUserId() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
+                this.NEWLINE + "Name " + this.getGroupName() +
+                this.NEWLINE + "Description " + this.getGroupDescription() +
+                this.NEWLINE + "Domain ID " + this.getGroupDomainId() +
                 this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
+        for(String key : this.getGroupLinks().keySet()) {
+            description += key + " " + this.getGroupLinks().get(key) + NEWLINE;
         }
         return description;
     }

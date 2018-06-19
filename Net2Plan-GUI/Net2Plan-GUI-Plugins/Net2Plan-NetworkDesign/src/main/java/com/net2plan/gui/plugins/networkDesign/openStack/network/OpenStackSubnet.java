@@ -78,7 +78,32 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Subnet: " + this.getId();
+        String description = "Subnet: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getName() +
+                this.NEWLINE + "CIDR " + this.getSubnetCidr() +
+                this.NEWLINE + "Gateway " + this.getSubnetGateway() +
+                this.NEWLINE + "Network ID " + this.getSubnetNetworkId() +
+                this.NEWLINE + "IP version " + this.getSubnetIpVersion() +
+                this.NEWLINE + "Tenant ID " + this.getSubnetTenantId() +
+                this.NEWLINE + "DHCP Enable " + this.isSubnetIsDHCPEnabled() +
+                this.NEWLINE + "IPv6 Address Mode " + this.getSubnetIpv6AddressMode() +
+                this.NEWLINE + "IPv6 Ra Mode " + this.getSubnetIpv6RaMode();
+
+        description += this.NEWLINE + "Pool" + this.NEWLINE;
+        for(Pool pool : this.getSubnetAllocationPools()) {
+            description += pool + " " + NEWLINE;
+        }
+        description += this.NEWLINE + "DNS" + this.NEWLINE;
+        for(String dns : this.getSubnetDnsNames()) {
+            description += dns + " " + NEWLINE;
+        }
+        description += this.NEWLINE + "Host Route" + this.NEWLINE;
+        for(HostRoute hostRoute : this.getSubnetHostRoutes()) {
+            description += hostRoute + " " + NEWLINE;
+        }
+        return description;
+
     }
 
     public void setName (String value) {

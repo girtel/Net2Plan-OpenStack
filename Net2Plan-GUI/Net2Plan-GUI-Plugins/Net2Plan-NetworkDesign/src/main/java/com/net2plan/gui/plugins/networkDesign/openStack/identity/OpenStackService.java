@@ -60,15 +60,22 @@ public class OpenStackService  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        String description = "Credential: " +
+        String description = "Service: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.getCredentialUserId() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
-                this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
+                this.NEWLINE + "Service name " + this.getServiceName() +
+                this.NEWLINE + "Project/Tenant ID " + this.getServiceDescription() +
+                this.NEWLINE + "Blob " + this.getServiceType() +
+                this.NEWLINE + "Type " + this.getServiceVersion() +
+                this.NEWLINE + "Type " + this.isServiceEnabled() +
+                this.NEWLINE + "Endpoints" + this.NEWLINE;
+        for(Endpoint endpoint : this.getServiceEndpoints()) {
+            description += endpoint + " " + NEWLINE;
+
+        }
+
+        description +=this.NEWLINE + "Links" + this.NEWLINE;
+        for(String key : this.getServiceLinks().keySet()) {
+            description += key + " " + this.getServiceLinks().get(key) + NEWLINE;
         }
         return description;
     }

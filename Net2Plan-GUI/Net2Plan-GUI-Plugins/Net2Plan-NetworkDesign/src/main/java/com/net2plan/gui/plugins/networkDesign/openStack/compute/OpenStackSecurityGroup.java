@@ -48,7 +48,20 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Security group: " + this.getId();
+        String description = "Security Group: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "User ID " + this.getSecGroupExtensionName() +
+                this.NEWLINE + "Project/Tenant ID " + this.getSecGroupExtensionTenantId() +
+                this.NEWLINE + "Blob " + this.getSecGroupExtensionDescription();
+                description += this.NEWLINE + "Links" + this.NEWLINE;
+        for(Link link : this.getSecGroupExtensionLinks()) {
+            description += link + " "  + NEWLINE;
+        }
+        description += this.NEWLINE + "Rule" + this.NEWLINE;
+        for(SecGroupExtension.Rule rule : this.getSecGroupExtensionRules()) {
+            description += rule + " "  + NEWLINE;
+        }
+        return description;
     }
 
 

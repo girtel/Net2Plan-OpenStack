@@ -84,7 +84,27 @@ import sun.nio.ch.Net;
         @Override
         public String get50CharactersDescription()
         {
-            return "Network: "+this.getId();
+            String description = "Policy: " +
+                    this.NEWLINE + "ID " + this.getId() +
+                    this.NEWLINE + "Name " + this.getName() +
+                    this.NEWLINE + "Provider physical net " + this.getNetworkProviderPhyNet() +
+                    this.NEWLINE + "Provider segment ID " + this.getNetworkProviderSegID() +
+                    this.NEWLINE + "Tenant/Project ID " + this.getNetworkTenantId() +
+                    this.NEWLINE + "MTU " + this.getNetworkMTU() +
+                    this.NEWLINE + "State " + this.getNetworkState() +
+                    this.NEWLINE + "Type " + this.getNetworkType() +
+                    this.NEWLINE + "Admin state up " + this.isNetworkIsAdminStateUp() +
+                    this.NEWLINE + "Router external " + this.isNetworkIsRouterExternal() +
+                    this.NEWLINE + "Shared " + this.isNetworkIsShared();
+                   description+= this.NEWLINE + "Neutron subnets" + this.NEWLINE;
+            for(Subnet subnet : this.getNetworkNeutronSubnets()) {
+                description += subnet + " " + NEWLINE;
+            }
+            description+=this.NEWLINE + "Subnets" + this.NEWLINE;
+            for(String subnet : this.getNetworkSubnets()) {
+                description += subnet + " " + NEWLINE;
+            }
+            return description;
         }
 
         public void setName (String value) {

@@ -45,7 +45,15 @@ public class OpenStackFloatingIp extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "FloatingIP: " + this.getId();
+        String description = "Floating IP: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Pool " + this.getFloatingIPPool() +
+                this.NEWLINE + "Instance/Server ID " + this.getFloatingIPInstanceId() +
+                this.NEWLINE + "Fixed IP Address" + this.getFloatingIPFixedIpAddress() +
+                this.NEWLINE + "Floating IP Address " + this.getFloatingIPFloatingIpAddress() +
+                this.NEWLINE + "Links" + this.NEWLINE;
+
+        return description;
     }
 
 

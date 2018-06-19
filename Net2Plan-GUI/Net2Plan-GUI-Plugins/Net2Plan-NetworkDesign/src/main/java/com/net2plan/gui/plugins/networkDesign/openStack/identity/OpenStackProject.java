@@ -73,15 +73,17 @@ public class OpenStackProject  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        String description = "Credential: " +
+        String description = "Project/Tenant: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "User ID " + this.getCredentialUserId() +
-                this.NEWLINE + "Project/Tenant ID " + this.getCredentialProjectId() +
-                this.NEWLINE + "Blob " + this.getCredentialBlob() +
-                this.NEWLINE + "Type " + this.getCredentialType() +
+                this.NEWLINE + "Project name " + this.getProjectName() +
+                this.NEWLINE + "Parent ID " + this.getProjectParentId() +
+                this.NEWLINE + "Domain ID " + this.getProjectDomainId() +
+                this.NEWLINE + "Description " + this.getProjectDescription() +
+                this.NEWLINE + "Subtree " + this.getProjectSubtree() +
+                this.NEWLINE + "Enable " + this.isProjectEnabled() +
                 this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getCredentialLinks().keySet()) {
-            description += key + " " + this.getCredentialLinks().get(key) + NEWLINE;
+        for(String key : this.getProjectLinks().keySet()) {
+            description += key + " " + this.getProjectLinks().get(key) + NEWLINE;
         }
         return description;
     }

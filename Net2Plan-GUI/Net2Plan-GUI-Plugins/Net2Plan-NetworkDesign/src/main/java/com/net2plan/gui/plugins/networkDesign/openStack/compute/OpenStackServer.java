@@ -138,7 +138,59 @@ public class OpenStackServer  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Server: " + this.getId();
+        String description = "Server: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getServerName() +
+                this.NEWLINE + "Access IPv4 " + this.getServerAccessIPv4() +
+                this.NEWLINE + "Access IPv6 " + this.getServerAccessIPv6() +
+                this.NEWLINE + "Admin pass " + this.getServerAdminPass() +
+                this.NEWLINE + "Availability Zone " + this.getServerAvailabilityZone() +
+                this.NEWLINE + "Config drive " + this.getServerConfigDrive() +
+                this.NEWLINE + "Flavor ID " + this.getServerFlavorId() +
+                this.NEWLINE + "Flavor " + this.getServerFlavor() +
+                this.NEWLINE + "Host " + this.getServerHost() +
+                this.NEWLINE + "Host ID " + this.getServerHostId() +
+                this.NEWLINE + "Hypervisor Hostname " + this.getServerHypervisorHostname() +
+                this.NEWLINE + "Image ID " + this.getServerImageId() +
+                this.NEWLINE + "Instance Name " + this.getServerInstanceName() +
+                this.NEWLINE + "Keyname " + this.getServerKeyName() +
+                this.NEWLINE + "Power state " + this.getServerPowerState() +
+                this.NEWLINE + "Task state " + this.getServerTaskState() +
+                this.NEWLINE + "Project/Tenant ID " + this.getServerTenantId() +
+                this.NEWLINE + "User ID " + this.getServerUserId() +
+                this.NEWLINE + "Uuid " + this.getServerUuid() +
+                this.NEWLINE + "VM State " + this.getServerVmState() +
+                this.NEWLINE + "Addresses " + this.getServerAddresses() +
+                this.NEWLINE + "Created " + this.getServerCreated() +
+                this.NEWLINE + "Disk config" + this.getServerDiskConfig() +
+                this.NEWLINE + "Fault " + this.getServerFault() +
+                this.NEWLINE + "Progress " + this.getServerProgress() +
+                this.NEWLINE + "Status " + this.getServerStatus() +
+                this.NEWLINE + "Terminated at " + this.getServerTerminatedAt() +
+                this.NEWLINE + "Update at " + this.getServerUpdate() +
+                this.NEWLINE + "Launched at " + this.getServerLaunchedAt();
+
+        description+= this.NEWLINE + "Volumes Attached" + this.NEWLINE;
+        for(String key : this.getServerOsExtendedVolumesAttached()) {
+            description += key + " " + NEWLINE;
+        }
+
+        description+= this.NEWLINE + "Links" + this.NEWLINE;
+        for(Link key : this.getServerLinks()) {
+            description += key + " "  + NEWLINE;
+        }
+
+        description+= this.NEWLINE + "Metadata" + this.NEWLINE;
+        for(String key : this.getServerMetadata().keySet()) {
+            description += key + " " + this.getServerMetadata().get(key) + NEWLINE;
+        }
+
+        description+= this.NEWLINE + "Security Groups" + this.NEWLINE;
+        for(SecurityGroup key : this.getServerSecurityGroups()) {
+            description += key + " "  + NEWLINE;
+        }
+
+        return description;
     }
 
 

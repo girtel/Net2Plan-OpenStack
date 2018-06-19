@@ -71,7 +71,26 @@ public class OpenStackImage  extends OpenStackNetworkElement
     @Override
     public String get50CharactersDescription()
     {
-        return "Image: " + this.getId();
+        String description = "Image: " +
+                this.NEWLINE + "ID " + this.getId() +
+                this.NEWLINE + "Name " + this.getImageName() +
+                this.NEWLINE + "Created at " + this.getImageCreated() +
+                this.NEWLINE + "Min Disk " + this.getImageMinDisk() +
+                this.NEWLINE + "Min RAM " + this.getImageMinRam() +
+                this.NEWLINE + "Progress " + this.getImageProgress() +
+                this.NEWLINE + "Size " + this.getImageSize() +
+                this.NEWLINE + "Status " + this.getImageStatus() +
+                this.NEWLINE + "Update at " + this.getImageUpdated() +
+                this.NEWLINE + "Snapshot " + this.isImageSnapshot();
+               description += this.NEWLINE + "Links" + this.NEWLINE;
+        for(String key : this.getImageMetaData().keySet()) {
+            description += key + " " + this.getImageMetaData().get(key) + NEWLINE;
+        }
+        description +=this.NEWLINE + "Links" + this.NEWLINE;
+        for(Link link : this.getImageLinks()) {
+            description += link + " " +  NEWLINE;
+        }
+        return description;
     }
 
 
