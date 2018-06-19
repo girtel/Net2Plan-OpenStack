@@ -54,12 +54,16 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
                 this.NEWLINE + "Project/Tenant ID " + this.getSecGroupExtensionTenantId() +
                 this.NEWLINE + "Blob " + this.getSecGroupExtensionDescription();
                 description += this.NEWLINE + "Links" + this.NEWLINE;
-        for(Link link : this.getSecGroupExtensionLinks()) {
-            description += link + " "  + NEWLINE;
+        if(this.getSecGroupExtensionLinks()!=null) {
+            for (Link link : this.getSecGroupExtensionLinks()) {
+                description += link + " " + NEWLINE;
+            }
         }
-        description += this.NEWLINE + "Rule" + this.NEWLINE;
-        for(SecGroupExtension.Rule rule : this.getSecGroupExtensionRules()) {
-            description += rule + " "  + NEWLINE;
+        if(this.getSecGroupExtensionRules()!=null) {
+            description += this.NEWLINE + "Rule" + this.NEWLINE;
+            for (SecGroupExtension.Rule rule : this.getSecGroupExtensionRules()) {
+                description += rule + " " + NEWLINE;
+            }
         }
         return description;
     }

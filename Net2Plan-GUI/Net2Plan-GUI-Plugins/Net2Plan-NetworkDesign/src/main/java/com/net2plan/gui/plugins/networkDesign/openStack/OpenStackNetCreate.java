@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.Facing;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
 import org.openstack4j.model.compute.Server;
@@ -12,9 +13,9 @@ import org.openstack4j.model.compute.ServerCreate;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.Role;
 import org.openstack4j.model.identity.v3.Token;
-import org.openstack4j.model.image.ContainerFormat;
-import org.openstack4j.model.image.DiskFormat;
-import org.openstack4j.model.image.Image;
+import org.openstack4j.model.image.v2.ContainerFormat;
+import org.openstack4j.model.image.v2.DiskFormat;
+import org.openstack4j.model.image.v2.Image;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.NetworkType;
 
@@ -407,21 +408,32 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackImage(JSONObject information){
-        changeOs(Facing.PUBLIC);
+        changeOs(Facing.INTERNAL);
         Payload<File> payload = null;
         try {
 
             String path = information.getString("PATH");
-            System.out.println(path);
+            String name = information.getString("NAME");
             payload = Payloads.create(new File(path));
 
 
-        Image image = this.osClientV3.images().create(Builders.image()
-                .name("Cirros 0.3.0 x64")
-                .isPublic(true)
-                .containerFormat(ContainerFormat.BARE)
-                .diskFormat(DiskFormat.QCOW2)
-                .build(), payload);
+            Image image = this.osClientV3.imagesV2().create(
+                    Builders.imageV2()
+                            .name(name)
+                            .containerFormat(ContainerFormat.BARE)
+                            .visibility(org.openstack4j.model.image.v2.Image.ImageVisibility.PUBLIC)
+                            .diskFormat(DiskFormat.QCOW2)
+                            .minDisk((long)0)
+                            .minRam((long)0)
+                            .build()
+            );
+
+
+            ActionResponse upload = this.osClientV3.imagesV2().upload(
+                    image.getId(),
+                    payload,
+                    image);
+
 
         } catch (Exception e) {
             e.printStackTrace();

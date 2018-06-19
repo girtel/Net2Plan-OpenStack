@@ -523,7 +523,9 @@ public class OpenStackNet
         changeOs(Facing.INTERNAL);
         /* Get elements of Identity(Keystone)*/
         final List<User> users = (List<User>) os.identity().users().list();
-        final List<? extends Project> projects = (List<? extends Project>)os.identity().projects().list();
+         List<? extends Project> projects = new ArrayList<>();
+        if(system.equals("ubuntu"))
+        os.identity().projects().list();
         final List<Domain> domains = (List<Domain>) os.identity().domains().list();
         final List<Endpoint> endpoints = (List<Endpoint>) os.identity().serviceEndpoints().listEndpoints();
         final List<Service> services = (List<Service>) os.identity().serviceEndpoints().list();

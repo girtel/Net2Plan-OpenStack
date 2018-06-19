@@ -96,13 +96,17 @@ import sun.nio.ch.Net;
                     this.NEWLINE + "Admin state up " + this.isNetworkIsAdminStateUp() +
                     this.NEWLINE + "Router external " + this.isNetworkIsRouterExternal() +
                     this.NEWLINE + "Shared " + this.isNetworkIsShared();
-                   description+= this.NEWLINE + "Neutron subnets" + this.NEWLINE;
-            for(Subnet subnet : this.getNetworkNeutronSubnets()) {
-                description += subnet + " " + NEWLINE;
+            if(this.getNetworkNeutronSubnets()!=null) {
+                description += this.NEWLINE + "Neutron subnets" + this.NEWLINE;
+                for (Subnet subnet : this.getNetworkNeutronSubnets()) {
+                    description += subnet + " " + NEWLINE;
+                }
             }
-            description+=this.NEWLINE + "Subnets" + this.NEWLINE;
-            for(String subnet : this.getNetworkSubnets()) {
-                description += subnet + " " + NEWLINE;
+            if(this.getNetworkSubnets()!=null) {
+                description += this.NEWLINE + "Subnets" + this.NEWLINE;
+                for (String subnet : this.getNetworkSubnets()) {
+                    description += subnet + " " + NEWLINE;
+                }
             }
             return description;
         }

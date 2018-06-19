@@ -123,6 +123,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     private final JMenuBar menuBar;
     private JTextArea upperText;
+    private JScrollPane jScrollPane;
 
     final String NEWLINE = String.format("%n");
 
@@ -138,9 +139,12 @@ public class ViewEditTopologyTablesPane extends JPanel
 
         this.callback = callback;
 
+
         upperText = new JTextArea();
+        jScrollPane = new JScrollPane(upperText);
         upperText.setFont(new JLabel().getFont());
         upperText.setBackground(new JLabel().getBackground());
+        upperText.setAutoscrolls(true);
         upperText.setLineWrap(true);
         upperText.setEditable(false);
         upperText.setWrapStyleWord(true);
@@ -170,7 +174,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         final JSplitPane splitPane = new JSplitPane();
         splitPane.setLeftComponent(viewEditHighLevelTabbedPane);
 
-        splitPane.setBottomComponent(upperText);
+        splitPane.setBottomComponent(jScrollPane);
         splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.3);
         splitPane.setEnabled(true);

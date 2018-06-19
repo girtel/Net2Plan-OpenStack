@@ -170,26 +170,33 @@ public class OpenStackServer  extends OpenStackNetworkElement
                 this.NEWLINE + "Update at " + this.getServerUpdate() +
                 this.NEWLINE + "Launched at " + this.getServerLaunchedAt();
 
-        description+= this.NEWLINE + "Volumes Attached" + this.NEWLINE;
-        for(String key : this.getServerOsExtendedVolumesAttached()) {
-            description += key + " " + NEWLINE;
+        if(this.getServerOsExtendedVolumesAttached()!=null) {
+            description += this.NEWLINE + "Volumes Attached" + this.NEWLINE;
+            for (String key : this.getServerOsExtendedVolumesAttached()) {
+                description += key + " " + NEWLINE;
+            }
         }
 
-        description+= this.NEWLINE + "Links" + this.NEWLINE;
-        for(Link key : this.getServerLinks()) {
-            description += key + " "  + NEWLINE;
+        if(this.getServerLinks()!=null) {
+            description += this.NEWLINE + "Links" + this.NEWLINE;
+            for (Link key : this.getServerLinks()) {
+                description += key + " " + NEWLINE;
+            }
         }
 
-        description+= this.NEWLINE + "Metadata" + this.NEWLINE;
-        for(String key : this.getServerMetadata().keySet()) {
-            description += key + " " + this.getServerMetadata().get(key) + NEWLINE;
+        if(this.getServerMetadata()!=null) {
+            description += this.NEWLINE + "Metadata" + this.NEWLINE;
+            for (String key : this.getServerMetadata().keySet()) {
+                description += key + " " + this.getServerMetadata().get(key) + NEWLINE;
+            }
         }
 
-        description+= this.NEWLINE + "Security Groups" + this.NEWLINE;
-        for(SecurityGroup key : this.getServerSecurityGroups()) {
-            description += key + " "  + NEWLINE;
+        if(this.getServerSecurityGroups()!=null) {
+            description += this.NEWLINE + "Security Groups" + this.NEWLINE;
+            for (SecurityGroup key : this.getServerSecurityGroups()) {
+                description += key + " " + NEWLINE;
+            }
         }
-
         return description;
     }
 

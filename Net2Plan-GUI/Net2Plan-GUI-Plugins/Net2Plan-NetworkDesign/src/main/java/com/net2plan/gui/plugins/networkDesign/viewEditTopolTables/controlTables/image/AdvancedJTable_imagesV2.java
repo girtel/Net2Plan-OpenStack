@@ -44,7 +44,7 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtRcMenu("Create image", e ->addImage(), (a, b) -> b >=0, null));
 
-
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
         return res;
 
     }
@@ -62,6 +62,7 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
                     chooser.getSelectedFile().getName());
             JSONObject information = new JSONObject();
             information.put("PATH",chooser.getSelectedFile().getPath());
+            information.put("NAME",chooser.getSelectedFile().getName());
             callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackImage(information);
             updateTab();
         }
