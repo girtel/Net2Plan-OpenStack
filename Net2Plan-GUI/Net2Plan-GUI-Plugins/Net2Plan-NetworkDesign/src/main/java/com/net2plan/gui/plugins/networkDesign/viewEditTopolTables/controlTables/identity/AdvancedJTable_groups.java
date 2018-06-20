@@ -49,7 +49,17 @@ public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenSta
         }), (a, b) -> b == 1, null));
         res.add(new AjtRcMenu("Change group's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change group's description", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Description",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change group's domain ID", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Domain ID",n,"Select");
 
         }), (a, b) -> b ==1, null));
 

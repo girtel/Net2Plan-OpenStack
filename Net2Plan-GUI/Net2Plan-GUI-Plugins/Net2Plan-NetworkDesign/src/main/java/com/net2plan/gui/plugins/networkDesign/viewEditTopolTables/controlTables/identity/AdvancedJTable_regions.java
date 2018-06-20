@@ -46,12 +46,16 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Change region's description", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Description",n);
+            generalTableUpdate("Description",n,"");
 
         }), (a, b) -> b ==1, null));
 
 
+        res.add(new AjtRcMenu("Change region's parent ID", e -> getSelectedElements().forEach(n -> {
 
+            generalTableUpdate("Parent ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
 
         return res;
 

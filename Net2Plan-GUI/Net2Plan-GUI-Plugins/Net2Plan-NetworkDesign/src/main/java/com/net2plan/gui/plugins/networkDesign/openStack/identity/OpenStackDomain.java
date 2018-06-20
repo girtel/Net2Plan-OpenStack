@@ -42,6 +42,7 @@ public class OpenStackDomain extends OpenStackNetworkElement
     public Map<String,String> getDomainLinks () { return this.domainLinks; }
 
     public void setDomainName (String value) { this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().name(value).build());  }
+    public void setDomainDescription(String value) { this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().description(value).build());  }
     public void isDomainEnabled (boolean value) { this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().enabled(value).build()); }
 
     @Override

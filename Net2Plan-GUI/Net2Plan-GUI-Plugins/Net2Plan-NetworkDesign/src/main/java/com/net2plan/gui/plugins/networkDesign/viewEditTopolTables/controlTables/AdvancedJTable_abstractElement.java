@@ -232,7 +232,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
 
     public abstract void updateTab();
 
-    public abstract  void generalTableUpdate(String key, OpenStackNetworkElement osne);
+    public abstract  void generalTableUpdate(String key, OpenStackNetworkElement osne,String type);
 
     @Override
     public DefaultTableModel getModel()

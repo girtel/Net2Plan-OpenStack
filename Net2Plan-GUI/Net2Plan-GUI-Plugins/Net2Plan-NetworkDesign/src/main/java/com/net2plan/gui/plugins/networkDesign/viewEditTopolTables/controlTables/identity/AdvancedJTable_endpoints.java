@@ -59,7 +59,41 @@ public class AdvancedJTable_endpoints extends AdvancedJTable_networkElement<Open
 
         res.add(new AjtRcMenu("Change endpoint's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change endpoint's description", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Description",n,"");
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change endpoint's region", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Region ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change endpoint's facing", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Facing",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change endpoint's service ID", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Service ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change endpoint's type", e -> getSelectedElements().forEach(n -> {
+
+        generalTableUpdate("Type",n,"");
+
+    }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change endpoint's url", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("URL",n,"");
 
         }), (a, b) -> b ==1, null));
 

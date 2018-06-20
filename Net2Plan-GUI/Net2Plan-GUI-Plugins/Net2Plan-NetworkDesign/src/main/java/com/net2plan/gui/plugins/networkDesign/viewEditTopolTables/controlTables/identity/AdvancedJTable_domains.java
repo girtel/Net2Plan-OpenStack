@@ -6,6 +6,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.util.*;
 
@@ -50,10 +51,15 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Change domain's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 
+        res.add(new AjtRcMenu("Change domain's description", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Description",n,"");
+
+        }), (a, b) -> b ==1, null));
 
 
         return res;
@@ -70,7 +76,7 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
         generalTableForm("Add domain",newList);
     }
     public void removeDomain(OpenStackDomain domain){
-
+        System.out.println("Deleting");
         callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackDomain(domain.getId());
         updateTab();
     }

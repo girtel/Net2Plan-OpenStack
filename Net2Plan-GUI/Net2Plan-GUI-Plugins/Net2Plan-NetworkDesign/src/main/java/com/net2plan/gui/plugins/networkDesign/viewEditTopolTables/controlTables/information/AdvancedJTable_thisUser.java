@@ -49,17 +49,17 @@ public class AdvancedJTable_thisUser extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtRcMenu("Change the user's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
         res.add(new AjtRcMenu("Change the user's email", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Email",n);
+            generalTableUpdate("Email",n,"");
 
         }), (a, b) -> b ==1, null));
         res.add(new AjtRcMenu("Change the user's description", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Description",n);
+            generalTableUpdate("Description",n,"");
 
         }), (a, b) -> b ==1, null));
 

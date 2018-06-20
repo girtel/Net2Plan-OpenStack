@@ -66,16 +66,19 @@ public class OpenStackService  extends OpenStackNetworkElement
                 this.NEWLINE + "Project/Tenant ID " + this.getServiceDescription() +
                 this.NEWLINE + "Blob " + this.getServiceType() +
                 this.NEWLINE + "Type " + this.getServiceVersion() +
-                this.NEWLINE + "Type " + this.isServiceEnabled() +
+                this.NEWLINE + "Enable " + this.isServiceEnabled() +
                 this.NEWLINE + "Endpoints" + this.NEWLINE;
-        for(Endpoint endpoint : this.getServiceEndpoints()) {
+        if(this.getServiceEndpoints()!=null){
+        for (Endpoint endpoint : this.getServiceEndpoints()) {
             description += endpoint + " " + NEWLINE;
 
         }
-
+    }
         description +=this.NEWLINE + "Links" + this.NEWLINE;
-        for(String key : this.getServiceLinks().keySet()) {
-            description += key + " " + this.getServiceLinks().get(key) + NEWLINE;
+        if(this.getServiceLinks()!=null) {
+            for (String key : this.getServiceLinks().keySet()) {
+                description += key + " " + this.getServiceLinks().get(key) + NEWLINE;
+            }
         }
         return description;
     }

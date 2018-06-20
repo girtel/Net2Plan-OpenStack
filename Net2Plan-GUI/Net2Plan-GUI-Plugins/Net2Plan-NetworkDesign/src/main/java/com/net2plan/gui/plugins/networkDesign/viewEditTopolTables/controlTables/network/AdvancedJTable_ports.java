@@ -73,7 +73,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
         res.add(new AjtRcMenu("Change port's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 

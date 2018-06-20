@@ -66,7 +66,7 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Change subnet's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 

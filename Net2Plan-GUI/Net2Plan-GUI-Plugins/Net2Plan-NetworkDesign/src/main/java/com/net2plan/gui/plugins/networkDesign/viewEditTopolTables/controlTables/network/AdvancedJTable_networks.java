@@ -67,7 +67,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtRcMenu("Change network's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 

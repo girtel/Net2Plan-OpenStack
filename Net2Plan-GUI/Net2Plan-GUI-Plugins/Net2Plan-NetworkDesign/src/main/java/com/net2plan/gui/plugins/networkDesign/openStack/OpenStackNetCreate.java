@@ -200,9 +200,11 @@ public class OpenStackNetCreate{
     public void createOpenStackRole(JSONObject information){
         changeOs(Facing.INTERNAL);
         String roleName = information.getString("Name");
+        String roleDomainId = information.getString("Domain ID");
         try {
              this.osClientV3.identity().roles().create(Builders.role()
                     .name(roleName)
+                     .domainId(roleDomainId)
                     .build());
         }catch(Exception ex){
             System.out.println(ex.toString());

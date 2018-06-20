@@ -56,7 +56,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Change router's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 

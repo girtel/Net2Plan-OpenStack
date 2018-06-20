@@ -52,7 +52,22 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
 
         res.add(new AjtRcMenu("Change credential's user id", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("User ID",n);
+            generalTableUpdate("User ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change credential's tenant/project id", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Tenant ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change credential's type", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Type",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change credential's blob", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Blob",n,"");
 
         }), (a, b) -> b ==1, null));
 

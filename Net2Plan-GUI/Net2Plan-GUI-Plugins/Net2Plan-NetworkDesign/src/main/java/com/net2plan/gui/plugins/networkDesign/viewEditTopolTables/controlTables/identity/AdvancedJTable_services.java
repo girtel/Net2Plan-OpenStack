@@ -58,9 +58,22 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtRcMenu("Change service's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change service's description", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Description",n,"");
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change service's type", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Service type",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+
 
 
         return res;

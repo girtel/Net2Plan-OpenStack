@@ -58,7 +58,32 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtRcMenu("Change project's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change project's parent ID", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Parent ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change project's domain", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Domain",n,"Select");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change project's description", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Description",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change project's parents", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Parents",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change project's subtree", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Subtree",n,"");
 
         }), (a, b) -> b ==1, null));
 

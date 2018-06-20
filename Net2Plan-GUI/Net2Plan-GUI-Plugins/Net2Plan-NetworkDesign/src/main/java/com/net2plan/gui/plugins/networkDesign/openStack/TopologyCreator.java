@@ -72,7 +72,7 @@ class TopologyCreator
             /* Get elements of Identity(Keystone)*/
             final List<User> users = (List<User>) os.identity().users().list();
         List<? extends Project> projects = new ArrayList<>();
-            if(system.equals("ubuntu"))
+if(system.equals("ubuntu"))
                 projects = os.identity().projects().list();
 
             final List<Domain> domains = (List<Domain>) os.identity().domains().list();

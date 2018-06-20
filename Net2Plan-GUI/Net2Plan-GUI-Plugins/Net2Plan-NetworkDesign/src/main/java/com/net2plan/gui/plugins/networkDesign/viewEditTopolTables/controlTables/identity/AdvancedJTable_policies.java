@@ -50,13 +50,27 @@ public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b == 1, null));
 
+
         res.add(new AjtRcMenu("Change policy's user id", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("User ID",n);
+            generalTableUpdate("User ID",n,"Select");
 
         }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change policy's tenant/project id", e -> getSelectedElements().forEach(n -> {
 
+            generalTableUpdate("Tenant ID",n,"Select");
 
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change policy's type", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Type",n,"");
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Change policy's blob", e -> getSelectedElements().forEach(n -> {
+
+            generalTableUpdate("Blob",n,"");
+
+        }), (a, b) -> b ==1, null));
         return res;
 
     }

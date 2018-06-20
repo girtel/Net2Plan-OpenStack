@@ -55,7 +55,7 @@ public class AdvancedJTable_thisProject extends AdvancedJTable_networkElement<Op
 
         res.add(new AjtRcMenu("Change project's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 

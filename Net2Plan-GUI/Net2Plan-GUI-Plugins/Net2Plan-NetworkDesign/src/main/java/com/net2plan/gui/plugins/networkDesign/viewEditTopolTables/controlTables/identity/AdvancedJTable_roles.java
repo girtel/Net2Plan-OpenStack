@@ -47,11 +47,15 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
         }), (a, b) -> b == 1, null));
         res.add(new AjtRcMenu("Change role's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n);
+            generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
 
+        res.add(new AjtRcMenu("Change role's domain ID", e -> getSelectedElements().forEach(n -> {
 
+            generalTableUpdate("Domain ID",n,"Select");
+
+        }), (a, b) -> b ==1, null));
         return res;
 
     }
@@ -59,6 +63,7 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
     public void addRole(){
         Map<String,String> newList = new HashMap<>();
         newList.put("Name","");
+        newList.put("Domain ID","Select");
 
         generalTableForm("Add role",newList);
 
