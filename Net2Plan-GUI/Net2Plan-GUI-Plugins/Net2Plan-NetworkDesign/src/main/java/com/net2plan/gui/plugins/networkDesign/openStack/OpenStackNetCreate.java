@@ -18,8 +18,12 @@ import org.openstack4j.model.image.v2.DiskFormat;
 import org.openstack4j.model.image.v2.Image;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.NetworkType;
+import org.openstack4j.openstack.OSFactory;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -410,7 +414,81 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackImage(JSONObject information){
-        changeOs(Facing.INTERNAL);
+      //  changeOs(Facing.INTERNAL);
+        ControlWindow controlWindow =  new ControlWindow(information,this.osClientV3.getToken());
+        submit(controlWindow);
+
+
+    }
+
+
+
+    public  void logPanel(){
+        JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
+    }
+    public void changeOs(Facing facing){
+        Token token = osClientV3.getToken();
+        MyRunnable newR;
+
+        if(system.equals("ubuntu")) {
+            newR = new MyRunnable(token, facing);
+            submit(newR);
+            this.osClientV3 = newR.getOs();
+        }
+
+    }
+
+
+}
+class ControlWindow implements Runnable{
+
+    private  JSONObject information;
+    private OSClient.OSClientV3 osClientV3;
+
+
+    public ControlWindow (JSONObject information,Token token){
+        this.information = information;
+        this.osClientV3 = OSFactory.clientFromToken(token,Facing.INTERNAL);
+    }
+    @Override
+    public void run() {
+
+        JFrame jfM = new JFrame("Control window");
+        jfM.setLayout(null);
+
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        JLabel l6 = new JLabel("Status", SwingConstants.LEFT);
+
+        JTextArea jTextArea = new JTextArea();
+        jp1.add(jTextArea);
+        jp1.add(l6);
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 200);
+        jbP1.setBounds(75, 90, 90, 25);
+         jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                    jfM.dispose();
+            }
+        });
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        jfM.setSize(250, 160);
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+
         Payload<File> payload = null;
         try {
 
@@ -431,31 +509,36 @@ public class OpenStackNetCreate{
             );
 
 
-            ActionResponse upload = this.osClientV3.imagesV2().upload(
+            submit(new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+
+                            while(!osClientV3.imagesV2().get(image.getId()).getStatus().equals(Image.ImageStatus.ACTIVE)){
+                                jTextArea.setText(osClientV3.imagesV2().get(image.getId()).getStatus().value());
+                                System.out.println(osClientV3.imagesV2().get(image.getId()).getStatus().value());
+                            }
+                            jTextArea.setText(osClientV3.imagesV2().get(image.getId()).getStatus().value());
+                            System.out.println(osClientV3.imagesV2().get(image.getId()).getStatus().value());
+
+                        }
+                    })
+            );
+
+            ActionResponse upload = osClientV3.imagesV2().upload(
                     image.getId(),
                     payload,
                     image);
 
 
+
         } catch (Exception e) {
             e.printStackTrace();
-            logPanel();
         }
+
+
     }
 
 
-    public  void logPanel(){
-        JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
-    }
-    public void changeOs(Facing facing){
-        Token token = osClientV3.getToken();
-        MyRunnable newR;
 
-                if(system.equals("ubuntu")) {
-                    newR = new MyRunnable(token, facing);
-                    submit(newR);
-                    this.osClientV3 = newR.getOs();
-                }
-
-    }
 }
