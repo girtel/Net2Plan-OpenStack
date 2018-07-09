@@ -56,9 +56,50 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Change router's name", e -> getSelectedElements().forEach(n -> {
 
-            generalTableUpdate("Name",n,"");
+            Map<String,String> headers = new HashMap<>();
+            headers.put("Name","");
+            generalTableFormUpdate("Change name",headers,"Name",n);
 
         }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change router's tenant ID", e -> getSelectedElements().forEach(n -> {
+
+            Map<String,String> headers = new HashMap<>();
+            headers.put("Tenant ID","Select");
+            generalTableFormUpdate("Change Tenant ID",headers,"Tenant ID",n);
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Change router's external gateway info", e -> getSelectedElements().forEach(n -> {
+
+            Map<String,String> headers = new HashMap<>();
+            headers.put("Network ID","Select");
+            headers.put("Snapshot","Boolean");
+            generalTableFormUpdate("Change external gateway",headers,"External gateway",n);
+
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Clear router's external gateway", e -> getSelectedElements().forEach(n -> {
+
+           n.clearRouterExternalGatewayInfo();
+           updateTab();
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("No routes ", e -> getSelectedElements().forEach(n -> {
+            n.noRoutes();
+            updateTab();
+
+        }), (a, b) -> b ==1, null));
+
+        res.add(new AjtRcMenu("Add route", e -> getSelectedElements().forEach(n -> {
+
+            Map<String,String> headers = new HashMap<>();
+            headers.put("Destination","Special-ipv4masc");
+            headers.put("Next hop","Special-ipv4masc");
+            generalTableFormUpdate("Add route",headers,"Route",n);
+
+        }), (a, b) -> b ==1, null));
+
 
 
         return res;

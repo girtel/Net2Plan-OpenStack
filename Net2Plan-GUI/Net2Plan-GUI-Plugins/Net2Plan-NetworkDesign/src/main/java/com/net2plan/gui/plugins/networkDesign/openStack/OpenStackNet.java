@@ -525,7 +525,7 @@ public class OpenStackNet
         final List<User> users = (List<User>) os.identity().users().list();
          List<? extends Project> projects = new ArrayList<>();
         if(system.equals("ubuntu"))
-        os.identity().projects().list();
+        projects = os.identity().projects().list();
         final List<Domain> domains = (List<Domain>) os.identity().domains().list();
         final List<Endpoint> endpoints = (List<Endpoint>) os.identity().serviceEndpoints().listEndpoints();
         final List<Service> services = (List<Service>) os.identity().serviceEndpoints().list();

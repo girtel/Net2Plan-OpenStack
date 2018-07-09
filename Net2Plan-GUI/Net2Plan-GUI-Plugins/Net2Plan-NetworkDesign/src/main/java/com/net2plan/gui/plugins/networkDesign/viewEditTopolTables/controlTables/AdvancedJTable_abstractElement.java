@@ -230,6 +230,8 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
 
     public abstract void generalTableForm(String title,Map<String,String> headers);
 
+    public abstract void generalTableFormUpdate(String title,Map<String,String> headers,String key, OpenStackNetworkElement osne);
+
     public abstract void updateTab();
 
     public abstract  void generalTableUpdate(String key, OpenStackNetworkElement osne,String type);

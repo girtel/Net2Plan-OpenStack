@@ -7,6 +7,8 @@ import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import org.json.JSONObject;
 import org.openstack4j.model.network.ExternalGateway;
 import org.openstack4j.model.network.HostRoute;
 import org.openstack4j.model.network.Router;
@@ -16,8 +18,7 @@ import org.openstack4j.model.network.State;
  *
  * @author Manuel
  */
-public class OpenStackRouter extends OpenStackNetworkElement
-{
+public class OpenStackRouter extends OpenStackNetworkElement {
     final Node npNode;
 
     private String routerId;
@@ -30,26 +31,25 @@ public class OpenStackRouter extends OpenStackNetworkElement
     private ExternalGateway routerExternalGatewayInfo;
     private Router osRouter;
 
-    public static OpenStackRouter createFromAddRouter (OpenStackNet osn ,Router router)
-    {
-        final Node npNode2 = osn.getNetPlan().addNode(0,0,"",null);
+    public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router) {
+        final Node npNode2 = osn.getNetPlan().addNode(0, 0, "", null);
         npNode2.setName(router.getId());
 
-        if(router.getName().equals("router1")) {
+        if (router.getName().equals("router1")) {
             try {
 
-                npNode2.setUrlNodeIcon( osn.getNetPlan().getNetworkLayerDefault(),new URL("https://findicons.com/files/icons/1035/human_o2/128/router_gnome_netstatus_75_100.png"));
+                npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL("https://findicons.com/files/icons/1035/human_o2/128/router_gnome_netstatus_75_100.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             try {
-                npNode2.setUrlNodeIcon( osn.getNetPlan().getNetworkLayerDefault(),new URL("http://www.myiconfinder.com/uploads/iconsets/256-256-ab5e2d6a7b779ce5a246fb00a5f163f6-router.png"));
+                npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL("http://www.myiconfinder.com/uploads/iconsets/256-256-ab5e2d6a7b779ce5a246fb00a5f163f6-router.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        final OpenStackRouter res = new OpenStackRouter(osn,npNode2,router);
+        final OpenStackRouter res = new OpenStackRouter(osn, npNode2, router);
         res.routerId = router.getId();
         res.routerName = router.getName();
         res.routerTenantId = router.getTenantId();
@@ -60,30 +60,54 @@ public class OpenStackRouter extends OpenStackNetworkElement
         res.routerExternalGatewayInfo = router.getExternalGatewayInfo();
         return res;
     }
-    public OpenStackRouter(OpenStackNet osn, Node npNode, Router router)
-    {
-        super (osn , npNode , (List<OpenStackNetworkElement>) (List<?>) osn.openStackRouters);
+
+    public OpenStackRouter(OpenStackNet osn, Node npNode, Router router) {
+        super(osn, npNode, (List<OpenStackNetworkElement>) (List<?>) osn.openStackRouters);
         this.npNode = npNode;
         this.osRouter = router;
     }
 
 
     @Override
-    public String getId () { return routerId; }
-    public String getRouterName () { return routerName; }
-    public String getRouterTenantId () { return routerTenantId; }
-    public State getRouterState () { return routerState; }
-    public boolean isRouterIsAdminStateUp () { return routerIsAdminStateUp; }
-    public boolean isRouterIsDistributed () { return routerIsDistributed; }
-    public List<? extends HostRoute> getRouterRoutes () { return routerRoutes; }
-    public ExternalGateway getRouterExternalGatewayInfo () { return routerExternalGatewayInfo; }
-    public void setXYPositionMap (Point2D pos) { npNode.setXYPositionMap(pos); }
+    public String getId() {
+        return routerId;
+    }
 
+    public String getRouterName() {
+        return routerName;
+    }
+
+    public String getRouterTenantId() {
+        return routerTenantId;
+    }
+
+    public State getRouterState() {
+        return routerState;
+    }
+
+    public boolean isRouterIsAdminStateUp() {
+        return routerIsAdminStateUp;
+    }
+
+    public boolean isRouterIsDistributed() {
+        return routerIsDistributed;
+    }
+
+    public List<? extends HostRoute> getRouterRoutes() {
+        return routerRoutes;
+    }
+
+    public ExternalGateway getRouterExternalGatewayInfo() {
+        return routerExternalGatewayInfo;
+    }
+
+    public void setXYPositionMap(Point2D pos) {
+        npNode.setXYPositionMap(pos);
+    }
 
 
     @Override
-    public String get50CharactersDescription()
-    {
+    public String get50CharactersDescription() {
 
 
         String description = "Router: " +
@@ -95,49 +119,117 @@ public class OpenStackRouter extends OpenStackNetworkElement
                 this.NEWLINE + "Is Admin State Up " + this.isRouterIsAdminStateUp() +
                 this.NEWLINE + "Router external gateway info " + this.getRouterExternalGatewayInfo() +
                 this.NEWLINE + "Host Route" + this.NEWLINE;
-        for(HostRoute hostRoute : this.getRouterRoutes()) {
+        for (HostRoute hostRoute : this.getRouterRoutes()) {
             description += hostRoute + " " + NEWLINE;
         }
         return description;
     }
 
-    public void setName (String value) {
+    public void setName(JSONObject jsonObject) {
 
-        try{
+        try {
 
-        this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().name(value).build());
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().name(jsonObject.getString("Name")).build());
 
-        }catch(Exception ex){
-
-        logPanel();
-        System.out.println(ex.toString());
-
-        }
-
-    }
-    public void setRouterTenantId (String value) { this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().tenantId(value).build()); }
-    public void isAdminStateUp (boolean value) {
-        try{
-
-        this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().adminStateUp(value).build());
-
-        }catch(Exception ex){
-
-        logPanel();
-        System.out.println(ex.toString());
-
-        }
-    }
-    public void isDistributed (boolean value) {
-        try{
-        this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().distributed(value).build());
-
-        }catch(Exception ex){
+        } catch (Exception ex) {
 
             logPanel();
             System.out.println(ex.toString());
 
         }
+
+    }
+
+    public void setRouterTenantId(JSONObject jsonObject) {
+        try {
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().tenantId(jsonObject.getString("Tenant ID")).build());
+        }catch(Exception ex){
+            System.out.println(ex.toString());
+            logPanel();
         }
-    public void setRouterExternalGatewayInfo (ExternalGateway value) { this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().externalGateway(value).build()); }
+    }
+
+    public void isAdminStateUp(boolean value) {
+        try {
+
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().adminStateUp(value).build());
+
+        } catch (Exception ex) {
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+
+    public void isDistributed(boolean value) {
+        try {
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().distributed(value).build());
+
+        } catch (Exception ex) {
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+
+    public void setRouterExternalGatewayInfo(JSONObject jsonObject) {
+        try {
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().externalGateway(jsonObject.getString("Network ID"),jsonObject.getBoolean("Snapshot")).build());
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            logPanel();
+        }
+    }
+    public void clearRouterExternalGatewayInfo() {
+        try {
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().clearExternalGateway().build());
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            logPanel();
+        }
+    }
+    public void noRoutes() {
+        try {
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().noRoutes().build());
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            logPanel();
+        }
+    }
+    public void addRoute(JSONObject jsonObject) {
+        try {
+            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().route(prepareCidr(jsonObject.getString("Destination")),prepareCidr(jsonObject.getString("Next hop"))).build());
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+            logPanel();
+        }
+    }
+
+    public String prepareIp(String ip){
+        String[] parts = ip.split("-");
+        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
+        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
+        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
+        String part4 =  String.valueOf(Integer.parseInt(parts[3])); // ###
+        String response = part1+"."+part2+"."+part3+"."+part4;
+
+        return response;
+    }
+
+    public String prepareCidr(String cidr){
+
+        String[] parts = cidr.split("-");
+        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
+        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
+        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
+        String part4 = parts[3]; //###/##
+        String[] newParts = part4.split("/");
+        String part5 = String.valueOf(Integer.parseInt(newParts[0])); // ###
+        String part6 = String.valueOf(Integer.parseInt(newParts[1])); //##
+        String response = part1+"."+part2+"."+part3+"."+part5+"/"+part6;
+
+        return response;
+    }
 }

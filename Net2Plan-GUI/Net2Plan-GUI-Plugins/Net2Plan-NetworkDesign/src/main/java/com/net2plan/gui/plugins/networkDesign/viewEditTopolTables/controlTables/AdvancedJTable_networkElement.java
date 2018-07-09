@@ -12,10 +12,7 @@
 
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Policy;
@@ -537,6 +534,427 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
         jfM.add(jbP1);
         jfM.add(jp1);
+        jfM.getRootPane().setDefaultButton(jbP1);
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        jfM.setIconImage(img.getImage());
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        if(headers.size()<3) {
+            jfM.setSize(250, 130 * headers.size());
+        }else {
+            jfM.setSize(250, 80 * headers.size());
+        }
+
+        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
+
+        jfM.setResizable(false);
+        jfM.setVisible(true);
+        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+
+    @Override
+    public void generalTableFormUpdate(String title,Map<String,String> headers,String key, OpenStackNetworkElement osne){
+        JFrame jfM = new JFrame(title);
+        jfM.setLayout(null);
+
+        JButton jbP1 = new JButton("Enter");
+
+        JPanel jp1 = new JPanel(new GridLayout(headers.size()+1, 2, 15, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+
+        JLabel l6 = new JLabel("Properties", SwingConstants.LEFT);
+        jp1.add(l6);
+        JLabel label = new JLabel("", SwingConstants.LEFT);
+        jp1.add(label);
+
+        for(String header : headers.keySet()){
+            JLabel jlabel = new JLabel(header, SwingConstants.LEFT);
+            jp1.add(jlabel);
+            switch (headers.get(header)){
+
+                case "Boolean":
+                    JCheckBox jCheckBox = new JCheckBox();
+                    jp1.add(jCheckBox);
+                    break;
+                case "Select":
+                    JComboBox jComboBox;
+                    Object[] stockArr = new String[1];
+                    stockArr[0] = "empty";
+                    List<String> stockList = new ArrayList<>() ;
+                    switch (header){
+                        case "Network ID":
+                            stockList = callback.getOpenStackNet().openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Subnet ID":
+                            stockList = callback.getOpenStackNet().openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Tenant ID":
+                            if(callback.getOpenStackNet().openStackProjects.size()==0)break;
+                            stockList = callback.getOpenStackNet().openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "User ID":
+                            stockList = callback.getOpenStackNet().openStackUsers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Flavor ID":
+                            stockList = callback.getOpenStackNet().openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Image ID":
+                            stockList = callback.getOpenStackNet().openStackImageV2.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Port ID":
+                            stockList = callback.getOpenStackNet().openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Service ID":
+                            stockList = callback.getOpenStackNet().openStackServices.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Router ID":
+                            stockList = callback.getOpenStackNet().openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "Domain ID":
+                            stockList = callback.getOpenStackNet().openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
+                            break;
+                        case "IP version":
+                            stockArr = IPVersionType.values();
+                            break;
+                        case "Network type":
+                            stockArr = NetworkType.values();
+                            break;
+                        case "Service type":
+                            stockArr = ServiceType.values();
+                            break;
+                        case "Facing":
+                            stockArr = Facing.values();
+                            break;
+                    }
+
+                    jComboBox = new JComboBox(stockArr);
+                    jp1.add(jComboBox);
+                    break;
+                case "Special-ipv4masc":
+                    try {
+                        MaskFormatter mf = new MaskFormatter("###-###-###-###/##");
+                        JFormattedTextField f = new JFormattedTextField(mf);
+                        jp1.add(f);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case "Special-ipv4":
+                    try {
+                        MaskFormatter mf = new MaskFormatter("###-###-###-###");
+                        JFormattedTextField f = new JFormattedTextField(mf);
+                        jp1.add(f);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    break;
+                default:
+                    JTextField jtextField = new JTextField();
+                    jp1.add(jtextField);
+                    break;
+            }
+
+        }
+
+
+        jp1.setVisible(true);
+        jp1.setBounds(10, 10, 200, 50*headers.size());
+        jbP1.setBounds(75, 60*headers.size(), 90, 25);
+
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Component [] components = jp1.getComponents();
+                JSONObject jsonObject = new JSONObject();
+
+                for(int i = 3;i< components.length;i=i+2){
+
+                    switch (headers.get(((JLabel)components[i-1]).getText())){
+                        case "Select":
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JComboBox)components[i]).getSelectedItem().toString());
+                            break;
+                        case "Boolean":
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JCheckBox)components[i]).isSelected());
+                            break;
+                        case "IP version":
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JComboBox)components[i]).getSelectedItem());
+                            break;
+                        default:
+                            jsonObject.put( ((JLabel)components[i-1]).getText(),((JTextField)components[i]).getText());
+                            break;
+                    }
+                }
+
+                switch (ajtType){
+
+                    /*IDENTITY*/
+                    case USERS:
+                        switch (key){
+                            case "Name":
+                                ((OpenStackUser)osne).updateUserName(((JTextField)components[1]).getText());
+                                break;
+                            case "Description":
+                                ((OpenStackUser)osne).updateUserDescription(((JTextField)components[1]).getText());
+                                break;
+                            case "Email":
+                                ((OpenStackUser)osne).updateUserEmail(((JTextField)components[1]).getText());
+                                break;
+                        }
+                        break;
+                    case PROJECTS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackProject)osne).setProjectName(((JTextField)components[1]).getText());
+                                break;
+                            case "Parent id":
+                                ((OpenStackProject)osne).setProjectParentId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Domain id":
+                                ((OpenStackProject)osne).setProjectDomainId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Description":
+                                ((OpenStackProject)osne).setProjectDescription(((JTextField)components[1]).getText());
+                                break;
+                            case "Parents":
+                                ((OpenStackProject)osne).setProjectParents(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Subtree":
+                                ((OpenStackProject)osne).setProjectSubtree(((JTextField)components[1]).getText());
+                                break;
+
+
+                        }
+                        break;
+                    case DOMAINS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackDomain)osne).setDomainName(((JTextField)components[1]).getText());
+                                break;
+                            case "Description":
+                                ((OpenStackDomain)osne).setDomainDescription(((JTextField)components[1]).getText());
+                                break;
+                        }
+                        break;
+                    case ENDPOINTS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackEndpoint)osne).setEndpointName(((JTextField)components[1]).getText());
+                                break;
+                            case "Description":
+                                ((OpenStackEndpoint)osne).setEndpointDescription(((JTextField)components[1]).getText());
+                                break;
+                            case "Region ID":
+                                ((OpenStackEndpoint)osne).setEndpointRegionId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Facing":
+                                ((OpenStackEndpoint)osne).setEndpointIface(Facing.valueOf(((JTextField)components[1]).getText()));
+                                break;
+                            case "Service ID":
+                                ((OpenStackEndpoint)osne).setEndpointServiceId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Type":
+                                ((OpenStackEndpoint)osne).setEndpointType(((JTextField)components[1]).getText());
+                                break;
+                            case "URL":
+                                try {
+                                    ((OpenStackEndpoint)osne).setEndpointUrl(new URL(((JTextField)components[1]).getText()));
+                                } catch (MalformedURLException e1) {
+                                    e1.printStackTrace();
+
+                                }
+                                break;
+
+
+                        }
+                        break;
+                    case SERVICES:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackService)osne).setServiceName(((JTextField)components[1]).getText());
+                                break;
+                            case "Description":
+                                ((OpenStackService)osne).setServiceDescription(((JTextField)components[1]).getText());
+                                break;
+                            case "Type":
+                                ((OpenStackService)osne).setServiceType(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+
+
+
+                        }
+                        break;
+                    case REGIONS:
+                        switch(key){
+                            case "Description":
+                                ((OpenStackRegion)osne).setRegionDescription(((JTextField)components[1]).getText());
+                                break;
+                            case "Parent id":
+                                ((OpenStackRegion)osne).setParentRegionId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+
+
+                        }
+                        break;
+                    case CREDENTIALS:
+                        switch(key){
+                            case "Type":
+                                ((OpenStackCredential)osne).setCredentialType(((JTextField)components[1]).getText());
+                                break;
+                            case "User ID":
+                                ((OpenStackCredential)osne).setCredentialUserId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Tenant ID":
+                                ((OpenStackCredential)osne).setCredentialProjectId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Blob":
+                                ((OpenStackCredential)osne).setCredentialBlob(((JTextField)components[1]).getText());
+                                break;
+
+                        }
+                        break;
+                    case GROUPS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackGroup)osne).setGroupName(((JTextField)components[1]).getText());
+                                break;
+                            case "Domain ID":
+                                ((OpenStackGroup)osne).setGroupDomainId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Description":
+                                ((OpenStackGroup)osne).setGroupDescription(((JTextField)components[1]).getText());
+                                break;
+
+                        }
+                        break;
+                    case POLICIES:
+                        switch(key){
+                            case "User ID":
+                                ((OpenStackPolicy)osne).setPolicyUserId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Tenant ID":
+                                ((OpenStackPolicy)osne).setPolicyProjectId(((JComboBox)components[1]).getSelectedItem().toString());
+                                break;
+                            case "Type":
+                                ((OpenStackPolicy)osne).setPolicyType(((JTextField)components[1]).getText());
+                                break;
+                            case "Blob":
+                                ((OpenStackPolicy)osne).setPolicyBlob(((JTextField)components[1]).getText());
+                                break;
+
+                        }
+                        break;
+                    case ROLES:
+                        switch (key){
+                            case "Name":
+                                ((OpenStackRole)osne).setRoleName(((JTextField)components[1]).getText());
+                                break;
+
+                        }
+                        break;
+                    /*NETWORK*/
+                    case PORTS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackPort)osne).setName(((JTextField)components[1]).getText());
+                                break;
+
+                        }
+                        break;
+                    case NETWORKS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackNetwork)osne).setName(jsonObject);
+                                break;
+
+                        }
+                        break;
+                    case ROUTERS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackRouter)osne).setName(jsonObject);
+                                break;
+                            case "External Gateway":
+                                ((OpenStackRouter)osne).setRouterExternalGatewayInfo(jsonObject);
+                                break;
+                            case "Tenant ID":
+                                ((OpenStackRouter)osne).setRouterTenantId(jsonObject);
+                                break;
+                            case "Route":
+                                ((OpenStackRouter)osne).addRoute(jsonObject);
+                                break;
+
+
+                        }
+                        break;
+                    case SUBNETS:
+                        switch(key){
+                            case "Name":
+                                ((OpenStackSubnet)osne).setName(jsonObject);
+                                break;
+                            case "DNS":
+                                ((OpenStackSubnet)osne).addSubnetDns(jsonObject.put("DNS",prepareIp(jsonObject.getString("DNS"))));
+                                break;
+                            case "Pool":
+                                ((OpenStackSubnet)osne).addPool(jsonObject);
+                                break;
+                            case "CIDR":
+                                ((OpenStackSubnet)osne).changeSubnetCidr(jsonObject);
+                                break;
+                            case "Route":
+                                ((OpenStackSubnet)osne).addRoute(jsonObject);
+                                break;
+                            case "No gateway":
+                                ((OpenStackSubnet)osne).subnetNoGateway();
+                                break;
+                            case "Gateway":
+                                ((OpenStackSubnet)osne).setSubnetGateway(jsonObject);
+                                break;
+                            case "Network ID":
+                                ((OpenStackSubnet)osne).setSubnetNetworkId(jsonObject);
+                                break;
+                            case "Project ID":
+                                ((OpenStackSubnet)osne).setSubnetTenantId(jsonObject);
+                                break;
+                            case "IP version":
+                                ((OpenStackSubnet)osne).setSubnetIpVersion(jsonObject);
+                                break;
+                        }
+                        break;
+                }
+
+                try {
+                    updateTab();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+
+                jfM.dispose();
+            }});
+
+        jfM.add(jbP1);
+        jfM.add(jp1);
+        jfM.getRootPane().setDefaultButton(jbP1);
 
         ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
         jfM.setIconImage(img.getImage());
@@ -850,7 +1268,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case NETWORKS:
                         switch(key){
                             case "Name":
-                                ((OpenStackNetwork)osne).setName(((JTextField)components[1]).getText());
+                                ((OpenStackNetwork)osne).setName(null);
                                 break;
 
                         }
@@ -858,7 +1276,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case ROUTERS:
                         switch(key){
                             case "Name":
-                                ((OpenStackRouter)osne).setName(((JTextField)components[1]).getText());
+                                ((OpenStackRouter)osne).setName(null);
                                 break;
 
                         }
@@ -866,7 +1284,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case SUBNETS:
                         switch(key){
                             case "Name":
-                                ((OpenStackSubnet)osne).setName(((JTextField)components[1]).getText());
+                                ((OpenStackSubnet)osne).setName(null);
                                 break;
 
                         }
@@ -878,7 +1296,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
         jfM.add(jbP1);
         jfM.add(jp1);
-
+        jfM.getRootPane().setDefaultButton(jbP1);
         ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
         jfM.setIconImage(img.getImage());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -972,5 +1390,14 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         updateTab();
     }
 
+    public String prepareIp(String ip){
+        String[] parts = ip.split("-");
+        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
+        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
+        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
+        String part4 =  String.valueOf(Integer.parseInt(parts[3])); // ###
+        String response = part1+"."+part2+"."+part3+"."+part4;
 
+        return response;
+    }
 }

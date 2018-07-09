@@ -6,6 +6,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Resource;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.openstack4j.model.network.*;
 
 /**
@@ -106,10 +107,10 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
     }
 
-    public void setName (String value) {
+    public void setName (JSONObject jsonObject) {
 
         try{
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().name(value).build());
+            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().name(jsonObject.getString("Name")).build());
 
         }catch(Exception ex){
 
@@ -118,10 +119,118 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
         }
     }
-    public void setSubnetGateway (String value) { this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().gateway(value).build());}
-    public void setSubnetNetworkId (String value) { this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().networkId(value).build());}
-    public void setSubnetIpVersion (IPVersionType value) { this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipVersion(value).build());}
-    public void setSubnetTenantId (String value) {this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().tenantId(value).build()); }
+    public void addSubnetDns (JSONObject jsonObject) {
+
+        try {
+            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().addDNSNameServer(jsonObject.getString("DNS")).build());
+
+        }catch (Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+        }
+
+    }
+    public void addPool (JSONObject jsonObject) {
+        try{
+
+            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().addPool(prepareIp(jsonObject.getString("Start")),prepareIp(jsonObject.getString("End"))).build());
+
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+    public void changeSubnetCidr (JSONObject jsonObject) {
+        try{
+            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().cidr(prepareCidr(jsonObject.getString("CIDR"))).build());
+
+
+            }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+             }
+    }
+    public void addRoute (JSONObject object) {
+
+        try{
+
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().addHostRoute(prepareCidr(object.getString("Destination")),prepareCidr(object.getString("Next hop"))).build());
+
+
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+    }
+    public void subnetNoGateway () {
+
+        try{
+
+            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().noGateway().build());
+
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+    }
+    public void setSubnetGateway (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().gateway(prepareIp(jsonObject.getString("Gateway"))).build());
+
+        }catch(Exception ex){
+
+        logPanel();
+        System.out.println(ex.toString());
+
+    }
+
+}
+    public void setSubnetNetworkId (JSONObject jsonObject) {
+
+        try{
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().networkId(jsonObject.getString("Network ID")).build());
+        }catch(Exception ex){
+
+        logPanel();
+        System.out.println(ex.toString());
+
+    }
+
+}
+    public void setSubnetIpVersion (JSONObject jsonObject ) {
+        try{
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipVersion(IPVersionType.valueOf(jsonObject.getString("IP version"))).build());
+
+        }catch(Exception ex){
+
+        logPanel();
+        System.out.println(ex.toString());
+
+    }
+
+}
+    public void setSubnetTenantId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().tenantId(jsonObject.getString("Project ID")).build());
+        }catch(Exception ex){
+
+        logPanel();
+        System.out.println(ex.toString());
+
+    }
+
+}
     public void isSubnetIsDHCPEnabled (boolean value) {
 
         try{
@@ -136,9 +245,58 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         }
 
     }
-    public void setSubnetIpv6AddressMode (Ipv6AddressMode value) { this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipv6AddressMode(value).build()); }
-    public void setSubnetIpv6RaMode (Ipv6RaMode value) { this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipv6RaMode(value).build());}
+    public void setSubnetIpv6AddressMode (Ipv6AddressMode value) {
+        try{
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipv6AddressMode(value).build());
+        }catch(Exception ex){
+
+        logPanel();
+        System.out.println(ex.toString());
+
+    }
 
 
+}
+    public void setSubnetIpv6RaMode (Ipv6RaMode value) {
+
+        try{
+
+        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipv6RaMode(value).build());
+
+    }catch(Exception ex){
+
+    logPanel();
+    System.out.println(ex.toString());
+
+}
+
+
+}
+
+    public String prepareIp(String ip){
+        String[] parts = ip.split("-");
+        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
+        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
+        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
+        String part4 =  String.valueOf(Integer.parseInt(parts[3])); // ###
+        String response = part1+"."+part2+"."+part3+"."+part4;
+
+        return response;
+    }
+
+    public String prepareCidr(String cidr){
+
+        String[] parts = cidr.split("-");
+        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
+        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
+        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
+        String part4 = parts[3]; //###/##
+        String[] newParts = part4.split("/");
+        String part5 = String.valueOf(Integer.parseInt(newParts[0])); // ###
+        String part6 = String.valueOf(Integer.parseInt(newParts[1])); //##
+        String response = part1+"."+part2+"."+part3+"."+part5+"/"+part6;
+
+        return response;
+    }
 }
 

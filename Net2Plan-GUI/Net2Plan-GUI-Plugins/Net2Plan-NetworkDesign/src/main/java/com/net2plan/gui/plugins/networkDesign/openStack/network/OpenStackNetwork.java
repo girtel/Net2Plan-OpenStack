@@ -5,6 +5,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Resource;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
@@ -111,9 +112,9 @@ import sun.nio.ch.Net;
             return description;
         }
 
-        public void setName (String value) {
+        public void setName (JSONObject jsonObject) {
             try{
-            this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().name(value).build());
+            this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().name(jsonObject.getString("Name")).build());
 
             }catch(Exception ex){
 
