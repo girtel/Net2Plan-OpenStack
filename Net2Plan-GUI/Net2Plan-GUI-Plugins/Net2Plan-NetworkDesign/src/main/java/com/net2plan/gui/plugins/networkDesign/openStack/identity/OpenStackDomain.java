@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Domain;
 
 import java.util.List;
@@ -41,9 +42,28 @@ public class OpenStackDomain extends OpenStackNetworkElement
     public boolean isDomainEnabled () { return this.domainEnabled; }
     public Map<String,String> getDomainLinks () { return this.domainLinks; }
 
-    public void setDomainName (String value) { this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().name(value).build());  }
-    public void setDomainDescription(String value) { this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().description(value).build());  }
-    public void isDomainEnabled (boolean value) { this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().enabled(value).build()); }
+    public void setDomainName (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().name(jsonObject.getString("Name")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setDomainDescription(JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void isDomainEnabled (boolean value) {
+        this.osn.getOSClientV3().identity().domains().update(osDomain.toBuilder().enabled(value).build()); }
 
     @Override
     public String get50CharactersDescription()

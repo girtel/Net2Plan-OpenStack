@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Endpoint;
 import org.openstack4j.model.identity.v3.Service;
 
@@ -51,11 +52,57 @@ public class OpenStackService  extends OpenStackNetworkElement
     public List<? extends Endpoint> getServiceEndpoints () { return this.serviceEndpoints; }
     public Map<String,String> getServiceLinks () { return this.serviceLinks; }
 
-    public void setServiceName (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().name(value).build());  }
-    public void setServiceDescription (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().description(value).build());  }
-    public void setServiceType (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().type(value).build());  }
-    public void setServiceVersion (Integer value) { this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().version(value).build());  }
-    public void isServiceEnabled (boolean value) { this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().enabled(value).build());  }
+    public void setServiceName (JSONObject jsonObject) {
+        try{
+            this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().name(jsonObject.getString("Name")).build());
+        }catch(Exception ex){
+
+        logPanel();
+        System.out.println(ex.toString());
+
+    } }
+    public void setServiceDescription (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+    }
+    public void setServiceType (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().type(jsonObject.getString("Type")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+        }
+    public void setServiceVersion (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().version(jsonObject.getInt("Version")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+    public void isServiceEnabled (boolean value) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().update(osService.toBuilder().enabled(value).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
 
     @Override
     public String get50CharactersDescription()

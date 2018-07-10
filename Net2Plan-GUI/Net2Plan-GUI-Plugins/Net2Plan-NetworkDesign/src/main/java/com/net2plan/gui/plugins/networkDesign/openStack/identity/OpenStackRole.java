@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Role;
 
 import java.util.List;
@@ -39,8 +40,28 @@ public class OpenStackRole  extends OpenStackNetworkElement
     public String getRoleDomainId () { return this.roleDomainId; }
     public Map<String,String> getRoleLinks () { return this.roleLinks; }
 
-    public void setRoleName (String value) { this.osn.getOSClientV3().identity().roles().update(osRole.toBuilder().name(value).build());  }
-    public void setRoleDomainId (String value) { this.osn.getOSClientV3().identity().roles().update(osRole.toBuilder().domainId(value).build());  }
+    public void setRoleName (JSONObject jsonObject) {
+
+        try{
+        this.osn.getOSClientV3().identity().roles().update(osRole.toBuilder().name(jsonObject.getString("Name")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+    }
+    public void setRoleDomainId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().roles().update(osRole.toBuilder().domainId(jsonObject.getString("ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
 
     @Override
     public String get50CharactersDescription()

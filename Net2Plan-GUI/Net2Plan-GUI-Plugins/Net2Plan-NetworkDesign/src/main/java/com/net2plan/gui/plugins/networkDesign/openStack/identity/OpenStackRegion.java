@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Region;
 
 import java.util.List;
@@ -35,8 +36,28 @@ public class OpenStackRegion  extends OpenStackNetworkElement
     public String getRegionDescription () { return this.regionDescription; }
     public String getRegionParentRegionId () { return this.regionParentRegionId; }
 
-    public void setRegionDescription (String value) { this.osn.getOSClientV3().identity().regions().update(osRegion.toBuilder().description(value).build());  }
-    public void setParentRegionId (String value) { this.osn.getOSClientV3().identity().regions().update(osRegion.toBuilder().parentRegionId(value).build());  }
+    public void setRegionDescription (JSONObject jsonObject) {
+
+        try{
+        this.osn.getOSClientV3().identity().regions().update(osRegion.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+    public void setParentRegionId (JSONObject jsonObject) {
+
+        try{
+        this.osn.getOSClientV3().identity().regions().update(osRegion.toBuilder().parentRegionId(jsonObject.getString("Parent ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
 
     @Override
     public String get50CharactersDescription()

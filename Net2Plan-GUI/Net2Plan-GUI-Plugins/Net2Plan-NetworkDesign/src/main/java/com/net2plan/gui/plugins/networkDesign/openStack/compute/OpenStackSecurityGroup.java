@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.common.Link;
 import org.openstack4j.model.compute.SecGroupExtension;
 import org.openstack4j.model.compute.SecurityGroup;
@@ -43,7 +44,8 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     public String getSecGroupExtensionTenantId () { return this.secGroupExtensionTenantId; }
     public List<? extends SecGroupExtension.Rule> getSecGroupExtensionRules () { return this.secGroupExtensionRules; }
     public List<? extends Link> getSecGroupExtensionLinks () { return this.secGroupExtensionLinks; }
-
+    public void setSecGroupName (JSONObject jsonObject) { this.osn.getOSClientV3().compute().securityGroups().update(this.osSecGroupExtension.getId(),jsonObject.getString("Name"),this.osSecGroupExtension.getDescription());}
+    public void setSecGroupDescription (JSONObject jsonObject) { this.osn.getOSClientV3().compute().securityGroups().update(this.osSecGroupExtension.getId(),this.osSecGroupExtension.getName(),jsonObject.getString("Description"));}
 
     @Override
     public String get50CharactersDescription()

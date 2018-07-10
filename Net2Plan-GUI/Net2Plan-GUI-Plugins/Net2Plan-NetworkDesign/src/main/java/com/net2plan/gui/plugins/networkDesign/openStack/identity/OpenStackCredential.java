@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.Credential;
 
@@ -47,15 +48,49 @@ public class OpenStackCredential extends OpenStackNetworkElement
     public String getCredentialType () { return this.credentialType; }
     public Map<String,String> getCredentialLinks () { return this.credentialLinks; }
 
-    public void setCredentialUserId (String value) {
+    public void setCredentialUserId (JSONObject jsonObject) {
+try{
+        this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().userId(jsonObject.getString("User ID")).build());
+}catch(Exception ex){
 
-        this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().userId(value).build());
+    logPanel();
+    System.out.println(ex.toString());
 
+}
 
     }
-    public void setCredentialProjectId (String value) { this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().projectId(value).build()); }
-    public void setCredentialBlob (String value) { this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().blob(value).build()); }
-    public void setCredentialType (String value) { this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().type(value).build()); }
+    public void setCredentialProjectId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().projectId(jsonObject.getString("Project ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setCredentialBlob (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().blob(jsonObject.getString("Blob")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+        }
+    public void setCredentialType (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().credentials().update(osCredential.toBuilder().type(jsonObject.getString("Type")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+    }
 
     @Override
     public String get50CharactersDescription()

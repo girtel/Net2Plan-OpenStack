@@ -31,6 +31,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static edu.emory.mathcs.utils.ConcurrencyUtils.setNumberOfThreads;
 import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
@@ -414,9 +416,37 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackImage(JSONObject information){
-      //  changeOs(Facing.INTERNAL);
+      changeOs(Facing.PUBLIC);
+        Payload<File> payload = null;
+
+
+            String path = information.getString("PATH");
+            String name = information.getString("NAME");
+            payload = Payloads.create(new File(path));
+
+            System.out.println(path + "    "+ name);
+
+            Image image = this.osClientV3.imagesV2().create(
+                    Builders.imageV2()
+                            .name(name)
+                            .containerFormat(ContainerFormat.BARE)
+                            .visibility(org.openstack4j.model.image.v2.Image.ImageVisibility.PUBLIC)
+                            .diskFormat(DiskFormat.QCOW2)
+                            .minDisk((long)0)
+                            .minRam((long)0)
+                            .build()
+            );
+
+            ActionResponse upload = osClientV3.imagesV2().upload(
+                    image.getId(),
+                    payload,
+                    image);
+
+        System.out.println("Create");
+
         ControlWindow controlWindow =  new ControlWindow(information,this.osClientV3.getToken());
         submit(controlWindow);
+        //submit(controlWindow);
 
 
     }
@@ -442,52 +472,17 @@ public class OpenStackNetCreate{
 }
 class ControlWindow implements Runnable{
 
-    private  JSONObject information;
+    private JSONObject information;
     private OSClient.OSClientV3 osClientV3;
 
 
-    public ControlWindow (JSONObject information,Token token){
+    public ControlWindow (JSONObject information, Token token){
         this.information = information;
-        this.osClientV3 = OSFactory.clientFromToken(token,Facing.INTERNAL);
+        this.osClientV3 = OSFactory.clientFromToken(token);
     }
+
     @Override
     public void run() {
-
-        JFrame jfM = new JFrame("Control window");
-        jfM.setLayout(null);
-
-        JButton jbP1 = new JButton("Enter");
-
-        JPanel jp1 = new JPanel(new GridLayout(6, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
-        JLabel l6 = new JLabel("Status", SwingConstants.LEFT);
-
-        JTextArea jTextArea = new JTextArea();
-        jp1.add(jTextArea);
-        jp1.add(l6);
-        jp1.setVisible(true);
-        jp1.setBounds(10, 10, 200, 200);
-        jbP1.setBounds(75, 90, 90, 25);
-         jbP1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-                    jfM.dispose();
-            }
-        });
-
-        jfM.add(jbP1);
-        jfM.add(jp1);
-
-        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
-        jfM.setIconImage(img.getImage());
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        jfM.setSize(250, 160);
-        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
-
-        jfM.setResizable(false);
-        jfM.setVisible(true);
-        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
 
         Payload<File> payload = null;
         try {
@@ -496,6 +491,7 @@ class ControlWindow implements Runnable{
             String name = information.getString("NAME");
             payload = Payloads.create(new File(path));
 
+            System.out.println(path + "    "+ name);
 
             Image image = this.osClientV3.imagesV2().create(
                     Builders.imageV2()
@@ -508,30 +504,13 @@ class ControlWindow implements Runnable{
                             .build()
             );
 
-
-            submit(new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-
-                            while(!osClientV3.imagesV2().get(image.getId()).getStatus().equals(Image.ImageStatus.ACTIVE)){
-                                jTextArea.setText(osClientV3.imagesV2().get(image.getId()).getStatus().value());
-                                System.out.println(osClientV3.imagesV2().get(image.getId()).getStatus().value());
-                            }
-                            jTextArea.setText(osClientV3.imagesV2().get(image.getId()).getStatus().value());
-                            System.out.println(osClientV3.imagesV2().get(image.getId()).getStatus().value());
-
-                        }
-                    })
-            );
-
             ActionResponse upload = osClientV3.imagesV2().upload(
                     image.getId(),
                     payload,
                     image);
 
 
-
+            System.out.println("Finish upload");
         } catch (Exception e) {
             e.printStackTrace();
         }

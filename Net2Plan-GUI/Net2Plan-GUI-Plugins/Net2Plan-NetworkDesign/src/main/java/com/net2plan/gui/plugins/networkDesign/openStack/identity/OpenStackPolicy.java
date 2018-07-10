@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Policy;
 
 import java.util.List;
@@ -45,10 +46,47 @@ public class OpenStackPolicy extends OpenStackNetworkElement
     public String getPolicyBlob () { return this.policyBlob; }
     public Map<String,String> getPolicyLinks () { return this.policyLinks; }
 
-    public void setPolicyUserId (String value) { this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().userId(value).build());  }
-    public void setPolicyProjectId (String value) { this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().projectId(value).build());  }
-    public void setPolicyType (String value) { this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().type(value).build());  }
-    public void setPolicyBlob (String value) { this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().blob(value).build());  }
+    public void setPolicyUserId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().userId(jsonObject.getString("User ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+        }
+    public void setPolicyProjectId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().projectId(jsonObject.getString("Project ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setPolicyType (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().type(jsonObject.getString("Type")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setPolicyBlob (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().policies().update(osPolicy.toBuilder().blob(jsonObject.getString("Blob")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
 
     @Override
     public String get50CharactersDescription()

@@ -712,35 +712,35 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case USERS:
                         switch (key){
                             case "Name":
-                                ((OpenStackUser)osne).updateUserName(((JTextField)components[1]).getText());
+                                ((OpenStackUser)osne).updateUserName(jsonObject);
                                 break;
                             case "Description":
-                                ((OpenStackUser)osne).updateUserDescription(((JTextField)components[1]).getText());
+                                ((OpenStackUser)osne).updateUserDescription(jsonObject);
                                 break;
                             case "Email":
-                                ((OpenStackUser)osne).updateUserEmail(((JTextField)components[1]).getText());
+                                ((OpenStackUser)osne).updateUserEmail(jsonObject);
                                 break;
                         }
                         break;
                     case PROJECTS:
                         switch(key){
                             case "Name":
-                                ((OpenStackProject)osne).setProjectName(((JTextField)components[1]).getText());
+                                ((OpenStackProject)osne).setProjectName(jsonObject);
                                 break;
                             case "Parent id":
-                                ((OpenStackProject)osne).setProjectParentId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackProject)osne).setProjectParentId(jsonObject);
                                 break;
                             case "Domain id":
-                                ((OpenStackProject)osne).setProjectDomainId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackProject)osne).setProjectDomainId(jsonObject);
                                 break;
                             case "Description":
-                                ((OpenStackProject)osne).setProjectDescription(((JTextField)components[1]).getText());
+                                ((OpenStackProject)osne).setProjectDescription(jsonObject);
                                 break;
                             case "Parents":
-                                ((OpenStackProject)osne).setProjectParents(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackProject)osne).setProjectParents(jsonObject);
                                 break;
                             case "Subtree":
-                                ((OpenStackProject)osne).setProjectSubtree(((JTextField)components[1]).getText());
+                                ((OpenStackProject)osne).setProjectSubtree(jsonObject);
                                 break;
 
 
@@ -749,10 +749,10 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case DOMAINS:
                         switch(key){
                             case "Name":
-                                ((OpenStackDomain)osne).setDomainName(((JTextField)components[1]).getText());
+                                ((OpenStackDomain)osne).setDomainName(jsonObject);
                                 break;
                             case "Description":
-                                ((OpenStackDomain)osne).setDomainDescription(((JTextField)components[1]).getText());
+                                ((OpenStackDomain)osne).setDomainDescription(jsonObject);
                                 break;
                         }
                         break;
@@ -762,27 +762,22 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                                 ((OpenStackEndpoint)osne).setEndpointName(((JTextField)components[1]).getText());
                                 break;
                             case "Description":
-                                ((OpenStackEndpoint)osne).setEndpointDescription(((JTextField)components[1]).getText());
+                                ((OpenStackEndpoint)osne).setEndpointDescription(jsonObject);
                                 break;
                             case "Region ID":
-                                ((OpenStackEndpoint)osne).setEndpointRegionId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackEndpoint)osne).setEndpointRegionId(jsonObject);
                                 break;
                             case "Facing":
-                                ((OpenStackEndpoint)osne).setEndpointIface(Facing.valueOf(((JTextField)components[1]).getText()));
+                                ((OpenStackEndpoint)osne).setEndpointIface(jsonObject);
                                 break;
                             case "Service ID":
-                                ((OpenStackEndpoint)osne).setEndpointServiceId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackEndpoint)osne).setEndpointServiceId(jsonObject);
                                 break;
                             case "Type":
-                                ((OpenStackEndpoint)osne).setEndpointType(((JTextField)components[1]).getText());
+                                ((OpenStackEndpoint)osne).setEndpointType(jsonObject);
                                 break;
                             case "URL":
-                                try {
-                                    ((OpenStackEndpoint)osne).setEndpointUrl(new URL(((JTextField)components[1]).getText()));
-                                } catch (MalformedURLException e1) {
-                                    e1.printStackTrace();
-
-                                }
+                                ((OpenStackEndpoint)osne).setEndpointUrl(jsonObject);
                                 break;
 
 
@@ -791,13 +786,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case SERVICES:
                         switch(key){
                             case "Name":
-                                ((OpenStackService)osne).setServiceName(((JTextField)components[1]).getText());
+                                ((OpenStackService)osne).setServiceName(jsonObject);
                                 break;
                             case "Description":
-                                ((OpenStackService)osne).setServiceDescription(((JTextField)components[1]).getText());
+                                ((OpenStackService)osne).setServiceDescription(jsonObject);
                                 break;
                             case "Type":
-                                ((OpenStackService)osne).setServiceType(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackService)osne).setServiceType(jsonObject);
                                 break;
 
 
@@ -807,10 +802,10 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case REGIONS:
                         switch(key){
                             case "Description":
-                                ((OpenStackRegion)osne).setRegionDescription(((JTextField)components[1]).getText());
+                                ((OpenStackRegion)osne).setRegionDescription(jsonObject);
                                 break;
                             case "Parent id":
-                                ((OpenStackRegion)osne).setParentRegionId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackRegion)osne).setParentRegionId(jsonObject);
                                 break;
 
 
@@ -819,16 +814,16 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case CREDENTIALS:
                         switch(key){
                             case "Type":
-                                ((OpenStackCredential)osne).setCredentialType(((JTextField)components[1]).getText());
+                                ((OpenStackCredential)osne).setCredentialType(jsonObject);
                                 break;
                             case "User ID":
-                                ((OpenStackCredential)osne).setCredentialUserId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackCredential)osne).setCredentialUserId(jsonObject);
                                 break;
                             case "Tenant ID":
-                                ((OpenStackCredential)osne).setCredentialProjectId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackCredential)osne).setCredentialProjectId(jsonObject);
                                 break;
                             case "Blob":
-                                ((OpenStackCredential)osne).setCredentialBlob(((JTextField)components[1]).getText());
+                                ((OpenStackCredential)osne).setCredentialBlob(jsonObject);
                                 break;
 
                         }
@@ -836,13 +831,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case GROUPS:
                         switch(key){
                             case "Name":
-                                ((OpenStackGroup)osne).setGroupName(((JTextField)components[1]).getText());
+                                ((OpenStackGroup)osne).setGroupName(jsonObject);
                                 break;
                             case "Domain ID":
-                                ((OpenStackGroup)osne).setGroupDomainId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackGroup)osne).setGroupDomainId(jsonObject);
                                 break;
                             case "Description":
-                                ((OpenStackGroup)osne).setGroupDescription(((JTextField)components[1]).getText());
+                                ((OpenStackGroup)osne).setGroupDescription(jsonObject);
                                 break;
 
                         }
@@ -850,16 +845,16 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case POLICIES:
                         switch(key){
                             case "User ID":
-                                ((OpenStackPolicy)osne).setPolicyUserId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackPolicy)osne).setPolicyUserId(jsonObject);
                                 break;
                             case "Tenant ID":
-                                ((OpenStackPolicy)osne).setPolicyProjectId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackPolicy)osne).setPolicyProjectId(jsonObject);
                                 break;
                             case "Type":
-                                ((OpenStackPolicy)osne).setPolicyType(((JTextField)components[1]).getText());
+                                ((OpenStackPolicy)osne).setPolicyType(jsonObject);
                                 break;
                             case "Blob":
-                                ((OpenStackPolicy)osne).setPolicyBlob(((JTextField)components[1]).getText());
+                                ((OpenStackPolicy)osne).setPolicyBlob(jsonObject);
                                 break;
 
                         }
@@ -867,7 +862,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case ROLES:
                         switch (key){
                             case "Name":
-                                ((OpenStackRole)osne).setRoleName(((JTextField)components[1]).getText());
+                                ((OpenStackRole)osne).setRoleName(jsonObject);
                                 break;
 
                         }
@@ -1096,35 +1091,35 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case USERS:
                         switch (key){
                             case "Name":
-                                ((OpenStackUser)osne).updateUserName(((JTextField)components[1]).getText());
+                                ((OpenStackUser)osne).updateUserName(null);
                                 break;
                             case "Description":
-                                ((OpenStackUser)osne).updateUserDescription(((JTextField)components[1]).getText());
+                                ((OpenStackUser)osne).updateUserDescription(null);
                                 break;
                             case "Email":
-                                ((OpenStackUser)osne).updateUserEmail(((JTextField)components[1]).getText());
+                                ((OpenStackUser)osne).updateUserEmail(null);
                                 break;
                         }
                         break;
                     case PROJECTS:
                         switch(key){
                             case "Name":
-                                ((OpenStackProject)osne).setProjectName(((JTextField)components[1]).getText());
+                                ((OpenStackProject)osne).setProjectName(null);
                                 break;
                             case "Parent id":
-                                ((OpenStackProject)osne).setProjectParentId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackProject)osne).setProjectParentId(null);
                                 break;
                             case "Domain id":
-                                ((OpenStackProject)osne).setProjectDomainId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackProject)osne).setProjectDomainId(null);
                                 break;
                             case "Description":
-                                ((OpenStackProject)osne).setProjectDescription(((JTextField)components[1]).getText());
+                                ((OpenStackProject)osne).setProjectDescription(null);
                                 break;
                             case "Parents":
-                                ((OpenStackProject)osne).setProjectParents(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackProject)osne).setProjectParents(null);
                                 break;
                             case "Subtree":
-                                ((OpenStackProject)osne).setProjectSubtree(((JTextField)components[1]).getText());
+                                ((OpenStackProject)osne).setProjectSubtree(null);
                                 break;
 
 
@@ -1133,40 +1128,35 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case DOMAINS:
                         switch(key){
                             case "Name":
-                                ((OpenStackDomain)osne).setDomainName(((JTextField)components[1]).getText());
+                                ((OpenStackDomain)osne).setDomainName(null);
                                 break;
                             case "Description":
-                                ((OpenStackDomain)osne).setDomainDescription(((JTextField)components[1]).getText());
+                                ((OpenStackDomain)osne).setDomainDescription(null);
                                 break;
                         }
                         break;
                     case ENDPOINTS:
                         switch(key){
                             case "Name":
-                                ((OpenStackEndpoint)osne).setEndpointName(((JTextField)components[1]).getText());
+                                ((OpenStackEndpoint)osne).setEndpointName(null);
                                 break;
                             case "Description":
-                                ((OpenStackEndpoint)osne).setEndpointDescription(((JTextField)components[1]).getText());
+                                ((OpenStackEndpoint)osne).setEndpointDescription(null);
                                 break;
                             case "Region ID":
-                                ((OpenStackEndpoint)osne).setEndpointRegionId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackEndpoint)osne).setEndpointRegionId(null);
                                 break;
                             case "Facing":
-                                ((OpenStackEndpoint)osne).setEndpointIface(Facing.valueOf(((JTextField)components[1]).getText()));
+                                ((OpenStackEndpoint)osne).setEndpointIface(null);
                                 break;
                             case "Service ID":
-                                ((OpenStackEndpoint)osne).setEndpointServiceId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackEndpoint)osne).setEndpointServiceId(null);
                                 break;
                             case "Type":
-                                ((OpenStackEndpoint)osne).setEndpointType(((JTextField)components[1]).getText());
+                                ((OpenStackEndpoint)osne).setEndpointType(null);
                                 break;
                             case "URL":
-                                try {
-                                    ((OpenStackEndpoint)osne).setEndpointUrl(new URL(((JTextField)components[1]).getText()));
-                                } catch (MalformedURLException e1) {
-                                    e1.printStackTrace();
-
-                                }
+                                ((OpenStackEndpoint)osne).setEndpointUrl(null);
                                 break;
 
 
@@ -1175,13 +1165,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case SERVICES:
                         switch(key){
                             case "Name":
-                                ((OpenStackService)osne).setServiceName(((JTextField)components[1]).getText());
+                                ((OpenStackService)osne).setServiceName(null);
                                 break;
                             case "Description":
-                                ((OpenStackService)osne).setServiceDescription(((JTextField)components[1]).getText());
+                                ((OpenStackService)osne).setServiceDescription(null);
                                 break;
                             case "Type":
-                                ((OpenStackService)osne).setServiceType(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackService)osne).setServiceType(null);
                                 break;
 
 
@@ -1191,10 +1181,10 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case REGIONS:
                         switch(key){
                             case "Description":
-                                ((OpenStackRegion)osne).setRegionDescription(((JTextField)components[1]).getText());
+                                ((OpenStackRegion)osne).setRegionDescription(null);
                                 break;
                             case "Parent id":
-                                ((OpenStackRegion)osne).setParentRegionId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackRegion)osne).setParentRegionId(null);
                                 break;
 
 
@@ -1203,16 +1193,16 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case CREDENTIALS:
                         switch(key){
                             case "Type":
-                                ((OpenStackCredential)osne).setCredentialType(((JTextField)components[1]).getText());
+                                ((OpenStackCredential)osne).setCredentialType(null);
                                 break;
                             case "User ID":
-                                ((OpenStackCredential)osne).setCredentialUserId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackCredential)osne).setCredentialUserId(null);
                                 break;
                             case "Tenant ID":
-                                ((OpenStackCredential)osne).setCredentialProjectId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackCredential)osne).setCredentialProjectId(null);
                                 break;
                             case "Blob":
-                                ((OpenStackCredential)osne).setCredentialBlob(((JTextField)components[1]).getText());
+                                ((OpenStackCredential)osne).setCredentialBlob(null);
                                 break;
 
                         }
@@ -1220,13 +1210,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case GROUPS:
                         switch(key){
                             case "Name":
-                                ((OpenStackGroup)osne).setGroupName(((JTextField)components[1]).getText());
+                                ((OpenStackGroup)osne).setGroupName(null);
                                 break;
                             case "Domain ID":
-                                ((OpenStackGroup)osne).setGroupDomainId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackGroup)osne).setGroupDomainId(null);
                                 break;
                             case "Description":
-                                ((OpenStackGroup)osne).setGroupDescription(((JTextField)components[1]).getText());
+                                ((OpenStackGroup)osne).setGroupDescription(null);
                                 break;
 
                         }
@@ -1234,16 +1224,16 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case POLICIES:
                         switch(key){
                             case "User ID":
-                                ((OpenStackPolicy)osne).setPolicyUserId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackPolicy)osne).setPolicyUserId(null);
                                 break;
                             case "Tenant ID":
-                                ((OpenStackPolicy)osne).setPolicyProjectId(((JComboBox)components[1]).getSelectedItem().toString());
+                                ((OpenStackPolicy)osne).setPolicyProjectId(null);
                                 break;
                             case "Type":
-                                ((OpenStackPolicy)osne).setPolicyType(((JTextField)components[1]).getText());
+                                ((OpenStackPolicy)osne).setPolicyType(null);
                                 break;
                             case "Blob":
-                                ((OpenStackPolicy)osne).setPolicyBlob(((JTextField)components[1]).getText());
+                                ((OpenStackPolicy)osne).setPolicyBlob(null);
                                 break;
 
                         }
@@ -1251,7 +1241,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     case ROLES:
                         switch (key){
                             case "Name":
-                                ((OpenStackRole)osne).setRoleName(((JTextField)components[1]).getText());
+                                ((OpenStackRole)osne).setRoleName(null);
                                 break;
 
                         }

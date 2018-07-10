@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Group;
 
 import java.util.List;
@@ -43,9 +44,36 @@ public class OpenStackGroup  extends OpenStackNetworkElement
     public String getGroupDomainId () { return this.groupDomainId; }
     public Map<String,String> getGroupLinks () { return this.groupLinks; }
 
-    public void setGroupName (String value) { this.osn.getOSClientV3().identity().groups().update(osGroup.toBuilder().name(value).build());  }
-    public void setGroupDescription (String value) { this.osn.getOSClientV3().identity().groups().update(osGroup.toBuilder().description(value).build());  }
-    public void setGroupDomainId (String value) { this.osn.getOSClientV3().identity().groups().update(osGroup.toBuilder().domainId(value).build());  }
+    public void setGroupName (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().groups().update(osGroup.toBuilder().name(jsonObject.getString("Name")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setGroupDescription (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().groups().update(osGroup.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setGroupDomainId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().groups().update(osGroup.toBuilder().domainId(jsonObject.getString("Domain ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
 
     @Override
     public String get50CharactersDescription()

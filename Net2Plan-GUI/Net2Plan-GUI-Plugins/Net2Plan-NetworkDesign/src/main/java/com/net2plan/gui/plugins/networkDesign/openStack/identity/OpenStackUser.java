@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.User;
@@ -87,24 +88,42 @@ public class OpenStackUser extends OpenStackNetworkElement
 
         }
     }
-    public void updateUserDescription(String userDescription){
+    public void updateUserDescription(JSONObject jsonObject){
 
-        this.osn.getOSClientV3().identity().users().update(this.user.toBuilder().description(userDescription).build());
+        try{
+        this.osn.getOSClientV3().identity().users().update(this.user.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
 
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
 
     }
 
-    public void updateUserName(String userName){
+    public void updateUserName(JSONObject jsonObject){
 
-        this.osn.getOSClientV3().identity().users().update(this.user.toBuilder().name(userName).build());
+        try{
+        this.osn.getOSClientV3().identity().users().update(this.user.toBuilder().name(jsonObject.getString("Name")).build());
+        }catch(Exception ex){
 
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
 
     }
 
-    public void updateUserEmail(String userEmail){
+    public void updateUserEmail(JSONObject jsonObject){
 
-        this.osn.getOSClientV3().identity().users().update(this.user.toBuilder().email(userEmail).build());
+        try{
+        this.osn.getOSClientV3().identity().users().update(this.user.toBuilder().email(jsonObject.getString("Email")).build());
+        }catch(Exception ex){
 
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
 
     }
 

@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.Project;
 
@@ -59,14 +60,88 @@ public class OpenStackProject  extends OpenStackNetworkElement
     public boolean isProjectEnabled () { return this.projectEnabled; }
     public Map<String,String> getProjectLinks () { return this.projectLinks; }
 
-    public void setProjectName (String value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().name(value).build());  }
-    public void setProjectParentId (String value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().parentId(value).build());  }
-    public void setProjectDomainId (String value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().domainId(value).build());  }
-    public void setProjectDomain (Domain value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().domain(value).build());  }
-    public void setProjectDescription (String value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().description(value).build());  }
-    public void setProjectParents (String value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().parents(value).build());  }
-    public void setProjectSubtree (String value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().subtree(value).build());  }
-    public void setProjectEnabled (boolean value) { this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().enabled(value).build());  }
+    public void setProjectName (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().name(jsonObject.getString("Name")).build());
+
+    }catch(Exception ex){
+
+    logPanel();
+    System.out.println(ex.toString());
+
+}
+    }
+    public void setProjectParentId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().parentId(jsonObject.getString("Parent ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setProjectDomainId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().domainId(jsonObject.getString("Domain ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setProjectDomain (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().domain((Domain) jsonObject.get("Name")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }}
+    public void setProjectDescription (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+    public void setProjectParents (JSONObject jsonObject) {
+
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().parents(jsonObject.getString("Parents")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+    public void setProjectSubtree (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().subtree(jsonObject.getString("Subtree")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
+    public void setProjectEnabled (boolean value) {
+        try{
+        this.osn.getOSClientV3().identity().projects().update(osProject.toBuilder().enabled(value).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+
+    }
 
 
 

@@ -3,6 +3,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.identity;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import org.json.JSONObject;
 import org.omg.IOP.ENCODING_CDR_ENCAPS;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.types.Facing;
@@ -85,7 +86,16 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
 
 
     }
-    public void setEndpointDescription (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().description(value).build());  }
+    public void setEndpointDescription (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().description(jsonObject.getString("Description")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+    }
     public void isEndpointEnabled (Boolean value) {
 
 
@@ -109,12 +119,66 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
 
 
     }
-    public void setEndpointRegion (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().region(value).build()); }
-    public void setEndpointRegionId (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().regionId(value).build());  }
-    public void setEndpointIface (Facing value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().iface(value).build());  }
-    public void setEndpointServiceId (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().serviceId(value).build());  }
-    public void setEndpointType (String value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().type(value).build());  }
-    public void setEndpointUrl (URL value) { this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().url(value).build()); }
+    public void setEndpointRegion (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().region(jsonObject.getString("Region")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setEndpointRegionId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().regionId(jsonObject.getString("Region ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setEndpointIface (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().iface(Facing.valueOf(jsonObject.getString("Facing"))).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setEndpointServiceId (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().serviceId(jsonObject.getString("Service ID")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setEndpointType (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().type(jsonObject.getString("Type")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
+    public void setEndpointUrl (JSONObject jsonObject) {
+        try{
+        this.osn.getOSClientV3().identity().serviceEndpoints().updateEndpoint(osEndpoint.toBuilder().url((URL)jsonObject.get("URL")).build());
+        }catch(Exception ex){
+
+            logPanel();
+            System.out.println(ex.toString());
+
+        }
+        }
 
     @Override
     public String get50CharactersDescription()
