@@ -243,7 +243,13 @@ public class OpenStackNetCreate{
         changeOs(Facing.PUBLIC);
         String networkTenantId = information.getString("Tenant ID");
         String networkName = information.getString("Name");
-        NetworkType networkType = NetworkType.valueOf(information.getString("Network type"));
+        NetworkType networkType = null;
+        try {
+             networkType = NetworkType.valueOf(information.getString("Network type"));
+        }catch(Exception ex){
+            createOpenStackSubnet(information);
+            return;
+        }
         Boolean networkExternal = information.getBoolean("IsExternal");
 
         try{

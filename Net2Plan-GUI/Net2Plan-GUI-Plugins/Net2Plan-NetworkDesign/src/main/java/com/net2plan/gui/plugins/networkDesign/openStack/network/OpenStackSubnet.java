@@ -3,8 +3,14 @@ package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.interfaces.networkDesign.Resource;
+
+import java.awt.geom.Point2D;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.openstack4j.model.network.*;
@@ -29,7 +35,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     private boolean subnetIsDHCPEnabled;
     private Ipv6AddressMode subnetIpv6AddressMode;
     private Ipv6RaMode subnetIpv6RaMode;
-
+    final Node npNode;
     private Subnet osSubnet;
 
     public static OpenStackSubnet createFromAddSubnet (OpenStackNet osn ,Subnet subnet)
@@ -58,6 +64,20 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     {
         super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.openStackSubnets);
         this.osSubnet = subnet;
+
+        Map<String,String> attributes = new HashMap<>();
+        attributes.put("rightClick","no");
+        final Node npNode2 = osn.getNetPlan().addNode(0, 0, "", attributes);
+        npNode2.setName(subnet.getId());
+
+
+            try {
+                npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Switch.png").toURI().toURL().toString()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        this.npNode = npNode2;
     }
 
     @Override
@@ -75,7 +95,9 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public Ipv6AddressMode getSubnetIpv6AddressMode () { return this.subnetIpv6AddressMode; }
     public Ipv6RaMode getSubnetIpv6RaMode () { return this.subnetIpv6RaMode; }
 
-
+    public void setXYPositionMap(Point2D pos) {
+        npNode.setXYPositionMap(pos);
+    }
     @Override
     public String get50CharactersDescription()
     {
@@ -272,7 +294,9 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
 
 }
-
+public Node getNpNode(){
+        return  npNode;
+}
     public String prepareIp(String ip){
         String[] parts = ip.split("-");
         String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###

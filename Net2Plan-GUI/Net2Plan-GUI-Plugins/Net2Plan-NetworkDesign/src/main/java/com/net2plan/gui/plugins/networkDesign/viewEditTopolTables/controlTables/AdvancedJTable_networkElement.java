@@ -525,6 +525,20 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                 try {
                     updateTab();
+
+                    switch(ajtType){
+                        case NETWORKS:
+                            callback.getViewEditTopTables().changeViewOfTable(ajtType,1);
+                            updateTab();
+                            Map<String,String> headers = new HashMap<>();
+                            headers.put("Name","");
+                            headers.put("Network ID","Select");
+                            headers.put("IP version","Select");
+                            headers.put("Cidr","Special-ipv4masc");
+                            headers.put("Tenant ID","Select");
+                            generalTableForm("Add subnet",headers);
+                            break;
+                    }
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }

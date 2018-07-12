@@ -464,4 +464,42 @@ public class ViewEditTopologyTablesPane extends JPanel
         filteredTablePanel.updateTableSelection(type,value);
     }
 
+    public void changeViewOfTable(AJTableType ajTableType, Integer indexSubTab){
+        switch (ajTableType){
+
+            case USERS:
+            case PROJECTS:
+            case DOMAINS:
+            case ENDPOINTS:
+            case SERVICES:
+            case REGIONS:
+            case CREDENTIALS:
+            case GROUPS:
+            case POLICIES:
+            case ROLES:
+                this.identityTabbedPane.setSelectedIndex(indexSubTab);
+                break;
+
+            case NETWORKS:
+            case PORTS:
+            case SUBNETS:
+            case ROUTERS:
+                this.networkTabbedPane.setSelectedIndex(indexSubTab);
+                break;
+
+            /*compute*/
+            case SERVERS:
+            case FLAVORS:
+            case IMAGES:
+            case FLOATINGIPS:
+            case KEYPAIRS:
+            case SECURITYGROUPS:
+                this.computeTabbedPane.setSelectedIndex(indexSubTab);
+                break;
+
+            default:
+        }
+
+        updateView();
+    }
 }

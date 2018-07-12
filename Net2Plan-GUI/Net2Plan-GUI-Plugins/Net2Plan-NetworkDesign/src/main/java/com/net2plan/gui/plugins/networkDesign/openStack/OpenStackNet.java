@@ -455,8 +455,11 @@ public class OpenStackNet
     {
         // Node list
         final List<OpenStackRouter> nodeList = getOpenStackRouters();
-
+        final List<OpenStackNetwork> networkList = getOpenStackNetworks();
+        final List<OpenStackSubnet> subnetList = getOpenStackSubnets();
         final int numNodes = nodeList.size();
+        final int numNetworks = networkList.size();
+        final int numSubnets = subnetList.size();
         double index = 0.0;
 
         for (OpenStackRouter node : nodeList)
@@ -468,6 +471,30 @@ public class OpenStackNet
 
             index++;
         }
+
+        for (OpenStackNetwork network : networkList)
+        {
+             double xCoord = Math.sin(Math.toRadians((360 * index) / numNetworks));
+             double yCoord = -Math.cos(Math.toRadians((360 * index) / numNetworks));
+
+            network.setXYPositionMap(new Point2D.Double(xCoord, yCoord));
+
+            for (OpenStackSubnet subnet : subnetList)
+            {
+                if(subnet.getSubnetNetworkId().equals(network.getId())) {
+                    xCoord = Math.sin(Math.toRadians((360 * index) / numSubnets));
+                    yCoord = -Math.cos(Math.toRadians((360 * index) / numSubnets));
+
+                    subnet.setXYPositionMap(new Point2D.Double(xCoord, yCoord));
+
+                    getNetPlan().addLink(network.getNpNode(),subnet.getNpNode(),20000,20000,20000,null);
+                    index++;
+                }
+            }
+            index++;
+        }
+
+
 
 
 

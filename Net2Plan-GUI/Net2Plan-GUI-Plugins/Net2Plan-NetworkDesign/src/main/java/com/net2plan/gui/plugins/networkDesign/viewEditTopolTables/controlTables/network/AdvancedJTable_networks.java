@@ -87,6 +87,8 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         headers.put("IsExternal","Boolean");
         generalTableForm("Add network",headers);
 
+
+
     }
     public void removeNetwork(OpenStackNetwork network){
 

@@ -127,10 +127,12 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         if (vs.isWhatIfAnalysisActive()) return actions;
 
     	final NetPlan netPlan = callback.getDesign();
+        if(node.getAttribute("rightClick") != null) return actions;
         actions.add(new JMenuItem(new RemoveNodeAction("Remove node", node)));
 
         if (netPlan.getNumberOfNodes() > 1)
         {
+
             actions.add(new JPopupMenu.Separator());
             /*JMenu unidirectionalMenu = new JMenu("Create unidirectional link");
             JMenu bidirectionalMenu = new JMenu("Create bidirectional link");*/

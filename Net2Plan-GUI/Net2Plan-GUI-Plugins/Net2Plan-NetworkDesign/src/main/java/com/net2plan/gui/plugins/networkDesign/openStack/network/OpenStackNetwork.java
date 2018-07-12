@@ -2,8 +2,14 @@ package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.interfaces.networkDesign.Resource;
+
+import java.awt.geom.Point2D;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
@@ -34,11 +40,13 @@ import sun.nio.ch.Net;
         private boolean networkIsRouterExternal;
         private boolean networkIsShared;
         private Integer networkMTU;
-
+        final Node npNode;
         private Network osNetwork;
 
         public static OpenStackNetwork createFromAddNetwork (OpenStackNet osn ,Network network)
         {
+
+
             final OpenStackNetwork res = new OpenStackNetwork(osn,network);
             res.networkId= network.getId();
             res.networkName=network.getName();
@@ -62,11 +70,33 @@ import sun.nio.ch.Net;
         {
             super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.openStackNetworks);
 
+            Map<String,String> attributes = new HashMap<>();
+            attributes.put("rightClick","no");
+            final Node npNode2 = osn.getNetPlan().addNode(0, 0, "", attributes);
+            npNode2.setName(network.getId());
+
+            if (network.getName().equals("public")) {
+                try {
+
+                    npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Cloud.png").toURI().toURL().toString()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Layer3switch.png").toURI().toURL().toString()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            this.npNode = npNode2;
                 this.osNetwork = network;
 
         }
 
-
+        public Node getNpNode(){
+            return  npNode;
+        }
         @Override
         public String getId () { return this.networkId; }
         public String getName () { return this.networkName; }
@@ -81,7 +111,9 @@ import sun.nio.ch.Net;
         public boolean isNetworkIsRouterExternal () { return this.networkIsRouterExternal; }
         public boolean isNetworkIsShared () { return this.networkIsShared; }
         public Integer getNetworkMTU(){return this.networkMTU;}
-
+        public void setXYPositionMap(Point2D pos) {
+            npNode.setXYPositionMap(pos);
+        }
         @Override
         public String get50CharactersDescription()
         {
