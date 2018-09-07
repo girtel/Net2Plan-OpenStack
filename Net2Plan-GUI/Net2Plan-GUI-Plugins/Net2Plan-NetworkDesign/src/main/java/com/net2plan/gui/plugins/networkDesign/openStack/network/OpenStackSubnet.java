@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Node;
@@ -37,11 +38,11 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     private Ipv6RaMode subnetIpv6RaMode;
     final Node npNode;
     private Subnet osSubnet;
-
-    public static OpenStackSubnet createFromAddSubnet (OpenStackNet osn ,Subnet subnet)
+    private OpenStackClient openStackClient;
+    public static OpenStackSubnet createFromAddSubnet (OpenStackNet osn , Subnet subnet, OpenStackClient openStackClient)
     {
 
-        final OpenStackSubnet res = new OpenStackSubnet(osn, subnet);
+        final OpenStackSubnet res = new OpenStackSubnet(osn, subnet,openStackClient);
         res.subnetId = subnet.getId();
         res.subnetName =subnet.getName();
         res.subnetCidr = subnet.getCidr();
@@ -60,14 +61,14 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         return res;
     }
 
-    public OpenStackSubnet(OpenStackNet osn, Subnet subnet)
+    public OpenStackSubnet(OpenStackNet osn, Subnet subnet,OpenStackClient openStackClient)
     {
-        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.openStackSubnets);
+        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSubnets);
         this.osSubnet = subnet;
-
+        this.openStackClient=openStackClient;
         Map<String,String> attributes = new HashMap<>();
         attributes.put("rightClick","no");
-        final Node npNode2 = osn.getNetPlan().addNode(0, 0, "", attributes);
+        final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", attributes);
         npNode2.setName(subnet.getId());
 
 
@@ -132,7 +133,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public void setName (JSONObject jsonObject) {
 
         try{
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().name(jsonObject.getString("Name")).build());
+            this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().name(jsonObject.getString("Name")).build());
 
         }catch(Exception ex){
 
@@ -144,7 +145,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public void addSubnetDns (JSONObject jsonObject) {
 
         try {
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().addDNSNameServer(jsonObject.getString("DNS")).build());
+            this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().addDNSNameServer(jsonObject.getString("DNS")).build());
 
         }catch (Exception ex){
 
@@ -156,7 +157,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public void addPool (JSONObject jsonObject) {
         try{
 
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().addPool(prepareIp(jsonObject.getString("Start")),prepareIp(jsonObject.getString("End"))).build());
+            this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().addPool(prepareIp(jsonObject.getString("Start")),prepareIp(jsonObject.getString("End"))).build());
 
         }catch(Exception ex){
 
@@ -167,7 +168,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     }
     public void changeSubnetCidr (JSONObject jsonObject) {
         try{
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().cidr(prepareCidr(jsonObject.getString("CIDR"))).build());
+            this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().cidr(prepareCidr(jsonObject.getString("CIDR"))).build());
 
 
             }catch(Exception ex){
@@ -181,7 +182,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
         try{
 
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().addHostRoute(prepareCidr(object.getString("Destination")),prepareCidr(object.getString("Next hop"))).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().addHostRoute(prepareCidr(object.getString("Destination")),prepareCidr(object.getString("Next hop"))).build());
 
 
         }catch(Exception ex){
@@ -196,7 +197,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
         try{
 
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().noGateway().build());
+            this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().noGateway().build());
 
         }catch(Exception ex){
 
@@ -208,7 +209,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     }
     public void setSubnetGateway (JSONObject jsonObject) {
         try{
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().gateway(prepareIp(jsonObject.getString("Gateway"))).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().gateway(prepareIp(jsonObject.getString("Gateway"))).build());
 
         }catch(Exception ex){
 
@@ -221,7 +222,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public void setSubnetNetworkId (JSONObject jsonObject) {
 
         try{
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().networkId(jsonObject.getString("Network ID")).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().networkId(jsonObject.getString("Network ID")).build());
         }catch(Exception ex){
 
         logPanel();
@@ -232,7 +233,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 }
     public void setSubnetIpVersion (JSONObject jsonObject ) {
         try{
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipVersion(IPVersionType.valueOf(jsonObject.getString("IP version"))).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().ipVersion(IPVersionType.valueOf(jsonObject.getString("IP version"))).build());
 
         }catch(Exception ex){
 
@@ -244,7 +245,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 }
     public void setSubnetTenantId (JSONObject jsonObject) {
         try{
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().tenantId(jsonObject.getString("Project ID")).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().tenantId(jsonObject.getString("Project ID")).build());
         }catch(Exception ex){
 
         logPanel();
@@ -257,7 +258,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
         try{
 
-            this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().enableDHCP(value).build());
+            this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().enableDHCP(value).build());
 
         }catch(Exception ex){
 
@@ -269,7 +270,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     }
     public void setSubnetIpv6AddressMode (Ipv6AddressMode value) {
         try{
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipv6AddressMode(value).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().ipv6AddressMode(value).build());
         }catch(Exception ex){
 
         logPanel();
@@ -283,7 +284,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
         try{
 
-        this.osn.getOSClientV3().networking().subnet().update(osSubnet.toBuilder().ipv6RaMode(value).build());
+        this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().ipv6RaMode(value).build());
 
     }catch(Exception ex){
 

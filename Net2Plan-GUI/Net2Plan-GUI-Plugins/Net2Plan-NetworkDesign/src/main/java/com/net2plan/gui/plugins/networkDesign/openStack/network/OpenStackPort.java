@@ -1,8 +1,10 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Link;
+import com.net2plan.interfaces.networkDesign.Node;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.network.AllowedAddressPair;
@@ -10,6 +12,8 @@ import org.openstack4j.model.network.IP;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.State;
 
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,10 +37,11 @@ public class OpenStackPort extends OpenStackNetworkElement
     private String portTenantId;
     private String portHostId;
     private Port osPort;
-
-    public static OpenStackPort createFromAddPort (OpenStackNet osn ,Port port)
+    private Node npNode;
+    private OpenStackClient openStackClient;
+    public static OpenStackPort createFromAddPort (OpenStackNet osn ,Port port,OpenStackClient openStackClient)
     {
-        final OpenStackPort res = new OpenStackPort(osn,port);
+        final OpenStackPort res = new OpenStackPort(osn,port,openStackClient);
         res.portId= port.getId();
         res.portName=port.getName();
         res.portTenantId=port.getTenantId();
@@ -55,10 +60,24 @@ public class OpenStackPort extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackPort (OpenStackNet osn,Port port)
+    private OpenStackPort (OpenStackNet osn,Port port,OpenStackClient openStackClient)
     {
-        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.openStackPorts);
+        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackPorts);
         this.osPort = port;
+         this.openStackClient=openStackClient;
+        Map<String,String> attributes = new HashMap<>();
+        attributes.put("rightClick","no");
+        final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", attributes);
+        npNode2.setName(port.getId());
+
+
+        try {
+            npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/DSLAM.png").toURI().toURL().toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.npNode = npNode2;
     }
 
     @Override
@@ -77,6 +96,10 @@ public class OpenStackPort extends OpenStackNetworkElement
     public State getPortState () { return this.portState; }
     public boolean isAdminStateUp () { return this.isAdminStateUp; }
     public boolean isPortSecurityEnable () { return this.portSecurityEnable; }
+
+    public Node getNpNode(){
+        return  npNode;
+    }
 
     @Override
     public String get50CharactersDescription()
@@ -118,7 +141,7 @@ public class OpenStackPort extends OpenStackNetworkElement
 
     public void setName (String value) {
         try{
-        this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().name(value).build());
+        this.openStackClient.getClient().networking().port().update(osPort.toBuilder().name(value).build());
 
         }catch(Exception ex){
 
@@ -127,16 +150,16 @@ public class OpenStackPort extends OpenStackNetworkElement
 
         }
         }
-    public void setPortTenantId (String value) { this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().tenantId(value).build());}
-    public void setPortDeviceId (String value) {  this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().deviceId(value).build());}
-    public void setPortDeviceOwner (String value) {  this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().deviceOwner(value).build()); }
-    public void setPortHostId (String value) {  this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().hostId(value).build()); }
-    public void setPortMacAddress (String value) { this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().macAddress(value).build()); }
-    public void setPortNetworkId (String value) { this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().networkId(value).build()); }
-    public void setPortState (State value) { this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().state(value).build()); }
+    public void setPortTenantId (String value) { this.openStackClient.getClient().networking().port().update(osPort.toBuilder().tenantId(value).build());}
+    public void setPortDeviceId (String value) {  this.openStackClient.getClient().networking().port().update(osPort.toBuilder().deviceId(value).build());}
+    public void setPortDeviceOwner (String value) {  this.openStackClient.getClient().networking().port().update(osPort.toBuilder().deviceOwner(value).build()); }
+    public void setPortHostId (String value) {  this.openStackClient.getClient().networking().port().update(osPort.toBuilder().hostId(value).build()); }
+    public void setPortMacAddress (String value) { this.openStackClient.getClient().networking().port().update(osPort.toBuilder().macAddress(value).build()); }
+    public void setPortNetworkId (String value) { this.openStackClient.getClient().networking().port().update(osPort.toBuilder().networkId(value).build()); }
+    public void setPortState (State value) { this.openStackClient.getClient().networking().port().update(osPort.toBuilder().state(value).build()); }
     public void isAdminStateUp (boolean value) {
         try{
-        this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().adminState(value).build());
+        this.openStackClient.getClient().networking().port().update(osPort.toBuilder().adminState(value).build());
 
         }catch(Exception ex){
 
@@ -147,7 +170,7 @@ public class OpenStackPort extends OpenStackNetworkElement
         }
     public void isPortSecurityEnable (boolean value) {
         try{
-        this.osn.getOSClientV3().networking().port().update(osPort.toBuilder().portSecurityEnabled(value).build());
+        this.openStackClient.getClient().networking().port().update(osPort.toBuilder().portSecurityEnabled(value).build());
 
         }catch(Exception ex){
 

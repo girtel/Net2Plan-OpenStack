@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import org.openstack4j.model.common.Link;
@@ -49,10 +50,10 @@ public class OpenStackServer  extends OpenStackNetworkElement
     private String serverUuid;
     private String serverVmState;
     private Server osServer;
-
-    public static OpenStackServer createFromAddServer (OpenStackNet osn , Server server)
+    private OpenStackClient openStackClient;
+    public static OpenStackServer createFromAddServer (OpenStackNet osn , Server server,OpenStackClient openStackClient)
     {
-        final OpenStackServer res = new OpenStackServer(osn,server);
+        final OpenStackServer res = new OpenStackServer(osn,server,openStackClient);
         res.serverId= server.getId();
         res.serverName=server.getName();
         res.serverAccessIPv4=server.getAccessIPv4();
@@ -91,10 +92,11 @@ public class OpenStackServer  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackServer (OpenStackNet osn,Server server )
+    private OpenStackServer (OpenStackNet osn, Server server , OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.openStackServers);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackServers);
         this.osServer = server;
+        this.openStackClient=openStackClient;
     }
 
     @Override

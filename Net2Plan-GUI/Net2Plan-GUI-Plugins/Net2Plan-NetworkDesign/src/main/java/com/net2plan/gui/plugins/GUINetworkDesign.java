@@ -26,7 +26,6 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.UndoRedoManager;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
-import com.net2plan.gui.plugins.networkDesign.aboutItPane.AboutIt;
 import com.net2plan.gui.utils.ProportionalResizeJSplitPaneListener;
 import com.net2plan.interfaces.networkDesign.*;
 import com.net2plan.internal.Constants.NetworkElementType;
@@ -67,7 +66,7 @@ import java.util.List;
         private FocusPane focusPanel;
 
         private ViewEditTopologyTablesPane viewEditTopTables;
-        private AboutIt aboutIt;
+        //private AboutIt aboutIt;
 
         private VisualizationState vs;
         private UndoRedoManager undoRedoManager;
@@ -110,6 +109,8 @@ import java.util.List;
             this.tableControlWindow.showWindow(false);
         }
 
+
+
         @Override
         public void stop()
         {
@@ -133,7 +134,7 @@ import java.util.List;
                 // NOTE: ITopologyCanvas has already been added. Meaning that JUNGCanvas has already been too.
             }
 
-            this.currentOpenStackNet = new OpenStackNet();
+            this.currentOpenStackNet = new OpenStackNet(this);
             this.currentNetPlan = new NetPlan();
 
             BidiMap<NetworkLayer, Integer> mapLayer2VisualizationOrder = new DualHashBidiMap<>();
@@ -175,11 +176,11 @@ import java.util.List;
             this.undoRedoManager = new UndoRedoManager(this, MAXSIZEUNDOLISTCHANGES);
             this.undoRedoManager.addNetPlanChange();
 
-            aboutIt = new AboutIt(this);
+           // aboutIt = new AboutIt(this);
 
             final JTabbedPane tabPane = new JTabbedPane();
             tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.network), viewEditTopTables);
-            tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.whatif), aboutIt);
+            //tabPane.add(NetworkDesignWindow.getWindowName(NetworkDesignWindow.whatif), aboutIt);
 
             // Installing customized mouse listener
             MouseListener[] ml = tabPane.getListeners(MouseListener.class);
@@ -266,16 +267,12 @@ import java.util.List;
             };
 
             // Building tab controller
-            this.windowController = new WindowController(aboutIt);
+           // this.windowController = new WindowController(aboutIt);
 
             addKeyCombinationActions();
             updateVisualizationAfterNewTopology();
         }
 
-        public void connectToOpenStack(String os_auth_url, String os_username, String os_password, String os_project_name,String os_user_domain_name,String os_project_domain_id,String system)
-        {
-            this.currentOpenStackNet = OpenStackNet.buildOpenStackNetFromServer(this, os_auth_url,os_username,os_password,os_project_name,os_user_domain_name,os_project_domain_id, system);
-        }
 
 
         public OpenStackNet getOpenStackNet() { return this.currentOpenStackNet; }
@@ -482,9 +479,10 @@ import java.util.List;
         public ViewEditTopologyTablesPane getViewEditTopTables(){
             return this.viewEditTopTables;
         }
-        public AboutIt getAboutIt(){
+
+       /* public AboutIt getAboutIt(){
             return this.aboutIt;
-        }
+        }*/
         public void resetPickedStateAndUpdateView()
         {
             vs.resetPickedState();
@@ -551,8 +549,8 @@ import java.util.List;
             viewEditTopTables.setActionMap(this.getActionMap());
 
 
-            aboutIt.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
-            aboutIt.setActionMap(this.getActionMap());
+            //aboutIt.setInputMap(WHEN_IN_FOCUSED_WINDOW, this.getInputMap(WHEN_IN_FOCUSED_WINDOW));
+            //aboutIt.setActionMap(this.getActionMap());
         }
 
         public void putTransientColorInElementTopologyCanvas(Collection<? extends NetworkElement> linksAndNodes, Color color)
@@ -594,7 +592,7 @@ import java.util.List;
             topologyPanel.getCanvas().rebuildGraph();
             topologyPanel.getCanvas().zoomAll();
             viewEditTopTables.updateView();
-            aboutIt.updateView();
+           // aboutIt.updateView();
             focusPanel.updateView();
         }
 
@@ -620,20 +618,20 @@ import java.util.List;
                 topologyPanel.updateMultilayerPanel();
                 topologyPanel.getCanvas().rebuildGraph();
                 viewEditTopTables.updateView();
-                aboutIt.updateView();
+               // aboutIt.updateView();
                 focusPanel.updateView();
             } else if ((modificationsMade.contains(NetworkElementType.LINK) || modificationsMade.contains(NetworkElementType.NODE) || modificationsMade.contains(NetworkElementType.LAYER)))
             {
                 topologyPanel.getCanvas().rebuildGraph();
                 viewEditTopTables.updateView();
 
-                aboutIt.updateView();
+                //aboutIt.updateView();
                 focusPanel.updateView();
             } else
             {
                 viewEditTopTables.updateView();
 
-                aboutIt.updateView();
+                //aboutIt.updateView();
                 focusPanel.updateView();
             }
         }

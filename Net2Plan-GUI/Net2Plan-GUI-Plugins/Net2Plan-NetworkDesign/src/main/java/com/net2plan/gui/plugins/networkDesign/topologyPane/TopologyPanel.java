@@ -65,12 +65,6 @@ public class TopologyPanel extends JPanel implements ActionListener
 
     private final CipherClass cc = new CipherClass();
 
-    private JPanel jp1;
-    private JButton jbP1, jbP2, jbP3;
-    private JTextField os_username, os_auth_url,os_project_name,os_user_domain_name,os_project_domain_id;
-    private JPasswordField os_password;
-    private JFrame jfM;
-    private JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain,labelPDomain,labelSystem;
     private FileChooserNetworkDesign fc_netPlan;
     private JComboBox systemList;
     private String[] systems = { "ubuntu", "rhel", "centOs"};
@@ -301,7 +295,14 @@ public class TopologyPanel extends JPanel implements ActionListener
         return canvas;
     }
 
-    public void loadCredentials(){
+    public void addCredentials(){
+
+        JPanel jp1;
+        JButton jbP1;
+        JTextField os_username, os_auth_url,os_project_id,os_user_domain_name;
+        JPasswordField os_password;
+        JFrame jfM;
+        JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain;
 
         jfM = new JFrame("Credentials");
         jp1 = new JPanel(new GridLayout(7, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
@@ -313,16 +314,13 @@ public class TopologyPanel extends JPanel implements ActionListener
         labelUrl = new JLabel("OS_AUTH_URL",  SwingConstants.LEFT);
         labelProject = new JLabel("OS_PROJECT_NAME",  SwingConstants.LEFT);
         labelUDomain = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
-        labelPDomain = new JLabel("OS_P_DOMAIN_ID ", SwingConstants.LEFT);
-        labelSystem= new JLabel("SO ", SwingConstants.LEFT);
 
 
         os_username = new JTextField(10);
         os_password = new JPasswordField();
         os_auth_url = new JTextField();
-        os_project_name = new JTextField();
+        os_project_id = new JTextField();
         os_user_domain_name = new JTextField();
-        os_project_domain_id = new JTextField();
 
         jp1.add(labelUser);
         jp1.add(os_username);
@@ -334,41 +332,46 @@ public class TopologyPanel extends JPanel implements ActionListener
         jp1.add(os_auth_url);
 
         jp1.add(labelProject);
-        jp1.add(os_project_name);
+        jp1.add(os_project_id);
 
         jp1.add(labelUDomain);
         jp1.add(os_user_domain_name);
 
-        jp1.add(labelPDomain);
-        jp1.add(os_project_domain_id);
-
-
-
-        systemList = new JComboBox(systems);
-        systemList.setSelectedIndex(0);
-
-        jp1.add(labelSystem);
-        jp1.add(systemList);
         jp1.setVisible(true);
 
         jbP1 = new JButton("Enter");
-        jbP2 = new JButton("Load");
-        jbP3 = new JButton("Generate");
 
         jp1.setBounds(10, 10, 200, 250);
 
         jbP1.setBounds(75, 300, 90, 20);
-        jbP2.setBounds(25, 275, 90, 20);
-        jbP3.setBounds(125, 275, 90, 20);
 
-        jbP1.addActionListener(this);
-        jbP2.addActionListener(this);
-        jbP3.addActionListener(this);
+        jbP1.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("os_auth_url",os_auth_url.getText());
+                jsonObject.put("os_username",os_username.getText());
+                jsonObject.put("os_password",String.valueOf(os_password.getPassword()));
+                jsonObject.put("os_project_id",os_project_id.getText());
+                jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
+
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(jsonObject);
+                JSONObject jsonObject1 = new JSONObject();
+                jsonObject1.put("Credentials",jsonArray);
+
+                System.out.println("TopologyPanel adding new OSClientV3 " + jsonObject1);
+                callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject1);
+
+                   //callback.getAboutIt().updateText();
+                jfM.dispose();
+            }
+        });
 
         jfM.add(jp1);
         jfM.add(jbP1);
-        jfM.add(jbP2);
-        jfM.add(jbP3);
+
 
         ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
         jfM.setIconImage(img.getImage());
@@ -382,86 +385,49 @@ public class TopologyPanel extends JPanel implements ActionListener
         jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     }
+    public void loadCredentials(){
 
+
+        assert fc_netPlan != null;
+
+        int rc = fc_netPlan.showOpenDialog(null);
+        if (rc != JFileChooser.APPROVE_OPTION) return;
+
+
+        try{
+            byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
+            String everything = cc.descifra(bytes);
+            JSONObject jsonObject = new JSONObject(everything);
+            System.out.println("TopologyPanel loading  OSClientV3s " + jsonObject);
+            callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject);
+
+        } catch (Exception ex) {
+            System.out.println(ex.toString());
+        }
+
+    }
+    public void generateCredentials(){
+
+
+        assert fc_netPlan != null;
+
+        int rc = fc_netPlan.showOpenDialog(null);
+        if (rc != JFileChooser.APPROVE_OPTION) return;
+
+        try  {
+
+            FileUtils.writeByteArrayToFile(new File(fc_netPlan.getSelectedFile().getAbsolutePath()), cc.cifra(callback.getOpenStackNet().getJSONObjectOsClients().toString()));
+            System.out.println("TopologyPanel generated  OSClientV3s " + callback.getOpenStackNet().getJSONObjectOsClients());
+        }catch(Exception ex){
+            System.out.println(ex.toString());
+
+        }
+
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
 
         Object src = e.getSource();
-
-        if(src.equals(jbP1)){
-
-            callback.connectToOpenStack(os_auth_url.getText(), os_username.getText(), String.valueOf(os_password.getPassword()), os_project_name.getText(), os_user_domain_name.getText(), os_project_domain_id.getText(),systems[systemList.getSelectedIndex()]);
-
-            final VisualizationState vs = callback.getVisualizationState();
-            Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
-                    vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
-            vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
-
-
-            callback.updateVisualizationAfterNewTopology();
-            callback.addNetPlanChange();
-            callback.getAboutIt().updateText();
-            jfM.dispose();
-
-        }else if(src.equals(jbP2)){
-
-            assert fc_netPlan != null;
-
-            int rc = fc_netPlan.showOpenDialog(null);
-            if (rc != JFileChooser.APPROVE_OPTION) return;
-
-
-            try{
-                byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
-                String everything = cc.descifra(bytes);
-                JSONObject jsonObject = new JSONObject(everything);
-                os_username.setText(jsonObject.getString("os_username"));
-                String password = "";
-                JSONArray jA = jsonObject.getJSONArray("os_password");
-
-                for(int i = 0; i < jA.length(); i++) {
-                    password = password.concat(jA.getString(i));
-                }
-
-                os_password.setText(password);
-                os_auth_url.setText(jsonObject.getString("os_auth_url"));
-                os_project_name.setText(jsonObject.getString("os_project_name"));
-                os_user_domain_name.setText(jsonObject.getString("os_user_domain_name"));
-                os_project_domain_id.setText(jsonObject.getString("os_project_domain_id"));
-                systemList.setSelectedIndex(jsonObject.getInt("so"));
-
-
-            } catch (Exception ex) {
-                System.out.println(ex.toString());
-            }
-
-        }else if(src.equals(jbP3)){
-
-                assert fc_netPlan != null;
-
-                int rc = fc_netPlan.showOpenDialog(null);
-                if (rc != JFileChooser.APPROVE_OPTION) return;
-
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("os_username",os_username.getText());
-                jsonObject.put("os_password",os_password.getPassword());
-                jsonObject.put("os_auth_url",os_auth_url.getText());
-                jsonObject.put("os_project_name",os_project_name.getText());
-                jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
-                jsonObject.put("os_project_domain_id",os_project_domain_id.getText());
-                jsonObject.put("so",systemList.getSelectedIndex());
-
-                try  {
-
-                    FileUtils.writeByteArrayToFile(new File(fc_netPlan.getSelectedFile().getAbsolutePath()), cc.cifra(jsonObject.toString()));
-
-                }catch(Exception ex){
-                    System.out.println(ex.toString());
-
-                }
-        }
-
 
     }
 }

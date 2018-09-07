@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackFlavor;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -11,9 +12,9 @@ import java.util.*;
 
 public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenStackFlavor>
 {
-    public AdvancedJTable_flavors(GUINetworkDesign callback)
+    public AdvancedJTable_flavors(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, ViewEditTopologyTablesPane.AJTableType.FLAVORS , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.FLAVORS , true,openStackClient);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
     }
     public void removeFlavor(OpenStackFlavor flavor){
 
-       callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackFlavor(flavor.getId());
+       openStackClient.getOpenStackNetDelete().deleteOpenStackFlavor(flavor.getId());
        updateTab();
     }
 

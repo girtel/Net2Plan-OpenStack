@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -21,9 +22,9 @@ import java.util.List;
 
 public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStackPort>
 {
-    public AdvancedJTable_ports(GUINetworkDesign callback)
+    public AdvancedJTable_ports(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, ViewEditTopologyTablesPane.AJTableType.PORTS , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.PORTS , true,openStackClient);
     }
 
     @Override
@@ -86,15 +87,14 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
-        headers.put("Network ID","Select");
-        headers.put("Fixed IP","Special-ipv4");
         headers.put("Subnet ID","Select");
+        headers.put("Router ID","Select");
         generalTableForm("Add port",headers);
 
     }
     public void removePort(OpenStackPort port){
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackPort(port.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackPort(port.getId());
         updateTab();
     }
 

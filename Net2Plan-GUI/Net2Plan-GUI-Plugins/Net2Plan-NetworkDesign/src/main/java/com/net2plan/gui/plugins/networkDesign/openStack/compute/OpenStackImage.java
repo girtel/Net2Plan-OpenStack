@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import org.openstack4j.model.common.Link;
@@ -26,10 +27,11 @@ public class OpenStackImage  extends OpenStackNetworkElement
     private boolean imageSnapshot;
     private List<? extends Link>imageLinks;
     private Image osImage;
+    private OpenStackClient openStackClient;
 
-    public static OpenStackImage createFromAddImage (OpenStackNet osn , Image image)
+    public static OpenStackImage createFromAddImage (OpenStackNet osn , Image image,OpenStackClient openStackClient)
     {
-        final OpenStackImage res = new OpenStackImage(osn,image);
+        final OpenStackImage res = new OpenStackImage(osn,image,openStackClient);
         res.imageId= image.getId();
         res.imageName=image.getName();
         res.imageSize=image.getSize();
@@ -45,10 +47,11 @@ public class OpenStackImage  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackImage (OpenStackNet osn,Image image )
+    private OpenStackImage (OpenStackNet osn,Image image ,OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.openStackImages);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackImages);
         this.osImage = image;
+        this.openStackClient=openStackClient;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
+import com.net2plan.gui.plugins.utils.MyRunnable;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.identity.v3.Token;
@@ -12,7 +13,7 @@ public class OpenStackNetDelete {
 
     private OSClient.OSClientV3 osClientV3;
     private String system;
-    public OpenStackNetDelete(OSClient.OSClientV3 osClientV3,String system){
+    public OpenStackNetDelete(OSClient.OSClientV3 osClientV3){
         this.osClientV3 = osClientV3;
         this.system=system;
     }

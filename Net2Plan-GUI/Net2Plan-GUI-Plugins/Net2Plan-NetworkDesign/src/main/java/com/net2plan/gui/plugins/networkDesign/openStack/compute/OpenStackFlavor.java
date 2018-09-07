@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import org.json.JSONObject;
@@ -23,10 +24,11 @@ public class OpenStackFlavor  extends OpenStackNetworkElement
     private float flavorRxtxFactor;
     private Integer flavorRxtxQuota;
     private Flavor osFlavor;
+    private OpenStackClient openStackClient;
 
-    public static OpenStackFlavor createFromAddFlavor (OpenStackNet osn , Flavor flavor)
+    public static OpenStackFlavor createFromAddFlavor (OpenStackNet osn , Flavor flavor,OpenStackClient openStackClient)
     {
-        final OpenStackFlavor res = new OpenStackFlavor(osn,flavor);
+        final OpenStackFlavor res = new OpenStackFlavor(osn,flavor,openStackClient);
         res.flavorId= flavor.getId();
         res.flavorName=flavor.getName();
         res.flavorDisk=flavor.getDisk();
@@ -42,10 +44,11 @@ public class OpenStackFlavor  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackFlavor (OpenStackNet osn ,Flavor flavor)
+    private OpenStackFlavor (OpenStackNet osn ,Flavor flavor,OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.openStackFlavors);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackFlavors);
         this.osFlavor = flavor;
+        this.openStackClient=openStackClient;
     }
 
     @Override

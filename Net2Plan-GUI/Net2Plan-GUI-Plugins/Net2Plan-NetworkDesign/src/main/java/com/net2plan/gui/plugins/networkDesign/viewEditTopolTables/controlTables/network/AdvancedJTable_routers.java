@@ -4,6 +4,7 @@ import java.util.*;
 
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -17,9 +18,9 @@ import org.openstack4j.model.network.State;
 @SuppressWarnings("unchecked")
 public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenStackRouter>
 {
-    public AdvancedJTable_routers(GUINetworkDesign callback)
+    public AdvancedJTable_routers(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, AJTableType.ROUTERS , true);
+        super(callback, AJTableType.ROUTERS , true,openStackClient);
     }
 
     @Override
@@ -117,7 +118,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
     }
     public void removeRouter(OpenStackRouter router){
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackRouter(router.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackRouter(router.getId());
         updateTab();
     }
 

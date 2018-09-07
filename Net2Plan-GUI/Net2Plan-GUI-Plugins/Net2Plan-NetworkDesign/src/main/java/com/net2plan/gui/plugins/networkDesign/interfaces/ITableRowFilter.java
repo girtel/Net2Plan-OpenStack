@@ -11,6 +11,7 @@
 package com.net2plan.gui.plugins.networkDesign.interfaces;
 
 import com.google.common.collect.Sets;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
@@ -97,11 +98,11 @@ public abstract class ITableRowFilter
 		return res;
 	}
 
-	public final List<? extends OpenStackNetworkElement> getVisibleElements (OpenStackNet os, AJTableType ajTableType)
+	public final List<? extends OpenStackNetworkElement> getVisibleElements (OpenStackClient os, AJTableType ajTableType)
 	{
 		switch(ajTableType)
 		{
-			/*OpenStackNetworkElements of KEYSTONE*/
+			/*OpenStackNetworkElements of KEYSTONE
 			case USERS:
 				return os.getOpenStackUsers();
 			case PROJECTS:
@@ -122,7 +123,7 @@ public abstract class ITableRowFilter
 				return os.getOpenStackPolicies();
 			case ROLES:
 				return os.getOpenStackRoles();
-
+*/
 			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();
@@ -146,14 +147,16 @@ public abstract class ITableRowFilter
 				return os.getOpenStackKeypairs();
 			case SECURITYGROUPS:
 				return os.getOpenStackSecurityGroups();
+			case HOSTRESOURCES:
+				return os.getOpenStackHostResource();
 
-			/*OpenStackNetworkElements of GLANCE*/
+			/*OpenStackNetworkElements of GLANCE
 			case IMAGESV2:
 				return os.getOpenStackImageV2();
 			case TASKS:
 				return os.getOpenStackTask();
-
-			/*OpenStackNetworkElements of HEAT*/
+*/
+			/*OpenStackNetworkElements of HEAT
 			case STACKS:
 				return os.getOpenStackStacks();
 			case TEMPLATES:
@@ -162,25 +165,26 @@ public abstract class ITableRowFilter
 				return os.getOpenStackResources();
 			case EVENTS:
 				return os.getOpenStackEvents();
-
-			/*OpenStackNetworkElements of INFORMATION*/
+*/
+			/*OpenStackNetworkElements of INFORMATION
 			case THISPROJECT:
 				return os.getOpenStackInformationProject();
 			case THISUSER:
 				return os.getOpenStackInformationUser();
 			case SUMMARY:
 				return os.getOpenStackSummary();
+				*/
 			default:
 				assert false;
 				return new ArrayList<>();
 		}
 	}
 
-	public static final List<? extends OpenStackNetworkElement> getAllElements (OpenStackNet os, AJTableType ajTableType)
+	public static final List<? extends OpenStackNetworkElement> getAllElements (OpenStackClient os, AJTableType ajTableType)
 	{
 		switch(ajTableType)
 		{
-			/*OpenStackNetworkElements of KEYSTONE*/
+			/*OpenStackNetworkElements of KEYSTONE
 			case USERS:
 				return os.getOpenStackUsers();
 			case PROJECTS:
@@ -201,7 +205,7 @@ public abstract class ITableRowFilter
 				return os.getOpenStackPolicies();
 			case ROLES:
 				return os.getOpenStackRoles();
-
+*/
 			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();
@@ -225,14 +229,16 @@ public abstract class ITableRowFilter
 				return os.getOpenStackKeypairs();
 			case SECURITYGROUPS:
 				return os.getOpenStackSecurityGroups();
+			case HOSTRESOURCES:
+				return os.getOpenStackHostResource();
 
-			/*OpenStackNetworkElements of GLANCE*/
+			/*OpenStackNetworkElements of GLANCE
 			case IMAGESV2:
 				return os.getOpenStackImageV2();
 			case TASKS:
 				return os.getOpenStackTask();
-
-			/*OpenStackNetworkElements of HEAT*/
+*/
+			/*OpenStackNetworkElements of HEAT
 			case STACKS:
 				return os.getOpenStackStacks();
 			case TEMPLATES:
@@ -241,15 +247,15 @@ public abstract class ITableRowFilter
 				return os.getOpenStackResources();
 			case EVENTS:
 				return os.getOpenStackEvents();
-				
-			/*OpenStackNetworkElements of INFORMATION*/
+				*/
+			/*OpenStackNetworkElements of INFORMATION
 			case THISPROJECT:
 				return os.getOpenStackInformationProject();
 			case THISUSER:
 				return os.getOpenStackInformationUser();
 			case SUMMARY:
 				return os.getOpenStackSummary();
-
+*/
 			default:
 				assert false;
 				return new ArrayList<>();

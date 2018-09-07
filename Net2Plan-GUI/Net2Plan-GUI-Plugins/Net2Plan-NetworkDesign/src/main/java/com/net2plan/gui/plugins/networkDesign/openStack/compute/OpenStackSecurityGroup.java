@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import org.json.JSONObject;
@@ -19,9 +20,10 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     private List<? extends SecGroupExtension.Rule> secGroupExtensionRules;
     private List<? extends Link>secGroupExtensionLinks;
     private SecGroupExtension osSecGroupExtension;
-    public static OpenStackSecurityGroup createFromAddSegurityGroup (OpenStackNet osn , SecGroupExtension secGroupExtension)
+    private OpenStackClient openStackClient;
+    public static OpenStackSecurityGroup createFromAddSegurityGroup (OpenStackNet osn , SecGroupExtension secGroupExtension,OpenStackClient openStackClient )
     {
-        final OpenStackSecurityGroup res = new OpenStackSecurityGroup(osn,secGroupExtension);
+        final OpenStackSecurityGroup res = new OpenStackSecurityGroup(osn,secGroupExtension,openStackClient);
         res.secGroupExtensionId= secGroupExtension.getId();
         res.secGroupExtensionName=secGroupExtension.getName();
         res.secGroupExtensionTenantId=secGroupExtension.getTenantId();
@@ -31,10 +33,11 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackSecurityGroup (OpenStackNet osn,SecGroupExtension secGroupExtension )
+    private OpenStackSecurityGroup (OpenStackNet osn,SecGroupExtension secGroupExtension,OpenStackClient openStackClient )
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.openStackSecurityGroups);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSecurityGroups);
         this.osSecGroupExtension = secGroupExtension;
+        this.openStackClient=openStackClient;
     }
 
     @Override
@@ -44,8 +47,8 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     public String getSecGroupExtensionTenantId () { return this.secGroupExtensionTenantId; }
     public List<? extends SecGroupExtension.Rule> getSecGroupExtensionRules () { return this.secGroupExtensionRules; }
     public List<? extends Link> getSecGroupExtensionLinks () { return this.secGroupExtensionLinks; }
-    public void setSecGroupName (JSONObject jsonObject) { this.osn.getOSClientV3().compute().securityGroups().update(this.osSecGroupExtension.getId(),jsonObject.getString("Name"),this.osSecGroupExtension.getDescription());}
-    public void setSecGroupDescription (JSONObject jsonObject) { this.osn.getOSClientV3().compute().securityGroups().update(this.osSecGroupExtension.getId(),this.osSecGroupExtension.getName(),jsonObject.getString("Description"));}
+    public void setSecGroupName (JSONObject jsonObject) { this.openStackClient.getClient().compute().securityGroups().update(this.osSecGroupExtension.getId(),jsonObject.getString("Name"),this.osSecGroupExtension.getDescription());}
+    public void setSecGroupDescription (JSONObject jsonObject) { this.openStackClient.getClient().compute().securityGroups().update(this.osSecGroupExtension.getId(),this.osSecGroupExtension.getName(),jsonObject.getString("Description"));}
 
     @Override
     public String get50CharactersDescription()

@@ -23,8 +23,8 @@ import javax.swing.text.MaskFormatter;
 
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
-import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
@@ -55,11 +55,13 @@ import java.util.stream.Collectors;
 public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkElement> extends AdvancedJTable_abstractElement<T>
 {
     protected final AJTableType ajtType;
+    protected final OpenStackClient openStackClient;
 
-    public AdvancedJTable_networkElement(GUINetworkDesign networkViewer, AJTableType ajtType , boolean hasAggregationRow)
+    public AdvancedJTable_networkElement(GUINetworkDesign networkViewer, AJTableType ajtType , boolean hasAggregationRow,OpenStackClient openStackClient)
     {
         super(networkViewer, ajtType.getTabName() , hasAggregationRow);
         this.ajtType = ajtType;
+        this.openStackClient = openStackClient;
         updateView();
     }
 
@@ -88,7 +90,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     protected final List<T> getAllAbstractElementsInTable()
     {
         final ITableRowFilter rf = callback.getVisualizationState().getTableRowFilter();
-        return rf == null ? (List<T>) ITableRowFilter.getAllElements(callback.getOpenStackNet(), ajtType) : (List<T>) rf.getVisibleElements(callback.getOpenStackNet(), ajtType);
+        return rf == null ? (List<T>) ITableRowFilter.getAllElements(openStackClient, ajtType) : (List<T>) rf.getVisibleElements(openStackClient, ajtType);
     }
 
     public final AJTableType getAjType () { return ajtType; }
@@ -229,60 +231,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
 
         switch (ajtType) {
-
-            /*IDENTITY*/
-            case USERS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
-                }
-                break;
-            case PROJECTS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 6) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
-                }
-                break;
-
-            case ENDPOINTS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 7) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",5);
-                }
-                if (columnModelIndexOfClickOrMinus1IfOut == 8) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",4);
-                }
-                break;
-            case SERVICES:
-                if (columnModelIndexOfClickOrMinus1IfOut == 8) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",3);
-                }
-                break;
-            case CREDENTIALS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 3)
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
-
-                if (columnModelIndexOfClickOrMinus1IfOut == 4)
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",1);
-                break;
-            case GROUPS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 5) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
-                }
-                break;
-            case POLICIES:
-                if (columnModelIndexOfClickOrMinus1IfOut == 3) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
-                }
-                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",1);
-                }
-                break;
-
-            case ROLES:
-                if (columnModelIndexOfClickOrMinus1IfOut == 4) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",2);
-                }
-                break;
-
-
             /*NETWORK*/
             case NETWORKS:
                 if (columnModelIndexOfClickOrMinus1IfOut == 10) {
@@ -333,53 +281,37 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     List<String> stockList = new ArrayList<>() ;
                     switch (key){
                         case "Network ID":
-                            stockList = callback.getOpenStackNet().openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Subnet ID":
-                            stockList = callback.getOpenStackNet().openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Tenant ID":
-                            if(callback.getOpenStackNet().openStackProjects.size()==0)break;
-                            stockList = callback.getOpenStackNet().openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "User ID":
-                            stockList = callback.getOpenStackNet().openStackUsers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Flavor ID":
-                            stockList = callback.getOpenStackNet().openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Image ID":
-                            stockList = callback.getOpenStackNet().openStackImageV2.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackImages.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Port ID":
-                            stockList = callback.getOpenStackNet().openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Service ID":
-                            stockList = callback.getOpenStackNet().openStackServices.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Router ID":
-                            stockList = callback.getOpenStackNet().openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
-                        case "Domain ID":
-                            stockList = callback.getOpenStackNet().openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        case "Server ID":
+                            stockList = openStackClient.openStackServers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
@@ -394,6 +326,11 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                             break;
                         case "Facing":
                             stockArr = Facing.values();
+                            break;
+                        case "Pool Name":
+                            stockList = openStackClient.getClient().compute().floatingIps().getPoolNames();
+                            stockArr = new String[stockList.size()];
+                            stockArr = stockList.toArray(stockArr);
                             break;
                     }
 
@@ -458,67 +395,35 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                 switch (ajtType){
 
-                    /*IDENTIY*/
-                    case USERS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackUser(jsonObject);
-                        break;
-                    case PROJECTS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackProject(jsonObject);
-                        break;
-                    case DOMAINS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackDomain(jsonObject);
-                        break;
-                    case ENDPOINTS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackEndpoint(jsonObject);
-                        break;
-                    case SERVICES:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackService(jsonObject);
-                        break;
-                    case REGIONS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRegion(jsonObject);
-                        break;
-                    case CREDENTIALS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackCredential(jsonObject);
-                        break;
-                    case GROUPS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackGroup(jsonObject);
-                        break;
-                    case POLICIES:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackPolicy(jsonObject);
-                        break;
-                    case ROLES:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRole(jsonObject);
-                        break;
-
                     /*NETWORK*/
                     case PORTS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackPort(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackPort(jsonObject);
                         break;
                     case NETWORKS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackNetwork(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackNetwork(jsonObject);
                         break;
                     case SUBNETS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackSubnet(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackSubnet(jsonObject);
                         break;
                     case ROUTERS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRouter(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackRouter(jsonObject);
                         break;
 
                     /*COMPUTE*/
                     case SERVERS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackServer(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackServer(jsonObject);
                         break;
                     case FLAVORS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackFlavor(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackFlavor(jsonObject);
                         break;
                     case FLOATINGIPS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackFloatingIp(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackFloatingIp(jsonObject);
                         break;
                     case KEYPAIRS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackKeypair(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackKeypair(jsonObject);
                         break;
                     case SECURITYGROUPS:
-                        callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackSecurityGroup(jsonObject);
+                        openStackClient.getOpenStackNetCreate().createOpenStackSecurityGroup(jsonObject);
                         break;
 
                 }
@@ -526,19 +431,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 try {
                     updateTab();
 
-                    switch(ajtType){
-                        case NETWORKS:
-                            callback.getViewEditTopTables().changeViewOfTable(ajtType,1);
-                            updateTab();
-                            Map<String,String> headers = new HashMap<>();
-                            headers.put("Name","");
-                            headers.put("Network ID","Select");
-                            headers.put("IP version","Select");
-                            headers.put("Cidr","Special-ipv4masc");
-                            headers.put("Tenant ID","Select");
-                            generalTableForm("Add subnet",headers);
-                            break;
-                    }
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
@@ -597,53 +489,32 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     List<String> stockList = new ArrayList<>() ;
                     switch (header){
                         case "Network ID":
-                            stockList = callback.getOpenStackNet().openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Subnet ID":
-                            stockList = callback.getOpenStackNet().openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Tenant ID":
-                            if(callback.getOpenStackNet().openStackProjects.size()==0)break;
-                            stockList = callback.getOpenStackNet().openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "User ID":
-                            stockList = callback.getOpenStackNet().openStackUsers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Flavor ID":
-                            stockList = callback.getOpenStackNet().openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Image ID":
-                            stockList = callback.getOpenStackNet().openStackImageV2.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackImages.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Port ID":
-                            stockList = callback.getOpenStackNet().openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Service ID":
-                            stockList = callback.getOpenStackNet().openStackServices.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Router ID":
-                            stockList = callback.getOpenStackNet().openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Domain ID":
-                            stockList = callback.getOpenStackNet().openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
@@ -722,165 +593,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                 switch (ajtType){
 
-                    /*IDENTITY*/
-                    case USERS:
-                        switch (key){
-                            case "Name":
-                                ((OpenStackUser)osne).updateUserName(jsonObject);
-                                break;
-                            case "Description":
-                                ((OpenStackUser)osne).updateUserDescription(jsonObject);
-                                break;
-                            case "Email":
-                                ((OpenStackUser)osne).updateUserEmail(jsonObject);
-                                break;
-                        }
-                        break;
-                    case PROJECTS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackProject)osne).setProjectName(jsonObject);
-                                break;
-                            case "Parent id":
-                                ((OpenStackProject)osne).setProjectParentId(jsonObject);
-                                break;
-                            case "Domain id":
-                                ((OpenStackProject)osne).setProjectDomainId(jsonObject);
-                                break;
-                            case "Description":
-                                ((OpenStackProject)osne).setProjectDescription(jsonObject);
-                                break;
-                            case "Parents":
-                                ((OpenStackProject)osne).setProjectParents(jsonObject);
-                                break;
-                            case "Subtree":
-                                ((OpenStackProject)osne).setProjectSubtree(jsonObject);
-                                break;
-
-
-                        }
-                        break;
-                    case DOMAINS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackDomain)osne).setDomainName(jsonObject);
-                                break;
-                            case "Description":
-                                ((OpenStackDomain)osne).setDomainDescription(jsonObject);
-                                break;
-                        }
-                        break;
-                    case ENDPOINTS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackEndpoint)osne).setEndpointName(((JTextField)components[1]).getText());
-                                break;
-                            case "Description":
-                                ((OpenStackEndpoint)osne).setEndpointDescription(jsonObject);
-                                break;
-                            case "Region ID":
-                                ((OpenStackEndpoint)osne).setEndpointRegionId(jsonObject);
-                                break;
-                            case "Facing":
-                                ((OpenStackEndpoint)osne).setEndpointIface(jsonObject);
-                                break;
-                            case "Service ID":
-                                ((OpenStackEndpoint)osne).setEndpointServiceId(jsonObject);
-                                break;
-                            case "Type":
-                                ((OpenStackEndpoint)osne).setEndpointType(jsonObject);
-                                break;
-                            case "URL":
-                                ((OpenStackEndpoint)osne).setEndpointUrl(jsonObject);
-                                break;
-
-
-                        }
-                        break;
-                    case SERVICES:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackService)osne).setServiceName(jsonObject);
-                                break;
-                            case "Description":
-                                ((OpenStackService)osne).setServiceDescription(jsonObject);
-                                break;
-                            case "Type":
-                                ((OpenStackService)osne).setServiceType(jsonObject);
-                                break;
-
-
-
-                        }
-                        break;
-                    case REGIONS:
-                        switch(key){
-                            case "Description":
-                                ((OpenStackRegion)osne).setRegionDescription(jsonObject);
-                                break;
-                            case "Parent id":
-                                ((OpenStackRegion)osne).setParentRegionId(jsonObject);
-                                break;
-
-
-                        }
-                        break;
-                    case CREDENTIALS:
-                        switch(key){
-                            case "Type":
-                                ((OpenStackCredential)osne).setCredentialType(jsonObject);
-                                break;
-                            case "User ID":
-                                ((OpenStackCredential)osne).setCredentialUserId(jsonObject);
-                                break;
-                            case "Tenant ID":
-                                ((OpenStackCredential)osne).setCredentialProjectId(jsonObject);
-                                break;
-                            case "Blob":
-                                ((OpenStackCredential)osne).setCredentialBlob(jsonObject);
-                                break;
-
-                        }
-                        break;
-                    case GROUPS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackGroup)osne).setGroupName(jsonObject);
-                                break;
-                            case "Domain ID":
-                                ((OpenStackGroup)osne).setGroupDomainId(jsonObject);
-                                break;
-                            case "Description":
-                                ((OpenStackGroup)osne).setGroupDescription(jsonObject);
-                                break;
-
-                        }
-                        break;
-                    case POLICIES:
-                        switch(key){
-                            case "User ID":
-                                ((OpenStackPolicy)osne).setPolicyUserId(jsonObject);
-                                break;
-                            case "Tenant ID":
-                                ((OpenStackPolicy)osne).setPolicyProjectId(jsonObject);
-                                break;
-                            case "Type":
-                                ((OpenStackPolicy)osne).setPolicyType(jsonObject);
-                                break;
-                            case "Blob":
-                                ((OpenStackPolicy)osne).setPolicyBlob(jsonObject);
-                                break;
-
-                        }
-                        break;
-                    case ROLES:
-                        switch (key){
-                            case "Name":
-                                ((OpenStackRole)osne).setRoleName(jsonObject);
-                                break;
-
-                        }
-                        break;
                     /*NETWORK*/
                     case PORTS:
                         switch(key){
@@ -986,8 +698,9 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     public void updateTab(){
 
         callback.getDesign().removeAllNodes();
-        callback.getOpenStackNet().refreshListTable();
-        callback.getOpenStackNet().distributeTopologyOverCircle();
+        openStackClient.clearList();
+        openStackClient.fillList();
+
         final VisualizationState vs = callback.getVisualizationState();
         Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
                 vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
@@ -1016,53 +729,32 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 List<String> stockList = new ArrayList<>() ;
                 switch (key){
                     case "Network ID":
-                        stockList = callback.getOpenStackNet().openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                         stockArr = new String[stockList.size()];
                         stockArr = stockList.toArray(stockArr);
                         break;
                     case "Subnet ID":
-                        stockList = callback.getOpenStackNet().openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                        stockArr = new String[stockList.size()];
-                        stockArr = stockList.toArray(stockArr);
-                        break;
-                    case "Tenant ID":
-                        if(callback.getOpenStackNet().openStackProjects.size()==0)break;
-                        stockList = callback.getOpenStackNet().openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                        stockArr = new String[stockList.size()];
-                        stockArr = stockList.toArray(stockArr);
-                        break;
-                    case "User ID":
-                        stockList = callback.getOpenStackNet().openStackUsers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        stockList = openStackClient.openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                         stockArr = new String[stockList.size()];
                         stockArr = stockList.toArray(stockArr);
                         break;
                     case "Flavor ID":
-                        stockList = callback.getOpenStackNet().openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        stockList = openStackClient.openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                         stockArr = new String[stockList.size()];
                         stockArr = stockList.toArray(stockArr);
                         break;
                     case "Image ID":
-                        stockList = callback.getOpenStackNet().openStackImageV2.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        stockList = openStackClient.openStackImages.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                         stockArr = new String[stockList.size()];
                         stockArr = stockList.toArray(stockArr);
                         break;
                     case "Port ID":
-                        stockList = callback.getOpenStackNet().openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                        stockArr = new String[stockList.size()];
-                        stockArr = stockList.toArray(stockArr);
-                        break;
-                    case "Service ID":
-                        stockList = callback.getOpenStackNet().openStackServices.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        stockList = openStackClient.openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                         stockArr = new String[stockList.size()];
                         stockArr = stockList.toArray(stockArr);
                         break;
                     case "Router ID":
-                        stockList = callback.getOpenStackNet().openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                        stockArr = new String[stockList.size()];
-                        stockArr = stockList.toArray(stockArr);
-                        break;
-                    case "Domain ID":
-                        stockList = callback.getOpenStackNet().openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                        stockList = openStackClient.openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                         stockArr = new String[stockList.size()];
                         stockArr = stockList.toArray(stockArr);
                         break;
@@ -1100,166 +792,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             public void actionPerformed(ActionEvent e) {
                 Component [] components = jp1.getComponents();
                 switch(ajtType){
-
-                    /*IDENTITY*/
-                    case USERS:
-                        switch (key){
-                            case "Name":
-                                ((OpenStackUser)osne).updateUserName(null);
-                                break;
-                            case "Description":
-                                ((OpenStackUser)osne).updateUserDescription(null);
-                                break;
-                            case "Email":
-                                ((OpenStackUser)osne).updateUserEmail(null);
-                                break;
-                        }
-                        break;
-                    case PROJECTS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackProject)osne).setProjectName(null);
-                                break;
-                            case "Parent id":
-                                ((OpenStackProject)osne).setProjectParentId(null);
-                                break;
-                            case "Domain id":
-                                ((OpenStackProject)osne).setProjectDomainId(null);
-                                break;
-                            case "Description":
-                                ((OpenStackProject)osne).setProjectDescription(null);
-                                break;
-                            case "Parents":
-                                ((OpenStackProject)osne).setProjectParents(null);
-                                break;
-                            case "Subtree":
-                                ((OpenStackProject)osne).setProjectSubtree(null);
-                                break;
-
-
-                        }
-                        break;
-                    case DOMAINS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackDomain)osne).setDomainName(null);
-                                break;
-                            case "Description":
-                                ((OpenStackDomain)osne).setDomainDescription(null);
-                                break;
-                        }
-                        break;
-                    case ENDPOINTS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackEndpoint)osne).setEndpointName(null);
-                                break;
-                            case "Description":
-                                ((OpenStackEndpoint)osne).setEndpointDescription(null);
-                                break;
-                            case "Region ID":
-                                ((OpenStackEndpoint)osne).setEndpointRegionId(null);
-                                break;
-                            case "Facing":
-                                ((OpenStackEndpoint)osne).setEndpointIface(null);
-                                break;
-                            case "Service ID":
-                                ((OpenStackEndpoint)osne).setEndpointServiceId(null);
-                                break;
-                            case "Type":
-                                ((OpenStackEndpoint)osne).setEndpointType(null);
-                                break;
-                            case "URL":
-                                ((OpenStackEndpoint)osne).setEndpointUrl(null);
-                                break;
-
-
-                        }
-                        break;
-                    case SERVICES:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackService)osne).setServiceName(null);
-                                break;
-                            case "Description":
-                                ((OpenStackService)osne).setServiceDescription(null);
-                                break;
-                            case "Type":
-                                ((OpenStackService)osne).setServiceType(null);
-                                break;
-
-
-
-                        }
-                        break;
-                    case REGIONS:
-                        switch(key){
-                            case "Description":
-                                ((OpenStackRegion)osne).setRegionDescription(null);
-                                break;
-                            case "Parent id":
-                                ((OpenStackRegion)osne).setParentRegionId(null);
-                                break;
-
-
-                        }
-                        break;
-                    case CREDENTIALS:
-                        switch(key){
-                            case "Type":
-                                ((OpenStackCredential)osne).setCredentialType(null);
-                                break;
-                            case "User ID":
-                                ((OpenStackCredential)osne).setCredentialUserId(null);
-                                break;
-                            case "Tenant ID":
-                                ((OpenStackCredential)osne).setCredentialProjectId(null);
-                                break;
-                            case "Blob":
-                                ((OpenStackCredential)osne).setCredentialBlob(null);
-                                break;
-
-                        }
-                        break;
-                    case GROUPS:
-                        switch(key){
-                            case "Name":
-                                ((OpenStackGroup)osne).setGroupName(null);
-                                break;
-                            case "Domain ID":
-                                ((OpenStackGroup)osne).setGroupDomainId(null);
-                                break;
-                            case "Description":
-                                ((OpenStackGroup)osne).setGroupDescription(null);
-                                break;
-
-                        }
-                        break;
-                    case POLICIES:
-                        switch(key){
-                            case "User ID":
-                                ((OpenStackPolicy)osne).setPolicyUserId(null);
-                                break;
-                            case "Tenant ID":
-                                ((OpenStackPolicy)osne).setPolicyProjectId(null);
-                                break;
-                            case "Type":
-                                ((OpenStackPolicy)osne).setPolicyType(null);
-                                break;
-                            case "Blob":
-                                ((OpenStackPolicy)osne).setPolicyBlob(null);
-                                break;
-
-                        }
-                        break;
-                    case ROLES:
-                        switch (key){
-                            case "Name":
-                                ((OpenStackRole)osne).setRoleName(null);
-                                break;
-
-                        }
-                        break;
                     /*NETWORK*/
                     case PORTS:
                         switch(key){
@@ -1318,38 +850,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
         final SortedSet<T> selectedElements = this.getSelectedElements();
         switch (ajtType){
-            case USERS:
-                OpenStackUser user = ((OpenStackUser)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 7){
-                    user.isUserEnable(!user.isUserEnable());
-                }else{
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-            case DOMAINS:
-                OpenStackDomain domain = ((OpenStackDomain)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 5){
-                    domain.isDomainEnabled(!domain.isDomainEnabled());
-                }else{
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-            case ENDPOINTS:
-                OpenStackEndpoint endpoint = ((OpenStackEndpoint)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 11){
-                   endpoint.isEndpointEnabled(!endpoint.isEndpointEnabled());
-                }else{
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-            case SERVICES:
-                OpenStackService service = ((OpenStackService)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 7){
-                    service.isServiceEnabled(!service.isServiceEnabled());
-                }else{
-                    System.out.println("No boolean avaliable");
-                }
-                break;
             case NETWORKS:
                 OpenStackNetwork network = ((OpenStackNetwork)selectedElements.iterator().next());
                 if(columnModelIndexOfClickOrMinus1IfOut == 11){

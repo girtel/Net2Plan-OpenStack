@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackFloatingIp;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -11,9 +12,9 @@ import java.util.*;
 
 public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<OpenStackFloatingIp>
 {
-    public AdvancedJTable_floatingIp(GUINetworkDesign callback)
+    public AdvancedJTable_floatingIp(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, ViewEditTopologyTablesPane.AJTableType.FLOATINGIPS , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.FLOATINGIPS , true,openStackClient);
     }
 
     @Override
@@ -55,14 +56,14 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
     public void addFloatingIp(){
 
         Map<String,String> newList = new HashMap<>();
-        newList.put("Server IP","Special-ipv4");
-        newList.put("Floating IP","Special-ipv4");
+        newList.put("Server ID","Select");
+        newList.put("Pool Name","Select");
         generalTableForm("Add floating ip",newList);
 
     }
     public void removeFloatingIp(OpenStackFloatingIp floatingIp){
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackFloatingIp(floatingIp.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackFloatingIp(floatingIp.getId());
     }
 
 }

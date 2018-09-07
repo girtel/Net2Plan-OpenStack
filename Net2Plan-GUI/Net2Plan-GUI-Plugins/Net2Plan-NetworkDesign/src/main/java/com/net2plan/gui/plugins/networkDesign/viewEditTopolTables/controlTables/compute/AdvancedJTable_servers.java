@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackServer;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -8,13 +9,14 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import org.openstack4j.model.compute.*;
 
+import java.io.IOException;
 import java.util.*;
 
 public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenStackServer>
 {
-    public AdvancedJTable_servers(GUINetworkDesign callback)
+    public AdvancedJTable_servers(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, ViewEditTopologyTablesPane.AJTableType.SERVERS , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.SERVERS , true,openStackClient);
     }
 
     @Override
@@ -70,6 +72,16 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
 
         res.add(new AjtRcMenu("Add server", e -> addServer(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Get console", e -> getSelectedElements().forEach(n -> {
+            VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
+            try {
+                java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+
+        }), (a, b) -> b ==1, null));
 
 
 
@@ -82,7 +94,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Name","");
         headers.put("Flavor ID","Select");
         headers.put("Image ID", "Select");
-        headers.put("Port ID","Select");
+        headers.put("Network ID","Select");
         generalTableForm("Add server",headers);
     }
 

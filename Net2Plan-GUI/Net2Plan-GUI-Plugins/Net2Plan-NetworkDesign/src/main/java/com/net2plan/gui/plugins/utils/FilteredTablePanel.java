@@ -15,6 +15,7 @@ import javax.swing.JTable;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 
@@ -26,14 +27,16 @@ public class FilteredTablePanel extends JPanel
     private JLabel numEntriesLabel;
     private JButton resetTableRowFilters;
 
+    private OpenStackClient openStackClient;
     private final JTable table;
 
-    public FilteredTablePanel(GUINetworkDesign callback, JScrollPane scrollPane)
+    public FilteredTablePanel(GUINetworkDesign callback, JScrollPane scrollPane, OpenStackClient openStackClient)
     {
         if (callback == null) throw new IllegalArgumentException();
         if (scrollPane == null) throw new IllegalArgumentException();
 
         this.callback = callback;
+        this.openStackClient =openStackClient;
 
         try
         {
@@ -54,10 +57,10 @@ public class FilteredTablePanel extends JPanel
         }
     }
 
-    public FilteredTablePanel(GUINetworkDesign callback, JTable table)
+    /*public FilteredTablePanel(GUINetworkDesign callback, JTable table)
     {
-        this(callback, new JScrollPane(table));
-    }
+        this(callback, new JScrollPane(table), new);
+    }*/
 
     private JPanel buildHeader()
     {
@@ -94,7 +97,7 @@ public class FilteredTablePanel extends JPanel
         if (callback.getVisualizationState().getTableRowFilter() != null && table instanceof AdvancedJTable_networkElement)
         {
             final AJTableType ajType = ((AdvancedJTable_networkElement) table).getAjType();
-            final int numUnfilteredElements = ITableRowFilter.getAllElements(callback.getOpenStackNet(), ajType).size();
+            final int numUnfilteredElements = ITableRowFilter.getAllElements(openStackClient, ajType).size();
             numEntriesLabel.setText("Number of entries: " + numEntries + " / " + numUnfilteredElements + ", FILTERED VIEW: " + callback.getVisualizationState().getTableRowFilter().getDescription());
         }
         else

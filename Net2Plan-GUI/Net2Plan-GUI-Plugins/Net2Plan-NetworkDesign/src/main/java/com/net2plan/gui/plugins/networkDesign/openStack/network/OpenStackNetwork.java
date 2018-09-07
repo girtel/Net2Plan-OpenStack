@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Node;
@@ -42,12 +43,10 @@ import sun.nio.ch.Net;
         private Integer networkMTU;
         final Node npNode;
         private Network osNetwork;
-
-        public static OpenStackNetwork createFromAddNetwork (OpenStackNet osn ,Network network)
+private OpenStackClient openStackClient;
+        public static OpenStackNetwork createFromAddNetwork (OpenStackNet osn , Network network, OpenStackClient openStackClient)
         {
-
-
-            final OpenStackNetwork res = new OpenStackNetwork(osn,network);
+            final OpenStackNetwork res = new OpenStackNetwork(osn,network,openStackClient);
             res.networkId= network.getId();
             res.networkName=network.getName();
             res.networkProviderPhyNet=network.getProviderPhyNet();
@@ -62,19 +61,20 @@ import sun.nio.ch.Net;
             res.networkIsShared=network.isShared();
             res.networkMTU=network.getMTU();
 
-
             return res;
         }
 
-        public OpenStackNetwork(OpenStackNet osn, Network network)
+        public OpenStackNetwork(OpenStackNet osn, Network network,OpenStackClient openStackClient)
         {
-            super (osn , null , (List<OpenStackNetworkElement>) (List<?>) osn.openStackNetworks);
 
-            Map<String,String> attributes = new HashMap<>();
+            super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks);
+            this.openStackClient=openStackClient;
+             Map<String,String> attributes = new HashMap<>();
             attributes.put("rightClick","no");
-            final Node npNode2 = osn.getNetPlan().addNode(0, 0, "", attributes);
+            System.out.println(osn);
+            System.out.println(osn.getNetPlan());
+            final Node npNode2 = this.osn.getCallback().getDesign().addNode(0, 0, "", attributes);
             npNode2.setName(network.getId());
-
             if (network.getName().equals("public")) {
                 try {
 
@@ -146,7 +146,7 @@ import sun.nio.ch.Net;
 
         public void setName (JSONObject jsonObject) {
             try{
-            this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().name(jsonObject.getString("Name")).build());
+            this.openStackClient.getClient().networking().network().update(this.networkId, Builders.networkUpdate().name(jsonObject.getString("Name")).build());
 
             }catch(Exception ex){
 
@@ -157,7 +157,7 @@ import sun.nio.ch.Net;
             }
         public void isNetworkIsAdminStateUp (boolean value) {
             try{
-            this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().adminStateUp(value).build());
+            this.openStackClient.getClient().networking().network().update(this.networkId, Builders.networkUpdate().adminStateUp(value).build());
 
             }catch(Exception ex){
 
@@ -169,7 +169,7 @@ import sun.nio.ch.Net;
         public void isNetworkIsShared (boolean value) {
             try{
 
-                this.osn.getOSClientV3().networking().network().update(this.networkId, Builders.networkUpdate().shared(value).build());
+                this.openStackClient.getClient().networking().network().update(this.networkId, Builders.networkUpdate().shared(value).build());
 
             }catch(Exception ex){
 

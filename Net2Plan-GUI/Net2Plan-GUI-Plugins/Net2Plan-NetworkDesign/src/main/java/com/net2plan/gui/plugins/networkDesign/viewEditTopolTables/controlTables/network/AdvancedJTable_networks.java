@@ -4,6 +4,7 @@ package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables
 import java.util.*;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -17,9 +18,9 @@ import org.openstack4j.model.network.State;
 @SuppressWarnings("unchecked")
 public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenStackNetwork>
 {
-    public AdvancedJTable_networks(GUINetworkDesign callback)
+    public AdvancedJTable_networks(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, AJTableType.NETWORKS , true);
+        super(callback, AJTableType.NETWORKS , true,openStackClient);
     }
 
     @Override
@@ -85,6 +86,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         headers.put("Tenant ID","Select");
         headers.put("Network type","Select");
         headers.put("IsExternal","Boolean");
+        headers.put("Provider ID","");
         generalTableForm("Add network",headers);
 
 
@@ -92,7 +94,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
     }
     public void removeNetwork(OpenStackNetwork network){
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackNetwork(network.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackNetwork(network.getId());
         updateTab();
     }
 

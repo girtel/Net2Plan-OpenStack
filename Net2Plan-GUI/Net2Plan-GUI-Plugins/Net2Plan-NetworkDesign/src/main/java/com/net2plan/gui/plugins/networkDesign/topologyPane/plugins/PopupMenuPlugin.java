@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;
@@ -315,9 +316,9 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         headers.put("Name","");
         headers.put("Tenant ID","Select");
         headers.put("Network ID", "Select");
-        generalTableForm("Add router",headers);
+        generalTableForm("Add router",headers,null);
     }
-    public void generalTableForm(String title,Map<String,String> headers){
+    public void generalTableForm(String title, Map<String,String> headers, OpenStackClient openStackClient){
         JFrame jfM = new JFrame(title);
         jfM.setLayout(null);
 
@@ -346,53 +347,32 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
                     List<String> stockList = new ArrayList<>() ;
                     switch (key){
                         case "Network ID":
-                            stockList = callback.getOpenStackNet().openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Subnet ID":
-                            stockList = callback.getOpenStackNet().openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Tenant ID":
-                            if(callback.getOpenStackNet().openStackProjects.size()==0)break;
-                            stockList = callback.getOpenStackNet().openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "User ID":
-                            stockList = callback.getOpenStackNet().openStackUsers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Flavor ID":
-                            stockList = callback.getOpenStackNet().openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Image ID":
-                            stockList = callback.getOpenStackNet().openStackImageV2.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackImages.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Port ID":
-                            stockList = callback.getOpenStackNet().openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Service ID":
-                            stockList = callback.getOpenStackNet().openStackServices.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
                         case "Router ID":
-                            stockList = callback.getOpenStackNet().openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Domain ID":
-                            stockList = callback.getOpenStackNet().openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
+                            stockList = openStackClient.openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
                             stockArr = stockList.toArray(stockArr);
                             break;
@@ -469,9 +449,9 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
                     }
                 }
 
-                callback.getOpenStackNet().getOpenStackNetCreate().createOpenStackRouter(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackRouter(jsonObject);
 
-                callback.getOpenStackNet().refreshListTable();
+                openStackClient.clearList().fillList();
                 callback.getViewEditTopTables().updateView();
 
                 final VisualizationState vs = callback.getVisualizationState();
@@ -506,7 +486,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
     public void removeRouter(Node node){
 
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackRouter(node.getName());
+        /*.getOpenStackNetDelete().deleteOpenStackRouter(node.getName());
 
         callback.getOpenStackNet().refreshListTable();
         callback.getViewEditTopTables().updateView();
@@ -517,6 +497,6 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
                 vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
                 callback.updateVisualizationAfterNewTopology();
                 callback.addNetPlanChange();
-
+*/
     }
 }

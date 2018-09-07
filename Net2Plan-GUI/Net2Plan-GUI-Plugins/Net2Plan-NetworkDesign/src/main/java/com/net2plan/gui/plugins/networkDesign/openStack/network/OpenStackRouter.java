@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.network;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Node;
@@ -30,9 +31,10 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     private List<? extends HostRoute> routerRoutes;
     private ExternalGateway routerExternalGatewayInfo;
     private Router osRouter;
+    private OpenStackClient openStackClient;
 
-    public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router) {
-        final Node npNode2 = osn.getNetPlan().addNode(0, 0, "", null);
+    public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router,OpenStackClient openStackClient) {
+        final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", null);
         npNode2.setName(router.getId());
 
         if (router.getName().equals("router1")) {
@@ -49,7 +51,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
                 e.printStackTrace();
             }
         }
-        final OpenStackRouter res = new OpenStackRouter(osn, npNode2, router);
+        final OpenStackRouter res = new OpenStackRouter(osn, npNode2, router,openStackClient);
         res.routerId = router.getId();
         res.routerName = router.getName();
         res.routerTenantId = router.getTenantId();
@@ -61,10 +63,11 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         return res;
     }
 
-    public OpenStackRouter(OpenStackNet osn, Node npNode, Router router) {
-        super(osn, npNode, (List<OpenStackNetworkElement>) (List<?>) osn.openStackRouters);
+    public OpenStackRouter(OpenStackNet osn, Node npNode, Router router,OpenStackClient openStackClient) {
+        super(osn, npNode, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackRouters);
         this.npNode = npNode;
         this.osRouter = router;
+        this.openStackClient=openStackClient;
     }
 
 
@@ -129,7 +132,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
 
         try {
 
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().name(jsonObject.getString("Name")).build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().name(jsonObject.getString("Name")).build());
 
         } catch (Exception ex) {
 
@@ -142,7 +145,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
 
     public void setRouterTenantId(JSONObject jsonObject) {
         try {
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().tenantId(jsonObject.getString("Tenant ID")).build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().tenantId(jsonObject.getString("Tenant ID")).build());
         }catch(Exception ex){
             System.out.println(ex.toString());
             logPanel();
@@ -152,7 +155,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     public void isAdminStateUp(boolean value) {
         try {
 
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().adminStateUp(value).build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().adminStateUp(value).build());
 
         } catch (Exception ex) {
 
@@ -164,7 +167,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
 
     public void isDistributed(boolean value) {
         try {
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().distributed(value).build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().distributed(value).build());
 
         } catch (Exception ex) {
 
@@ -176,7 +179,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
 
     public void setRouterExternalGatewayInfo(JSONObject jsonObject) {
         try {
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().externalGateway(jsonObject.getString("Network ID"),jsonObject.getBoolean("Snapshot")).build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().externalGateway(jsonObject.getString("Network ID"),jsonObject.getBoolean("Snapshot")).build());
         } catch (Exception ex) {
             System.out.println(ex.toString());
             logPanel();
@@ -184,7 +187,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     }
     public void clearRouterExternalGatewayInfo() {
         try {
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().clearExternalGateway().build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().clearExternalGateway().build());
         } catch (Exception ex) {
             System.out.println(ex.toString());
             logPanel();
@@ -192,7 +195,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     }
     public void noRoutes() {
         try {
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().noRoutes().build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().noRoutes().build());
         } catch (Exception ex) {
             System.out.println(ex.toString());
             logPanel();
@@ -200,7 +203,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     }
     public void addRoute(JSONObject jsonObject) {
         try {
-            this.osn.getOSClientV3().networking().router().update(osRouter.toBuilder().route(prepareCidr(jsonObject.getString("Destination")),prepareCidr(jsonObject.getString("Next hop"))).build());
+            this.openStackClient.getClient().networking().router().update(osRouter.toBuilder().route(prepareCidr(jsonObject.getString("Destination")),prepareCidr(jsonObject.getString("Next hop"))).build());
         } catch (Exception ex) {
             System.out.println(ex.toString());
             logPanel();

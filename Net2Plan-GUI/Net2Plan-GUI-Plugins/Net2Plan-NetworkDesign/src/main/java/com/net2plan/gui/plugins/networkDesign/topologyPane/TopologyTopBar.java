@@ -42,7 +42,7 @@ public class TopologyTopBar extends JToolBar implements ActionListener
     private final TopologyPanel topologyPanel;
     private final ITopologyCanvas canvas;
 
-    private final JButton btn_load, btn_zoomIn, btn_zoomOut, btn_zoomAll, btn_takeSnapshot, btn_reset;
+    private final JButton btn_add,btn_load,btn_generate, btn_zoomIn, btn_zoomOut, btn_zoomAll, btn_takeSnapshot, btn_reset;
     private final JButton btn_increaseNodeSize, btn_decreaseNodeSize, btn_increaseFontSize, btn_decreaseFontSize;
     private final JButton btn_increaseLinkSize, btn_decreaseLinkSize, btn_tableControlWindow;
     private final JToggleButton btn_showNodeNames, btn_showLinkIds, btn_showNonConnectedNodes, btn_osmMap, btn_siteMode;
@@ -66,8 +66,12 @@ public class TopologyTopBar extends JToolBar implements ActionListener
         this.setOpaque(false);
         this.setBorderPainted(false);
 
+        btn_add = new JButton();
         btn_load = new JButton();
-        btn_load.setToolTipText("Load OpenStack credentials");
+        btn_generate = new JButton();
+        btn_add.setToolTipText("Add OpenStack credentials");
+        btn_load.setToolTipText("Load OpenStack credentials file");
+        btn_generate.setToolTipText("Generate OpenStack credentials file");
         btn_zoomIn = new JButton();
         btn_zoomIn.setToolTipText("Zoom in");
         btn_zoomOut = new JButton();
@@ -107,7 +111,9 @@ public class TopologyTopBar extends JToolBar implements ActionListener
         btn_linkStyle = new JButton();
         btn_linkStyle.setToolTipText("Change link style");
 
+        btn_add.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/loadOpenStack.png")));
         btn_load.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/loadOpenStack.png")));
+        btn_generate.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/loadOpenStack.png")));
         btn_showNodeNames.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showNodeName.png")));
         btn_showLinkIds.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showLinkUtilization.png")));
         btn_showNonConnectedNodes.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showNonConnectedNodes.png")));
@@ -125,7 +131,9 @@ public class TopologyTopBar extends JToolBar implements ActionListener
         btn_tableControlWindow.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showControl.png")));
         btn_linkStyle.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/linkStyle.png")));
 
+        btn_add.addActionListener(this);
         btn_load.addActionListener(this);
+        btn_generate.addActionListener(this);
         btn_showNodeNames.addActionListener(this);
         btn_showLinkIds.addActionListener(this);
         btn_showNonConnectedNodes.addActionListener(this);
@@ -145,7 +153,9 @@ public class TopologyTopBar extends JToolBar implements ActionListener
         btn_tableControlWindow.addActionListener(this);
         btn_linkStyle.addActionListener(this);
 
+        this.add(btn_add);
         this.add(btn_load);
+        this.add(btn_generate);
         this.add(new JToolBar.Separator());
         this.add(btn_zoomIn);
         this.add(btn_zoomOut);
@@ -181,11 +191,19 @@ public class TopologyTopBar extends JToolBar implements ActionListener
         Object src = e.getSource();
         final VisualizationState vs = callback.getVisualizationState();
 
-        if (src == btn_load)
+        if (src == btn_add)
+        {
+            topologyPanel.addCredentials();
+
+        }  else if (src == btn_load)
         {
             topologyPanel.loadCredentials();
 
-        } else if (src == btn_showNodeNames)
+        }  else if (src == btn_generate)
+        {
+            topologyPanel.generateCredentials();
+
+        }  else if (src == btn_showNodeNames)
         {
             vs.setCanvasShowNodeNames(btn_showNodeNames.isSelected());
             canvas.refresh();

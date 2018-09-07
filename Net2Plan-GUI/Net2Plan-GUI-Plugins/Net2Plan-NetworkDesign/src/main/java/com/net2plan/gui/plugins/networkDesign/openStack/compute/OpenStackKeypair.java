@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import org.openstack4j.model.compute.Keypair;
@@ -22,10 +23,10 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     private String keypairPrivateKey;
     private String keypairPublicKey;
     private Keypair osKeypair;
-
-    public static OpenStackKeypair createFromAddKeypair (OpenStackNet osn , Keypair keypair)
+    private OpenStackClient openStackClient;
+    public static OpenStackKeypair createFromAddKeypair (OpenStackNet osn , Keypair keypair,OpenStackClient openStackClient)
     {
-        final OpenStackKeypair res = new OpenStackKeypair(osn,keypair);
+        final OpenStackKeypair res = new OpenStackKeypair(osn,keypair,openStackClient);
         res.keypairId= keypair.getId();
         res.keypairName=keypair.getName();
         try {
@@ -41,10 +42,11 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackKeypair (OpenStackNet osn,Keypair keypair )
+    private OpenStackKeypair (OpenStackNet osn, Keypair keypair, OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.openStackKeypairs);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackKeypairs);
         this.osKeypair = keypair;
+        this.openStackClient=openStackClient;
     }
 
     @Override

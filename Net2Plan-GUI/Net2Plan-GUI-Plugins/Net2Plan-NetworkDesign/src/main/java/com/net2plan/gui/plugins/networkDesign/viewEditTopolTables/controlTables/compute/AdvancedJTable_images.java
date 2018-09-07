@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackImage;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -12,9 +13,9 @@ import java.util.*;
 
 public class AdvancedJTable_images extends AdvancedJTable_networkElement<OpenStackImage>
 {
-    public AdvancedJTable_images(GUINetworkDesign callback)
+    public AdvancedJTable_images(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, ViewEditTopologyTablesPane.AJTableType.IMAGES , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.IMAGES , true,openStackClient);
     }
 
     @Override

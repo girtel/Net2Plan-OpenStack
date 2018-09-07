@@ -5,6 +5,7 @@ import java.util.*;
 
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -19,9 +20,9 @@ import org.openstack4j.model.network.Ipv6RaMode;
 @SuppressWarnings("unchecked")
 public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenStackSubnet>
 {
-    public AdvancedJTable_subnets(GUINetworkDesign callback)
+    public AdvancedJTable_subnets(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, AJTableType.SUBNETS , true);
+        super(callback, AJTableType.SUBNETS , true,openStackClient);
     }
 
     @Override
@@ -162,7 +163,7 @@ updateTab();
     }
     public void removeSubnet(OpenStackSubnet subnet){
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackSubnet(subnet.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackSubnet(subnet.getId());
         updateTab();
     }
 

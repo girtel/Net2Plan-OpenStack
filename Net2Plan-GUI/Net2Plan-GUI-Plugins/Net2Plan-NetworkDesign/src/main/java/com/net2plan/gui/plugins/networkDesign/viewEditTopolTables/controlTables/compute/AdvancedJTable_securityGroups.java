@@ -1,6 +1,7 @@
 package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackSecurityGroup;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
@@ -11,9 +12,9 @@ import java.util.*;
 
 public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement<OpenStackSecurityGroup>
 {
-    public AdvancedJTable_securityGroups(GUINetworkDesign callback)
+    public AdvancedJTable_securityGroups(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
-        super(callback, ViewEditTopologyTablesPane.AJTableType.SECURITYGROUPS , true);
+        super(callback, ViewEditTopologyTablesPane.AJTableType.SECURITYGROUPS , true,openStackClient);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
     }
     public void removeSecurityGroup(OpenStackSecurityGroup securityGroup){
 
-        callback.getOpenStackNet().getOpenStackNetDelete().deleteOpenStackSecurityGroup(securityGroup.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackSecurityGroup(securityGroup.getId());
         updateTab();
     }
 

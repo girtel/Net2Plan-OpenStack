@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
+import com.net2plan.gui.plugins.utils.MyRunnable;
 import org.apache.commons.lang.ObjectUtils;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
@@ -8,16 +9,20 @@ import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
+import org.openstack4j.model.compute.FloatingIP;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.ServerCreate;
+import org.openstack4j.model.compute.VNCConsole;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.Role;
 import org.openstack4j.model.identity.v3.Token;
 import org.openstack4j.model.image.v2.ContainerFormat;
 import org.openstack4j.model.image.v2.DiskFormat;
 import org.openstack4j.model.image.v2.Image;
+import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.NetworkType;
+import org.openstack4j.model.network.RouterInterface;
 import org.openstack4j.openstack.OSFactory;
 
 import javax.swing.*;
@@ -28,6 +33,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +48,8 @@ public class OpenStackNetCreate{
     private OSClient.OSClientV3 osClientV3;
     private String system;
 
-    public OpenStackNetCreate(OSClient.OSClientV3 osClientV3,String system){
+    public OpenStackNetCreate(OSClient.OSClientV3 osClientV3){
         this.osClientV3 = osClientV3;
-        this.system=system;
     }
 
     //Identity
@@ -243,6 +248,7 @@ public class OpenStackNetCreate{
         changeOs(Facing.PUBLIC);
         String networkTenantId = information.getString("Tenant ID");
         String networkName = information.getString("Name");
+        String networkProvider= information.getString("Provider ID");
         NetworkType networkType = null;
         try {
              networkType = NetworkType.valueOf(information.getString("Network type"));
@@ -258,6 +264,7 @@ public class OpenStackNetCreate{
                     .tenantId(networkTenantId)
                     .networkType(networkType)
                     .isRouterExternal(networkExternal)
+                    .segmentId(networkProvider)
                     .build());
         }catch(Exception ex){
 
@@ -305,16 +312,14 @@ public class OpenStackNetCreate{
     }
     public void createOpenStackPort(JSONObject information){
         changeOs(Facing.PUBLIC);
-        String portName = information.getString("Name");
-        String portNetworkId = information.getString("Network ID");
-        String portFixedIp = prepareIp(information.getString("Fixed IP"));
         String portSubnetId = information.getString("Subnet ID");
+        String portDeviceId = information.getString("Router ID");
+
         try {
-            this.osClientV3.networking().port().create(Builders.port()
-                    .name(portName)
-                    .networkId(portNetworkId)
-                    .fixedIp(portFixedIp,portSubnetId)
-                    .build());
+            // Attach an External Interface
+            RouterInterface iface = osClientV3.networking().router()
+                    .attachInterface(portDeviceId, AttachInterfaceType.SUBNET, portSubnetId);
+
         }catch(Exception ex){
 
             logPanel();
@@ -339,16 +344,21 @@ public class OpenStackNetCreate{
         String serverName = information.getString("Name");
         String serverFlavorId = information.getString("Flavor ID");
         String serverImageId = information.getString("Image ID");
-        String serverNetworkId = information.getString("Port ID");
+        String serverNetworkId = information.getString("Network ID");
+        List<String> list = new ArrayList<>();
+        list.add(serverNetworkId);
         try {
             ServerCreate sc = this.osClientV3.compute().servers().serverBuilder()
                     .name(serverName)
                     .flavor(serverFlavorId)
                     .image(serverImageId)
-                    .addNetworkPort(serverNetworkId)
+                    .networks(list)
+                  // .addNetworkPort(serverNetworkId)
                     .build();
 
             Server server = this.osClientV3.compute().servers().boot(sc);
+
+
         }catch( Exception ex){
             System.out.println(ex.toString());
             logPanel();
@@ -373,10 +383,16 @@ public class OpenStackNetCreate{
     }
     public void createOpenStackFloatingIp(JSONObject information){
         changeOs(Facing.PUBLIC);
-        String floIpServerIp = prepareIp(information.getString("Server IP"));
-        String floIp = prepareIp(information.getString("Floating IP"));
+        String serverId = information.getString("Server ID");
+        String poolName = information.getString("Pool Name");
         try {
-            this.osClientV3.compute().floatingIps().addFloatingIP(floIpServerIp, floIp);
+
+
+            String pool = poolName;
+            FloatingIP floatingIP = osClientV3.compute().floatingIps().allocateIP(pool);
+
+            ActionResponse response = osClientV3.compute().floatingIps().addFloatingIP(this.osClientV3.compute().servers().get(serverId), floatingIP.getFixedIpAddress(), floatingIP.getFloatingIpAddress());
+
         }catch(Exception ex){
             System.out.println(ex.toString());
             logPanel();
@@ -448,11 +464,6 @@ public class OpenStackNetCreate{
                     payload,
                     image);
 
-        System.out.println("Create");
-
-        ControlWindow controlWindow =  new ControlWindow(information,this.osClientV3.getToken());
-        submit(controlWindow);
-        //submit(controlWindow);
 
 
     }
@@ -473,57 +484,6 @@ public class OpenStackNetCreate{
         }
 
     }
-
-
-}
-class ControlWindow implements Runnable{
-
-    private JSONObject information;
-    private OSClient.OSClientV3 osClientV3;
-
-
-    public ControlWindow (JSONObject information, Token token){
-        this.information = information;
-        this.osClientV3 = OSFactory.clientFromToken(token);
-    }
-
-    @Override
-    public void run() {
-
-        Payload<File> payload = null;
-        try {
-
-            String path = information.getString("PATH");
-            String name = information.getString("NAME");
-            payload = Payloads.create(new File(path));
-
-            System.out.println(path + "    "+ name);
-
-            Image image = this.osClientV3.imagesV2().create(
-                    Builders.imageV2()
-                            .name(name)
-                            .containerFormat(ContainerFormat.BARE)
-                            .visibility(org.openstack4j.model.image.v2.Image.ImageVisibility.PUBLIC)
-                            .diskFormat(DiskFormat.QCOW2)
-                            .minDisk((long)0)
-                            .minRam((long)0)
-                            .build()
-            );
-
-            ActionResponse upload = osClientV3.imagesV2().upload(
-                    image.getId(),
-                    payload,
-                    image);
-
-
-            System.out.println("Finish upload");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
 
 
 }
