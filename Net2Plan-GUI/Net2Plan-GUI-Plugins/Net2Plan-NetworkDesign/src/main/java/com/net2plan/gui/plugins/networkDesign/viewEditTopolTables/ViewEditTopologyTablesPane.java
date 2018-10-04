@@ -82,7 +82,13 @@ public class ViewEditTopologyTablesPane extends JPanel
         GNOCCHI("Ceilometer"),
         RESOURCES("Resources"),
         METERS("Metrics"),
-        MEASURES("Measures")
+        MEASURES("Measures"),
+
+        //SLICING
+        SLICING("Slicing"),
+        QUOTAS("Quotas"),
+        LIMITS("Limits"),
+        QUOTASUSAGE("Quota Usage")
         ;
 
         private final String tabName;
@@ -105,6 +111,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final JTabbedPane viewEditHighLevelTabbedPane;
     private final Map<OpenStackClient, JTabbedPane> layerSubTabbedPaneMap = new HashMap<>();
 
+    private final JTabbedPane slicingTabbedPane = new JTabbedPane();
     private final Map<OpenStackClient,JTabbedPane> identityTabbedPane = new HashMap<>();
     private final Map<OpenStackClient,JTabbedPane> networkTabbedPane = new HashMap<>();
     private final Map<OpenStackClient,JTabbedPane> computeTabbedPane = new HashMap<>();
@@ -163,7 +170,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         this.add(splitPane, BorderLayout.CENTER);*/
 
         for (AJTableType ajType : AJTableType.values())
-            ajTables.put(ajType, createPanelComponentInfo(ajType,new OpenStackClient()));
+            ajTables.put(ajType, createPanelComponentInfo(ajType,new OpenStackClient(this.callback.getOpenStackNet())));
 
         this.recomputNetPlanView ();
 
@@ -283,11 +290,24 @@ public class ViewEditTopologyTablesPane extends JPanel
                 table = new AdvancedJTable_measures(callback,openStackClient);
                 break;
 
+            /*SLICING*/
+            case SLICING:
+                table = new AdvancedJTable_subnets(callback,openStackClient);
+                break;
+            case LIMITS:
+                table = new AdvancedJTable_limits(callback,openStackClient);
+                break;
+            case QUOTAS:
+                table = new AdvancedJTable_quotas(callback,openStackClient);
+                break;
+            case QUOTASUSAGE:
+                table = new AdvancedJTable_quotasUsage(callback,openStackClient);
+                break;
+
             default:
                 assert false;
         }
 
-System.out.println("317a0779984548ee");
         return Pair.of(table, new FilteredTablePanel(callback, table.getTableScrollPane(),openStackClient));
     }
 
@@ -299,12 +319,11 @@ System.out.println("317a0779984548ee");
     public void updateView() {
          /* Load current network state */
         this.callback.getOpenStackNet().getOsClients().forEach(n-> {n.clearList();n.fillList();});
-
+        this.callback.getOpenStackNet().fillQuotasAndLimits();
         final NetPlan currentState = callback.getDesign();
         if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
 
         this.recomputNetPlanView();
-
         ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
 
         // Update filter header
@@ -344,8 +363,11 @@ System.out.println("317a0779984548ee");
         layerSubTabbedPaneMap.clear();
 
         viewEditHighLevelTabbedPane.removeAll();
+        slicingTabbedPane.removeAll();
+        for (AJTableType type : Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS,AJTableType.QUOTASUSAGE))
+            slicingTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
 
-        viewEditHighLevelTabbedPane.addTab("About OSs", new JTabbedPane());
+        viewEditHighLevelTabbedPane.addTab(AJTableType.SLICING.tabName, slicingTabbedPane);
 
         for (OpenStackClient openStackClient : callback.getOpenStackNet().getOsClients()) {
 

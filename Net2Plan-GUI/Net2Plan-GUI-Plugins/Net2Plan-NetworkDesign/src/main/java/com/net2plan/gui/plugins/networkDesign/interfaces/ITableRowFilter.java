@@ -98,7 +98,7 @@ public abstract class ITableRowFilter
 		return res;
 	}
 
-	public final List<? extends OpenStackNetworkElement> getVisibleElements (OpenStackClient os, AJTableType ajTableType)
+	public final List<? extends OpenStackNetworkElement> getVisibleElements (OpenStackClient os,OpenStackNet osn, AJTableType ajTableType)
 	{
 		switch(ajTableType)
 		{
@@ -159,6 +159,14 @@ public abstract class ITableRowFilter
 				return os.getOpenStackResources();
 			case MEASURES:
 				return os.getOpenStackMeasures();
+
+			case LIMITS:
+				return osn.getOpenStackLimits();
+
+			case QUOTAS:
+				return osn.getOpenStackQuotas();
+			case QUOTASUSAGE:
+				return osn.getOpenStackQuotasUsage();
 
 			default:
 				assert false;
@@ -166,7 +174,7 @@ public abstract class ITableRowFilter
 		}
 	}
 
-	public static final List<? extends OpenStackNetworkElement> getAllElements (OpenStackClient os, AJTableType ajTableType)
+	public static final List<? extends OpenStackNetworkElement> getAllElements (OpenStackClient os,OpenStackNet osn, AJTableType ajTableType)
 	{
 		switch(ajTableType)
 		{
@@ -228,6 +236,13 @@ public abstract class ITableRowFilter
 			case MEASURES:
 				return os.getOpenStackMeasures();
 
+
+			case LIMITS:
+				return os.getOsn().getOpenStackLimits();
+			case QUOTAS:
+				return osn.getOpenStackQuotas();
+			case QUOTASUSAGE:
+				return osn.getOpenStackQuotasUsage();
 			default:
 				assert false;
 				return new ArrayList<>();

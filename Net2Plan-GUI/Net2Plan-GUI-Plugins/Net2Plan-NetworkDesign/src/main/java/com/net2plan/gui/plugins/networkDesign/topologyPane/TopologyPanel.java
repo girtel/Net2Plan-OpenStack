@@ -398,7 +398,7 @@ public class TopologyPanel extends JPanel implements ActionListener
             byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
             String everything = cc.descifra(bytes);
             JSONObject jsonObject = new JSONObject(everything);
-            System.out.println("TopologyPanel loading  OSClientV3s " + jsonObject);
+            //System.out.println("TopologyPanel loading  OSClientV3s " + jsonObject);
             callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject);
 
         } catch (Exception ex) {

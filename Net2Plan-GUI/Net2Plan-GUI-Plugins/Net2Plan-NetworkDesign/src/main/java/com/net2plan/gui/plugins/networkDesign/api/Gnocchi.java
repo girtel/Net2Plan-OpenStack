@@ -100,7 +100,7 @@ public class Gnocchi extends Api {
 
             JSONObject jsonObject = (JSONObject) object;
 
-            System.out.println(jsonObject);
+           // System.out.println(jsonObject);
             Resource resource = new Resource() {
                 @Override
                 public String getId() {
@@ -144,7 +144,7 @@ public class Gnocchi extends Api {
     }
     public JSONArray measuresList(String metricId){
 
-        System.out.println ("Meausres for "  + metricId + " token " + osClientV3.getToken());
+        //System.out.println ("Meausres for "  + metricId + " token " + osClientV3.getToken());
         final List<OpenStackGnocchiMeasure> gnocchiMeasures = new ArrayList<>();
 
         Object responseObject = this.Get(url+GnocchiOption.METRIC.tabName+metricId+GnocchiOption.MEASURE.tabName,osClientV3.getToken().getId());

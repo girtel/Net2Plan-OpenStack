@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.networkDesign.api.Gnocchi;
+import com.net2plan.gui.plugins.networkDesign.api.Keystone;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
@@ -95,11 +96,12 @@ public class OpenStackClient {
     public final List<OpenStackGnocchiMeasure> openStackMeasures = new ArrayList<>();
 
     private Gnocchi gnocchi;
+    private Keystone keystone;
     private OpenStackNet osn;
     private String osAuthUrl,osUsername,osPassword,osTenantName;
     public OpenStackClient create(OpenStackNet osn,JSONObject jsonObject,String name){
 
-         System.out.println(jsonObject);
+         //System.out.println(jsonObject);
         try {
             this.name = name;
             this.osn = osn;
@@ -124,7 +126,7 @@ public class OpenStackClient {
             this.os=os;
             this.openStackNetCreate = new OpenStackNetCreate(os);
             this.openStackNetDelete = new OpenStackNetDelete(os);
-            System.out.println(" OpenStackClient new client" + os.getToken());
+           // System.out.println(" OpenStackClient new client" + os.getToken());
             prepareApis();
 
             connect=true;
@@ -133,7 +135,9 @@ public class OpenStackClient {
         }
         return this;
     }
-
+    public OpenStackClient (OpenStackNet osn){
+        this.osn=osn;
+    }
     public void prepareApis(){
         Token token = os.getToken();
         MyRunnable newR = new MyRunnable(token,Facing.PUBLIC);
@@ -146,6 +150,9 @@ public class OpenStackClient {
             Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
             this.gnocchi = new Gnocchi(endpoint.getUrl().toString() + "/v1/", this.os);
         }
+        this.keystone = new Keystone(os_auth_url,this.os);
+
+
     }
     public OpenStackClient clearList(){
 
@@ -196,7 +203,7 @@ public class OpenStackClient {
             os.identity().groups().list().forEach(n->addOpenStackGroup(n));
             os.identity().policies().list().forEach(n->addOpenStackPolicy(n));
             os.identity().roles().list().forEach(n->addOpenStackRole(n));
-
+            this.keystone.projectList().stream().forEach(n->addOpenStackProject(n));
             /* Get elements of Network(NEUTRON)*/
              os.networking().network().list().forEach(n -> addOpenStackNetwork(n));
              os.networking().subnet().list().forEach(n -> addOpenStackSubnet(n));
@@ -219,10 +226,6 @@ public class OpenStackClient {
             /*Get elements of Telmetry(Ceilometer)*/
             gnocchi.resourcesList().forEach(n->addOpenStackResource(n));
 
-            System.out.println("QUOTAS " + os.compute().quotaSets().limits());
-
-            System.out.println("QUOTAS " + os.compute().quotaSets().updateForTenant(this.os_project_id,Builders.quotaSet().cores(4).build()));
-
 
         }catch(Exception ex){
             ex.printStackTrace();
@@ -233,25 +236,25 @@ public class OpenStackClient {
 
     public void updateMeterList(String resource_id){
 
-        System.out.println ("Clearing meter for " + resource_id);
+        //System.out.println ("Clearing meter for " + resource_id);
         openStackMeters.clear();
         gnocchi.metersList().forEach(n->addOpenStackMeter(n));
-        System.out.println("Meters "+ openStackMeters);
+        //System.out.println("Meters "+ openStackMeters);
         openStackMeters.forEach(n->openStackMetersAvailable.add(n));
         openStackMeters.clear();
-        System.out.println("Meters available"+ openStackMetersAvailable);
+       // System.out.println("Meters available"+ openStackMetersAvailable);
         openStackMetersAvailable.forEach(n->{if(n.getMeter_resource_id().equals(resource_id)){
         openStackMeters.add(n);
         }
         });
-        System.out.println("Meters available"+ openStackMeters);
+      //  System.out.println("Meters available"+ openStackMeters);
         osn.getCallback().getViewEditTopTables().updateView();
 
     }
     public void updateMeasuresList(String metric_id){
-        System.out.println("Meteasures"+ gnocchi.measuresList(metric_id));
+       // System.out.println("Meteasures"+ gnocchi.measuresList(metric_id));
         gnocchi.measuresList(metric_id).forEach(n -> {openStackMeasures.add( OpenStackGnocchiMeasure.createFromAddMeasure(this.osn,((JSONArray)n).get(0).toString(),((JSONArray)n).get(1).toString(),((JSONArray)n).get(2).toString(),this));});
-        System.out.println("Meteasures"+ openStackMeasures);
+        //System.out.println("Meteasures"+ openStackMeasures);
         osn.getCallback().getViewEditTopTables().updateView();
     }
 
@@ -263,7 +266,7 @@ public class OpenStackClient {
     }
     public OpenStackNetCreate getOpenStackNetCreate(){ return this.openStackNetCreate; }
     public OpenStackNetDelete getOpenStackNetDelete(){ return this.openStackNetDelete; }
-
+    public OpenStackNet getOsn (){return  this.osn;}
     /* Add OpenStackNetworkElements of Keystone*/
     public OpenStackUser addOpenStackUser (User user){
         final OpenStackUser res = OpenStackUser.createFromAddUser(this.osn ,user,this);

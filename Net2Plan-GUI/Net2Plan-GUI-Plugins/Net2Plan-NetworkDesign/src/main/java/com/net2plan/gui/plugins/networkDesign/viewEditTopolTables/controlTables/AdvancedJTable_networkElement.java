@@ -90,7 +90,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     protected final List<T> getAllAbstractElementsInTable()
     {
         final ITableRowFilter rf = callback.getVisualizationState().getTableRowFilter();
-        return rf == null ? (List<T>) ITableRowFilter.getAllElements(openStackClient, ajtType) : (List<T>) rf.getVisibleElements(openStackClient, ajtType);
+        return rf == null ? (List<T>) ITableRowFilter.getAllElements(openStackClient,openStackClient.getOsn(), ajtType) : (List<T>) rf.getVisibleElements(openStackClient,openStackClient.getOsn(), ajtType);
     }
 
     public final AJTableType getAjType () { return ajtType; }
