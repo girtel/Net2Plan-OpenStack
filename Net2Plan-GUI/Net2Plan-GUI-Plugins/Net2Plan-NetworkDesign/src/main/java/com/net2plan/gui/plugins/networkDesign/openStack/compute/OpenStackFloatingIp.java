@@ -18,7 +18,7 @@ public class OpenStackFloatingIp extends OpenStackNetworkElement
     private String floatingIPFloatingIpAddress;
     private String floatingIPFixedIpAddress;
     private FloatingIP osFloatingIP;
-    private OpenStackClient openStackClient;
+
     public static OpenStackFloatingIp createFromAddFloatingIp (OpenStackNet osn ,FloatingIP floatingIP,OpenStackClient openStackClient)
     {
         final OpenStackFloatingIp res = new OpenStackFloatingIp(osn, floatingIP,openStackClient);
@@ -32,8 +32,7 @@ public class OpenStackFloatingIp extends OpenStackNetworkElement
 
     private OpenStackFloatingIp(OpenStackNet osn, FloatingIP floatingIP, OpenStackClient openStackClient )
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackFloatingIps);
-        this.openStackClient=openStackClient;
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackFloatingIps,openStackClient);
         this.osFloatingIP = floatingIP;
     }
 

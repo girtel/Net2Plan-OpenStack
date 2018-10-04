@@ -477,11 +477,11 @@ public class OpenStackNetCreate{
         Token token = osClientV3.getToken();
         MyRunnable newR;
 
-        if(system.equals("ubuntu")) {
+
             newR = new MyRunnable(token, facing);
             submit(newR);
             this.osClientV3 = newR.getOs();
-        }
+
 
     }
 

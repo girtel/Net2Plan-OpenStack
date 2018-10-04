@@ -191,6 +191,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                 pickSelectionHyperLink(value, columnModelIndexOfClickOrMinus1IfOut);
 
+
                 SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
             }
         }
@@ -246,6 +247,18 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 if (columnModelIndexOfClickOrMinus1IfOut == 6)
                     callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
                 break;
+            case RESOURCES:
+
+                callback.getOpenStackNet().getOsClients().forEach(n->n.updateMeterList(value.toString()));
+
+                break;
+            case METERS:
+
+                callback.getOpenStackNet().getOsClients().forEach(n->n.updateMeasuresList(value.toString()));
+
+                break;
+
+
 
 
         }
@@ -280,6 +293,9 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     stockArr[0] = "empty";
                     List<String> stockList = new ArrayList<>() ;
                     switch (key){
+                        case "Tenant ID":
+                            stockArr[0] = openStackClient.getProjectId();
+                            break;
                         case "Network ID":
                             stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];
@@ -488,6 +504,9 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                     stockArr[0] = "empty";
                     List<String> stockList = new ArrayList<>() ;
                     switch (header){
+                        case "Tenant ID":
+                            stockArr[0]=openStackClient.getProjectId();
+                            break;
                         case "Network ID":
                             stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
                             stockArr = new String[stockList.size()];

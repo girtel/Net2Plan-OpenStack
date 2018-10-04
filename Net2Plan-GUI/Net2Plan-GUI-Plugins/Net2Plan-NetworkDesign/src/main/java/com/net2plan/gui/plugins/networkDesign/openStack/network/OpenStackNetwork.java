@@ -3,6 +3,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.network;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.interfaces.networkDesign.Resource;
 
@@ -43,7 +44,6 @@ import sun.nio.ch.Net;
         private Integer networkMTU;
         final Node npNode;
         private Network osNetwork;
-private OpenStackClient openStackClient;
         public static OpenStackNetwork createFromAddNetwork (OpenStackNet osn , Network network, OpenStackClient openStackClient)
         {
             final OpenStackNetwork res = new OpenStackNetwork(osn,network,openStackClient);
@@ -67,24 +67,25 @@ private OpenStackClient openStackClient;
         public OpenStackNetwork(OpenStackNet osn, Network network,OpenStackClient openStackClient)
         {
 
-            super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks);
-            this.openStackClient=openStackClient;
+            super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks,openStackClient);
              Map<String,String> attributes = new HashMap<>();
             attributes.put("rightClick","no");
-            System.out.println(osn);
-            System.out.println(osn.getNetPlan());
-            final Node npNode2 = this.osn.getCallback().getDesign().addNode(0, 0, "", attributes);
+            //System.out.println(osn);
+            //System.out.println(osn.getNetPlan());
+
+            NetPlan netPlan = this.osn.getCallback().getDesign();
+            final Node npNode2 = netPlan.addNode(0, 0, "", attributes);
             npNode2.setName(network.getId());
             if (network.getName().equals("public")) {
                 try {
 
-                    npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Cloud.png").toURI().toURL().toString()));
+                    npNode2.setUrlNodeIcon(netPlan.getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Cloud.png").toURI().toURL().toString()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Layer3switch.png").toURI().toURL().toString()));
+                    npNode2.setUrlNodeIcon(netPlan.getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Layer3switch.png").toURI().toURL().toString()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

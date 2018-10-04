@@ -50,7 +50,7 @@ public class OpenStackServer  extends OpenStackNetworkElement
     private String serverUuid;
     private String serverVmState;
     private Server osServer;
-    private OpenStackClient openStackClient;
+
     public static OpenStackServer createFromAddServer (OpenStackNet osn , Server server,OpenStackClient openStackClient)
     {
         final OpenStackServer res = new OpenStackServer(osn,server,openStackClient);
@@ -94,9 +94,8 @@ public class OpenStackServer  extends OpenStackNetworkElement
 
     private OpenStackServer (OpenStackNet osn, Server server , OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackServers);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackServers,openStackClient);
         this.osServer = server;
-        this.openStackClient=openStackClient;
     }
 
     @Override

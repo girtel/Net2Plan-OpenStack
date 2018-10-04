@@ -20,7 +20,7 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     private List<? extends SecGroupExtension.Rule> secGroupExtensionRules;
     private List<? extends Link>secGroupExtensionLinks;
     private SecGroupExtension osSecGroupExtension;
-    private OpenStackClient openStackClient;
+
     public static OpenStackSecurityGroup createFromAddSegurityGroup (OpenStackNet osn , SecGroupExtension secGroupExtension,OpenStackClient openStackClient )
     {
         final OpenStackSecurityGroup res = new OpenStackSecurityGroup(osn,secGroupExtension,openStackClient);
@@ -35,9 +35,8 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
 
     private OpenStackSecurityGroup (OpenStackNet osn,SecGroupExtension secGroupExtension,OpenStackClient openStackClient )
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSecurityGroups);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSecurityGroups,openStackClient);
         this.osSecGroupExtension = secGroupExtension;
-        this.openStackClient=openStackClient;
     }
 
     @Override

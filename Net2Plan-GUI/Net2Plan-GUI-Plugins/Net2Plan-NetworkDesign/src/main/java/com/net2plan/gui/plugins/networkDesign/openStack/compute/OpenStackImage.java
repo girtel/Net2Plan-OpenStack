@@ -27,7 +27,6 @@ public class OpenStackImage  extends OpenStackNetworkElement
     private boolean imageSnapshot;
     private List<? extends Link>imageLinks;
     private Image osImage;
-    private OpenStackClient openStackClient;
 
     public static OpenStackImage createFromAddImage (OpenStackNet osn , Image image,OpenStackClient openStackClient)
     {
@@ -49,9 +48,8 @@ public class OpenStackImage  extends OpenStackNetworkElement
 
     private OpenStackImage (OpenStackNet osn,Image image ,OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackImages);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackImages,openStackClient);
         this.osImage = image;
-        this.openStackClient=openStackClient;
     }
 
     @Override

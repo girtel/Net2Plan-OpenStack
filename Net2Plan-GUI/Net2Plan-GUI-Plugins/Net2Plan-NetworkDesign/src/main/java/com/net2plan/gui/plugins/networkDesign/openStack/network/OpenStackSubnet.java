@@ -38,7 +38,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     private Ipv6RaMode subnetIpv6RaMode;
     final Node npNode;
     private Subnet osSubnet;
-    private OpenStackClient openStackClient;
+
     public static OpenStackSubnet createFromAddSubnet (OpenStackNet osn , Subnet subnet, OpenStackClient openStackClient)
     {
 
@@ -63,9 +63,8 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
     public OpenStackSubnet(OpenStackNet osn, Subnet subnet,OpenStackClient openStackClient)
     {
-        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSubnets);
+        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSubnets,openStackClient);
         this.osSubnet = subnet;
-        this.openStackClient=openStackClient;
         Map<String,String> attributes = new HashMap<>();
         attributes.put("rightClick","no");
         final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", attributes);
@@ -73,7 +72,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
 
             try {
-                npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Switch.png").toURI().toURL().toString()));
+                npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Switch.png").toURI().toURL().toString()));
             } catch (Exception e) {
                 e.printStackTrace();
             }

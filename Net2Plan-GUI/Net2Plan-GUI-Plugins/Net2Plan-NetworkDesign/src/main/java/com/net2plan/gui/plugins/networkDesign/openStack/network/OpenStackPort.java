@@ -38,7 +38,6 @@ public class OpenStackPort extends OpenStackNetworkElement
     private String portHostId;
     private Port osPort;
     private Node npNode;
-    private OpenStackClient openStackClient;
     public static OpenStackPort createFromAddPort (OpenStackNet osn ,Port port,OpenStackClient openStackClient)
     {
         final OpenStackPort res = new OpenStackPort(osn,port,openStackClient);
@@ -62,9 +61,8 @@ public class OpenStackPort extends OpenStackNetworkElement
 
     private OpenStackPort (OpenStackNet osn,Port port,OpenStackClient openStackClient)
     {
-        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackPorts);
+        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackPorts,openStackClient);
         this.osPort = port;
-         this.openStackClient=openStackClient;
         Map<String,String> attributes = new HashMap<>();
         attributes.put("rightClick","no");
         final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", attributes);
@@ -72,7 +70,7 @@ public class OpenStackPort extends OpenStackNetworkElement
 
 
         try {
-            npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/DSLAM.png").toURI().toURL().toString()));
+            npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/DSLAM.png").toURI().toURL().toString()));
         } catch (Exception e) {
             e.printStackTrace();
         }

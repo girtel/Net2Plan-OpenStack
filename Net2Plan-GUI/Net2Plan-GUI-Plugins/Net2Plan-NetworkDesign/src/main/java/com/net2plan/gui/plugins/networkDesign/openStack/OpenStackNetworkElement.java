@@ -19,7 +19,8 @@ public abstract class OpenStackNetworkElement implements Comparable<OpenStackNet
     protected final List<? extends OpenStackNetworkElement> indexedList;
     protected Integer osnIndex;
     public final String NEWLINE = String.format("%n");
-    protected OpenStackNetworkElement (OpenStackNet osn , NetworkElement npNe , List<OpenStackNetworkElement> indexedList)
+    protected OpenStackClient openStackClient;
+    protected OpenStackNetworkElement (OpenStackNet osn , NetworkElement npNe , List<OpenStackNetworkElement> indexedList, OpenStackClient openStackClient)
     {
         assert npNe != null;
         assert npNe.getNetPlan() != null;
@@ -29,6 +30,7 @@ public abstract class OpenStackNetworkElement implements Comparable<OpenStackNet
         this.np = osn.getNetPlan();
         this.indexedList = indexedList;
         this.osnIndex = indexedList.size();
+        this.openStackClient= openStackClient;
         indexedList.add(this);
     }
 

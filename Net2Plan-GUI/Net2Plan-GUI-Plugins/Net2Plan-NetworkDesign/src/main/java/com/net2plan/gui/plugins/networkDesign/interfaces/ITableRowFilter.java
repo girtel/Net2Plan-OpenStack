@@ -102,7 +102,7 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
-			/*OpenStackNetworkElements of KEYSTONE
+			/*OpenStackNetworkElements of KEYSTONE*/
 			case USERS:
 				return os.getOpenStackUsers();
 			case PROJECTS:
@@ -123,7 +123,7 @@ public abstract class ITableRowFilter
 				return os.getOpenStackPolicies();
 			case ROLES:
 				return os.getOpenStackRoles();
-*/
+
 			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();
@@ -139,8 +139,6 @@ public abstract class ITableRowFilter
 				return os.getOpenStackServers();
 			case FLAVORS:
 				return os.getOpenStackFlavor();
-			case IMAGES:
-				return os.getOpenStackImages();
 			case FLOATINGIPS:
 				return os.getOpenStackFloatingIpDns();
 			case KEYPAIRS:
@@ -150,30 +148,18 @@ public abstract class ITableRowFilter
 			case HOSTRESOURCES:
 				return os.getOpenStackHostResource();
 
-			/*OpenStackNetworkElements of GLANCE
-			case IMAGESV2:
-				return os.getOpenStackImageV2();
-			case TASKS:
-				return os.getOpenStackTask();
-*/
-			/*OpenStackNetworkElements of HEAT
-			case STACKS:
-				return os.getOpenStackStacks();
-			case TEMPLATES:
-				return os.getOpenStackTemplates();
+			/*OpenStackNetworkElements of GLANCE*/
+			case IMAGES:
+				return os.getOpenStackImages();
+
+			/*OpenStackNetworkElements of CEILOMETER*/
+			case METERS:
+				return os.getOpenStackMeters();
 			case RESOURCES:
 				return os.getOpenStackResources();
-			case EVENTS:
-				return os.getOpenStackEvents();
-*/
-			/*OpenStackNetworkElements of INFORMATION
-			case THISPROJECT:
-				return os.getOpenStackInformationProject();
-			case THISUSER:
-				return os.getOpenStackInformationUser();
-			case SUMMARY:
-				return os.getOpenStackSummary();
-				*/
+			case MEASURES:
+				return os.getOpenStackMeasures();
+
 			default:
 				assert false;
 				return new ArrayList<>();
@@ -184,7 +170,7 @@ public abstract class ITableRowFilter
 	{
 		switch(ajTableType)
 		{
-			/*OpenStackNetworkElements of KEYSTONE
+			/*OpenStackNetworkElements of KEYSTONE*/
 			case USERS:
 				return os.getOpenStackUsers();
 			case PROJECTS:
@@ -205,7 +191,7 @@ public abstract class ITableRowFilter
 				return os.getOpenStackPolicies();
 			case ROLES:
 				return os.getOpenStackRoles();
-*/
+
 			/*OpenStackNetworkElements of NEUTRON*/
 			case NETWORKS:
 				return os.getOpenStackNetworks();
@@ -221,8 +207,6 @@ public abstract class ITableRowFilter
 				return os.getOpenStackServers();
 			case FLAVORS:
 				return os.getOpenStackFlavor();
-			case IMAGES:
-				return os.getOpenStackImages();
 			case FLOATINGIPS:
 				return os.getOpenStackFloatingIpDns();
 			case KEYPAIRS:
@@ -232,30 +216,18 @@ public abstract class ITableRowFilter
 			case HOSTRESOURCES:
 				return os.getOpenStackHostResource();
 
-			/*OpenStackNetworkElements of GLANCE
-			case IMAGESV2:
-				return os.getOpenStackImageV2();
-			case TASKS:
-				return os.getOpenStackTask();
-*/
-			/*OpenStackNetworkElements of HEAT
-			case STACKS:
-				return os.getOpenStackStacks();
-			case TEMPLATES:
-				return os.getOpenStackTemplates();
+			/*OpenStackNetworkElements of GLANCE*/
+			case IMAGES:
+				return os.getOpenStackImages();
+
+			/*OpenStackNetworkElements of CEILOMETER*/
+			case METERS:
+				return os.getOpenStackMeters();
 			case RESOURCES:
 				return os.getOpenStackResources();
-			case EVENTS:
-				return os.getOpenStackEvents();
-				*/
-			/*OpenStackNetworkElements of INFORMATION
-			case THISPROJECT:
-				return os.getOpenStackInformationProject();
-			case THISUSER:
-				return os.getOpenStackInformationUser();
-			case SUMMARY:
-				return os.getOpenStackSummary();
-*/
+			case MEASURES:
+				return os.getOpenStackMeasures();
+
 			default:
 				assert false;
 				return new ArrayList<>();

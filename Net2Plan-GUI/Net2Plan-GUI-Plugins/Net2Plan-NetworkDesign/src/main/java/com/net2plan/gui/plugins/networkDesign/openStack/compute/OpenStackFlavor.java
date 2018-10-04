@@ -24,7 +24,6 @@ public class OpenStackFlavor  extends OpenStackNetworkElement
     private float flavorRxtxFactor;
     private Integer flavorRxtxQuota;
     private Flavor osFlavor;
-    private OpenStackClient openStackClient;
 
     public static OpenStackFlavor createFromAddFlavor (OpenStackNet osn , Flavor flavor,OpenStackClient openStackClient)
     {
@@ -46,9 +45,9 @@ public class OpenStackFlavor  extends OpenStackNetworkElement
 
     private OpenStackFlavor (OpenStackNet osn ,Flavor flavor,OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackFlavors);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackFlavors,openStackClient);
         this.osFlavor = flavor;
-        this.openStackClient=openStackClient;
+
     }
 
     @Override

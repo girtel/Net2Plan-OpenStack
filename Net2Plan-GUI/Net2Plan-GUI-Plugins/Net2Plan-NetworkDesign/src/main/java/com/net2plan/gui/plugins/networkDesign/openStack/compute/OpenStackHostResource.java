@@ -38,9 +38,8 @@ public class OpenStackHostResource extends OpenStackNetworkElement
 
     private OpenStackHostResource (OpenStackNet osn ,HostResource hostResource,OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackHostResources);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackHostResources,openStackClient);
         this.hostResource = hostResource;
-        this.openStackClient=openStackClient;
     }
 
     @Override

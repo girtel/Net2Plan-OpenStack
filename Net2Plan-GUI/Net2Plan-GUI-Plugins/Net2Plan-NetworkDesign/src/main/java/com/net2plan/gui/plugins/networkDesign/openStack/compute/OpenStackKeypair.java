@@ -23,7 +23,6 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     private String keypairPrivateKey;
     private String keypairPublicKey;
     private Keypair osKeypair;
-    private OpenStackClient openStackClient;
     public static OpenStackKeypair createFromAddKeypair (OpenStackNet osn , Keypair keypair,OpenStackClient openStackClient)
     {
         final OpenStackKeypair res = new OpenStackKeypair(osn,keypair,openStackClient);
@@ -44,9 +43,8 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
 
     private OpenStackKeypair (OpenStackNet osn, Keypair keypair, OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackKeypairs);
+        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackKeypairs,openStackClient);
         this.osKeypair = keypair;
-        this.openStackClient=openStackClient;
     }
 
     @Override

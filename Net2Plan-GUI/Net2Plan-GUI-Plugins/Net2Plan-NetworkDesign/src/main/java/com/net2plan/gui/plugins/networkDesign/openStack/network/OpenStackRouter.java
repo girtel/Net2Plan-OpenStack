@@ -31,7 +31,6 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     private List<? extends HostRoute> routerRoutes;
     private ExternalGateway routerExternalGatewayInfo;
     private Router osRouter;
-    private OpenStackClient openStackClient;
 
     public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router,OpenStackClient openStackClient) {
         final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", null);
@@ -40,13 +39,13 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         if (router.getName().equals("router1")) {
             try {
 
-                npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL("https://findicons.com/files/icons/1035/human_o2/128/router_gnome_netstatus_75_100.png"));
+                npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL("https://findicons.com/files/icons/1035/human_o2/128/router_gnome_netstatus_75_100.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                npNode2.setUrlNodeIcon(osn.getNetPlan().getNetworkLayerDefault(), new URL("http://www.myiconfinder.com/uploads/iconsets/256-256-ab5e2d6a7b779ce5a246fb00a5f163f6-router.png"));
+                npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL("http://www.myiconfinder.com/uploads/iconsets/256-256-ab5e2d6a7b779ce5a246fb00a5f163f6-router.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -64,10 +63,9 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     }
 
     public OpenStackRouter(OpenStackNet osn, Node npNode, Router router,OpenStackClient openStackClient) {
-        super(osn, npNode, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackRouters);
+        super(osn, npNode, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackRouters,openStackClient);
         this.npNode = npNode;
         this.osRouter = router;
-        this.openStackClient=openStackClient;
     }
 
 

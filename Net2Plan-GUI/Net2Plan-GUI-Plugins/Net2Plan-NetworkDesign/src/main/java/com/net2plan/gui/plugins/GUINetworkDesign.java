@@ -133,9 +133,9 @@ import java.util.List;
             {
                 // NOTE: ITopologyCanvas has already been added. Meaning that JUNGCanvas has already been too.
             }
-
-            this.currentOpenStackNet = new OpenStackNet(this);
             this.currentNetPlan = new NetPlan();
+            this.currentOpenStackNet = new OpenStackNet(this);
+
 
             BidiMap<NetworkLayer, Integer> mapLayer2VisualizationOrder = new DualHashBidiMap<>();
             Map<NetworkLayer, Boolean> layerVisibilityMap = new HashMap<>();

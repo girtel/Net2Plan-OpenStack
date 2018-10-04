@@ -66,42 +66,63 @@ public class OpenStackNet
         JSONArray jsonArray = jsonObject.getJSONArray("Credentials");
         int num = 0;
         for(Object object: jsonArray){
-            AddOsClient((JSONObject) object,num);
+            AddOsClient((JSONObject) object,credentiales.length());
             num++;
         }
         Inicialice();
     }
     public void AddOsClient(JSONObject credential,int index){
 
-            OpenStackClient openStackClient =new OpenStackClient()
-                    .create(this,credential,"OPENSTACK " + index)
-                    .clearList()
-                    .fillList();
-
-            osClients.add(openStackClient);
+            OpenStackClient openStackClient =new OpenStackClient().create(this,credential,"Openstack " + index);
+            if(openStackClient.isConnected()) {
+                openStackClient
+                        .clearList()
+                        .fillList();
+                osClients.add(openStackClient);
+            }
             credentiales.put(credential);
 
     }
-
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId) {
 
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
 
-        /*OpenStackNetworkElements of Neutron*/
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
+        for(OpenStackClient openStackClient:osClients) {
 
-        /*OpenStackNetworkElements of Neutron*/
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
-        allOpenStackNetworkElements.addAll(osClients.get(0).openStackNetworks);
+            /*OpenStackNetworkElements of Keystone*/
+            allOpenStackNetworkElements.addAll(openStackClient.openStackUsers);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackProjects);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackDomains);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackEndpoints);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackServices);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackRegions);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackCredentials);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackGroups);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackPolicies);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackRoles);
 
+            /*OpenStackNetworkElements of Neutron*/
+            allOpenStackNetworkElements.addAll(openStackClient.openStackNetworks);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackSubnets);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackRouters);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackPorts);
+
+            /*OpenStackNetworkElements of Nova*/
+            allOpenStackNetworkElements.addAll(openStackClient.openStackServers);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackFlavors);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackHostResources);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackKeypairs);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackSecurityGroups);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackFloatingIps);
+
+            /*OpenStackNetworkElements of Glance*/
+            allOpenStackNetworkElements.addAll(openStackClient.openStackImages);
+
+            /*OpenStackNetworkElements of Ceilometer*/
+            allOpenStackNetworkElements.addAll(openStackClient.openStackResources);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackMeters);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackMeasures);
+        }
         Optional<OpenStackNetworkElement> element = allOpenStackNetworkElements.stream().filter(n->n.getId() == openStackId).findFirst();
         if (element.isPresent()) return element.get();
         else return null;

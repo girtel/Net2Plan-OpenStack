@@ -7,7 +7,9 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.*;
+import org.openstack4j.model.compute.actions.LiveMigrateOptions;
 
 import java.io.IOException;
 import java.util.*;
@@ -83,6 +85,17 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
         }), (a, b) -> b ==1, null));
 
+        res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
+
+            try {
+                ActionResponse response = openStackClient.getClient().compute().servers().liveMigrate(n.getId(),LiveMigrateOptions.create().blockMigration(true).diskOverCommit(false));
+            System.out.println("Code " + response.getCode()+ " Fault " + response.getFault() + "Success" + response.isSuccess());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+
+
+        }), (a, b) -> b ==1, null));
 
 
         return res;
