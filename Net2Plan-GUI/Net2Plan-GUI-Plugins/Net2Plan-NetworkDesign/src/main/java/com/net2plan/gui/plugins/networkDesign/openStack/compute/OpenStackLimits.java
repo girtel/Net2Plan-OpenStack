@@ -78,7 +78,7 @@ public class OpenStackLimits extends OpenStackNetworkElement
     public Integer getLimitInstancesUsed () { return this.limitInstancesUsed; }
     public Integer getLimitVolumes () { return this.limitVolumes; }
     public Integer getLimitVolumesUsed () { return this.limitVolumesUsed; }
-
+    public OpenStackClient getOpenStackClient(){return this.openStackClient;}
     @Override
     public String get50CharactersDescription()
     {

@@ -8,6 +8,8 @@ import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openstack4j.api.OSClient.OSClientV3;
@@ -70,10 +72,10 @@ public class OpenStackNet
         JSONArray jsonArray = jsonObject.getJSONArray("Credentials");
         int num = 0;
         for(Object object: jsonArray){
-            AddOsClient((JSONObject) object,num);
+            AddOsClient((JSONObject) object,credentiales.length());
             num++;
         }
-        fillQuotasAndLimits();
+        //fillQuotasAndLimits();
         callback.getViewEditTopTables().updateView();
         Inicialice();
     }
@@ -150,11 +152,16 @@ public class OpenStackNet
         openStackQuotasUsage.clear();
         openStackQuotas.clear();
         openStackLimits.clear();
-        getOsClients().stream().forEach(n-> addOpenStackLimit(n.getClient().compute().quotaSets().limits().getAbsolute(),n));
-        getOsClients().stream().forEach(n-> n.openStackProjects.stream().forEach(r->addOpenStackQuota(n.getClient().compute().quotaSets().get(r.getId()),n,r.getId())));
-        getOsClients().stream().forEach(n-> n.openStackProjects.stream().forEach(r->addOpenStackQuotaUsage(n.getClient().compute().quotaSets().getTenantUsage(r.getId()),n,r.getId())));
+try {
 
+    getOsClients().stream().forEach(n -> addOpenStackLimit(n.getClient().compute().quotaSets().limits().getAbsolute(), n));
+    getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(n.getClient().compute().quotaSets().get(r.getId()), n, r.getId()));});
+    getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(n.getClient().compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
+}catch(Exception ex){
+    ex.printStackTrace();
+}
     }
+
 
     public OpenStackQuotasUsage addOpenStackQuotaUsage (SimpleTenantUsage simpleTenantUsage, OpenStackClient openStackClient, String project_id){
         final OpenStackQuotasUsage res = OpenStackQuotasUsage.createFromAddQuotaUsage(this ,simpleTenantUsage,openStackClient,project_id);

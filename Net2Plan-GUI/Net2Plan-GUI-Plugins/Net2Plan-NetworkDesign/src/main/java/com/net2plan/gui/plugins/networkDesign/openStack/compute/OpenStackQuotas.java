@@ -67,7 +67,7 @@ public class OpenStackQuotas extends OpenStackNetworkElement
     public Integer getQuotaKeypairs () { return this.quotaKeypairs; }
     public Integer getQuotaSecurityGroup () { return this.quotaSecurityGroup; }
     public Integer getQuotaVolumes () { return this.quotaVolumes; }
-
+    public OpenStackClient getOpenStackClient(){return this.openStackClient;}
     @Override
     public String get50CharactersDescription()
     {

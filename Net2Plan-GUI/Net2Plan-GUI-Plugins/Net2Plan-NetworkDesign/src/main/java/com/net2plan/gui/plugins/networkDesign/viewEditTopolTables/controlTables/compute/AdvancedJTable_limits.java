@@ -8,6 +8,8 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import org.openstack4j.api.Builders;
+import org.openstack4j.model.compute.AbsoluteLimit;
 import org.openstack4j.model.compute.Image;
 
 import java.util.*;
@@ -21,7 +23,7 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
     public List<AjtColumnInfo<OpenStackLimits>> getNonBasicUserDefinedColumnsVisibleOrNot() {
 
         final List<AjtColumnInfo<OpenStackLimits>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackLimits>(this, String.class, null, "OpenStack", "OpenStack ID", null, n -> openStackClient.getName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackLimits>(this, String.class, null, "OpenStack", "OpenStack ID", null, n -> n.getOpenStackClient().getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimits>(this, String.class, null, " Total Cores", " Total Cores", null, n -> n.getLimitCores(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimits>(this, Image.Status.class, null, "Used Cores", "Used Cores", null, n -> n.getLimitCoresUsed(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimits>(this, Image.Status.class, null, "Total Ram", "Total Ram", null, n -> n.getLimitRam(), AGTYPE.NOAGGREGATION, null, null));
@@ -38,8 +40,17 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
         final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Go to Glance", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Adjust percentage of quotas", e -> getSelectedElements().forEach(n -> {
 
+            int numeroDeProyectos = n.getOpenStackClient().openStackProjects.size();
+            AbsoluteLimit absoluteLimit = n.getOpenStackClient().getClient().compute().quotaSets().limits().getAbsolute();
+
+            n.getOpenStackClient().openStackProjects.stream().forEach(r-> n.getOpenStackClient().getClient().compute().quotaSets()
+                    .updateForTenant(r.getId(), Builders.quotaSet()
+                    .cores(absoluteLimit.getMaxTotalCores()/numeroDeProyectos)
+                    .keyPairs(absoluteLimit.getMaxTotalKeypairs()/numeroDeProyectos)
+                    .instances(absoluteLimit.getMaxTotalInstances()/numeroDeProyectos)
+                    .build()));
 
         }), (a, b) -> b == 1, null));
 
