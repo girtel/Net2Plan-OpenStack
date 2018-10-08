@@ -13,8 +13,10 @@ public class OpenStackNetDelete {
 
     private OSClient.OSClientV3 osClientV3;
     private String system;
-    public OpenStackNetDelete(OSClient.OSClientV3 osClientV3){
-        this.osClientV3 = osClientV3;
+
+    public OpenStackNetDelete(OpenStackClient openStackClient){
+        System.out.println("OpenStackNetDelete created for OpenStackClient: "+ openStackClient.getName());
+        this.osClientV3 = openStackClient.getClient();
         this.system=system;
     }
 

@@ -33,19 +33,19 @@ public class OpenStackNet
 
     private GUINetworkDesign callback;
     private NetPlan np;
+
     private List<OpenStackClient> osClients = new ArrayList<>();
+    private JSONArray credentiales = new JSONArray();
+
     public List<OpenStackQuotas> openStackQuotas = new ArrayList<>();
     public List<OpenStackQuotasUsage> openStackQuotasUsage = new ArrayList<>();
     public List<OpenStackLimits> openStackLimits = new ArrayList<>();
-    private JSONArray credentiales = new JSONArray();
 
 
-    public final  NetPlan getNetPlan () { return np; }
     public OpenStackNet()
     {
         this.np = new NetPlan();
     }
-
     public OpenStackNet (GUINetworkDesign callback) {
         this.callback = callback;
         this.np = callback.getDesign();
@@ -54,12 +54,9 @@ public class OpenStackNet
     public GUINetworkDesign getCallback(){
         return this.callback;
     }
-    public void Inicialice(){
+    public NetPlan getNetPlan () { return this.np; }
+    public List<OpenStackClient> getOsClients(){return this.osClients;}
 
-       // System.out.println("Inicialice");
-        callback.getViewEditTopTables().updateView();
-
-    }
     public JSONObject getJSONObjectOsClients(){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("Credentials",credentiales);
@@ -68,29 +65,50 @@ public class OpenStackNet
     }
     public void AddJSONObjectOsClients(JSONObject jsonObject){
 
-        System.out.println("OpenStackNet adding credentiales "+ jsonObject);
+       // System.out.println("OpenStackNet adding credentiales "+ jsonObject);
         JSONArray jsonArray = jsonObject.getJSONArray("Credentials");
         int num = 0;
         for(Object object: jsonArray){
             AddOsClient((JSONObject) object,credentiales.length());
             num++;
         }
-        //fillQuotasAndLimits();
+        fillQuotasAndLimits();
         callback.getViewEditTopTables().updateView();
-        Inicialice();
+
     }
     public void AddOsClient(JSONObject credential,int index){
 
-            OpenStackClient openStackClient =new OpenStackClient(this).create(this,credential,"Openstack " + index);
+            System.out.println("Adding OpenStackClient in OpenStackNet method(AddOsClient) " + credential);
+            OpenStackClient openStackClient =new OpenStackClient().create(this,credential,"Openstack " + index);
             if(openStackClient.isConnected()) {
                 openStackClient
                         .clearList()
                         .fillList();
                 osClients.add(openStackClient);
+                credentiales.put(credential);
+                System.out.println("Added OpenStackClient in OpenStackNet method(AddOsClient) "+ credential);
             }
-            credentiales.put(credential);
+
 
     }
+
+    public void fillQuotasAndLimits(){
+
+        System.out.println("Fill Quotas and limits in OpenStackNet method(fillQuotaAndLimits)");
+        openStackQuotasUsage.clear();
+        openStackQuotas.clear();
+        openStackLimits.clear();
+        try {
+
+            getOsClients().stream().forEach(n -> addOpenStackLimit(n.getClient().compute().quotaSets().limits().getAbsolute(), n));
+            System.out.println("LIMITTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"+ openStackLimits.size());
+            //getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(n.getClient().compute().quotaSets().get(r.getId()), n, r.getId()));});
+            //getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(n.getClient().compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
     public OpenStackNetworkElement getOpenStackNetworkElementByOpenStackId (String openStackId) {
 
         final List<OpenStackNetworkElement> allOpenStackNetworkElements = Lists.newArrayList();
@@ -133,9 +151,6 @@ public class OpenStackNet
 
 
         }
-        System.out.println(openStackLimits);
-        System.out.println(openStackId);
-
 
         allOpenStackNetworkElements.addAll(openStackLimits);
         allOpenStackNetworkElements.addAll(openStackQuotas);
@@ -146,22 +161,6 @@ public class OpenStackNet
         if (element.isPresent()) return element.get();
         else return null;
     }
-    public List<OpenStackClient> getOsClients(){return this.osClients;}
-    public void fillQuotasAndLimits(){
-
-        openStackQuotasUsage.clear();
-        openStackQuotas.clear();
-        openStackLimits.clear();
-try {
-
-    getOsClients().stream().forEach(n -> addOpenStackLimit(n.getClient().compute().quotaSets().limits().getAbsolute(), n));
-    getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(n.getClient().compute().quotaSets().get(r.getId()), n, r.getId()));});
-    getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(n.getClient().compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
-}catch(Exception ex){
-    ex.printStackTrace();
-}
-    }
-
 
     public OpenStackQuotasUsage addOpenStackQuotaUsage (SimpleTenantUsage simpleTenantUsage, OpenStackClient openStackClient, String project_id){
         final OpenStackQuotasUsage res = OpenStackQuotasUsage.createFromAddQuotaUsage(this ,simpleTenantUsage,openStackClient,project_id);
@@ -169,7 +168,6 @@ try {
         openStackQuotasUsage.add(res);
         return res;
     }
-
     public OpenStackQuotas addOpenStackQuota (QuotaSet quotaSet, OpenStackClient openStackClient, String project_id){
         final OpenStackQuotas res = OpenStackQuotas.createFromAddQuota(this ,quotaSet,openStackClient,project_id);
         if(openStackQuotas.contains(res)) return res;

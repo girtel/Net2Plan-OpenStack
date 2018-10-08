@@ -15,7 +15,7 @@ import java.util.Map;
 public class Gnocchi extends Api {
 
     private final OSClient.OSClientV3 osClientV3;
-    private final String url;
+    public final String url;
 
     public enum GnocchiOption {
         METRIC("metric/"),

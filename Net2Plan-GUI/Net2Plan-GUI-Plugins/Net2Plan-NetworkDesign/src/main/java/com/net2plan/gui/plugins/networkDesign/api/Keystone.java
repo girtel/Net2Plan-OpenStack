@@ -15,7 +15,7 @@ import java.util.*;
 public class Keystone extends Api {
 
     private final OSClient.OSClientV3 osClientV3;
-    private final String url;
+    public final String url;
 
     public enum KeystoneOption {
         PROJECT("/projects")

@@ -48,7 +48,7 @@ import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 public class OpenStackClient {
 
-    private String os_auth_url;
+    public String os_auth_url;
     private String os_username;
     private String os_password;
     private String os_user_domain_name;
@@ -98,23 +98,22 @@ public class OpenStackClient {
     private Gnocchi gnocchi;
     private Keystone keystone;
     private OpenStackNet osn;
-    private String osAuthUrl,osUsername,osPassword,osTenantName;
+    private Token token;
+
+    public OpenStackClient (){
+        this.osn= new OpenStackNet();
+    }
     public OpenStackClient create(OpenStackNet osn,JSONObject jsonObject,String name){
 
-         //System.out.println(jsonObject);
+        System.out.println("Creating OpenStackClient "+ name);
+        //System.out.println(jsonObject);
         try {
-            this.name = name;
-            this.osn = osn;
-            os_auth_url = jsonObject.getString("os_auth_url");
-            os_username = jsonObject.getString("os_username");
-            os_password = jsonObject.getString("os_password");
-            os_user_domain_name = jsonObject.getString("os_user_domain_name");
-            os_project_id = jsonObject.getString("os_project_id");
+            this.os_auth_url = jsonObject.getString("os_auth_url");
+            this.os_username = jsonObject.getString("os_username");
+            this.os_password = jsonObject.getString("os_password");
+            this.os_user_domain_name = jsonObject.getString("os_user_domain_name");
+            this.os_project_id = jsonObject.getString("os_project_id");
 
-            osAuthUrl=os_auth_url;
-            osUsername=os_username;
-            osPassword = os_password;
-            osTenantName=os_project_id;
             OSFactory.enableHttpLoggingFilter(false);
 
             OSClient.OSClientV3 os = OSFactory.builderV3()
@@ -124,21 +123,26 @@ public class OpenStackClient {
                     .authenticate();
 
             this.os=os;
-            this.openStackNetCreate = new OpenStackNetCreate(os);
-            this.openStackNetDelete = new OpenStackNetDelete(os);
-           // System.out.println(" OpenStackClient new client" + os.getToken());
+            this.name = name;
+            this.osn = osn;
+            this.openStackNetCreate = new OpenStackNetCreate(this);
+            this.openStackNetDelete = new OpenStackNetDelete(this);
+            this.token = os.getToken();
+            this.os = OSFactory.clientFromToken(token);
             prepareApis();
 
             connect=true;
+
+            System.out.println("Created new OpenStackClient with token: " + os.getToken());
+
         }catch (Exception ex){
             ex.printStackTrace();
         }
         return this;
     }
-    public OpenStackClient (OpenStackNet osn){
-        this.osn=osn;
-    }
+
     public void prepareApis(){
+        System.out.println("Preparing APIS for OpenStackClient "+ name);
         Token token = os.getToken();
         MyRunnable newR = new MyRunnable(token,Facing.PUBLIC);
         submit(newR);
@@ -146,14 +150,18 @@ public class OpenStackClient {
         List<Service> services = this.os.identity().serviceEndpoints().list().stream().filter(n -> ((Service) n).getName().equals("gnocchi")).collect(Collectors.toList());
 
         if(services.size() >= 1) {
+
             Service service = services.get(0);
             Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
             this.gnocchi = new Gnocchi(endpoint.getUrl().toString() + "/v1/", this.os);
+            System.out.println("GNOCCHI API SUPPORT "+ gnocchi.url);
         }
         this.keystone = new Keystone(os_auth_url,this.os);
+        System.out.println("KEYSTONE API SUPPORT"+ keystone.url);
 
 
     }
+
     public OpenStackClient clearList(){
 
         /*Clear Keystone list*/
@@ -187,41 +195,44 @@ public class OpenStackClient {
         /*Clear Ceilometer list*/
         openStackResources.clear();
 
+        System.out.println("Clearing OpenStackClient "+ name);
 
         return this;
     }
     public OpenStackClient fillList(){
 
         try {
+            OSFactory.clientFromToken(token);
             /* Get elements of Identity(Keystone)*/
-            os.identity().users().list().forEach(n->addOpenStackUser(n));
-            os.identity().domains().list().forEach(n->addOpenStackDomain(n));
-            os.identity().serviceEndpoints().listEndpoints().forEach(n->addOpenStackEndpoint(n));
-            os.identity().serviceEndpoints().list().forEach(n-> addOpenStackService(n));
-            os.identity().regions().list().forEach(n->addOpenStackRegion(n));
-            os.identity().credentials().list().forEach(n->addOpenStackCredential(n));
-            os.identity().groups().list().forEach(n->addOpenStackGroup(n));
-            os.identity().policies().list().forEach(n->addOpenStackPolicy(n));
-            os.identity().roles().list().forEach(n->addOpenStackRole(n));
+            this.os.identity().users().list().forEach(n->addOpenStackUser(n));
+            this.os.identity().domains().list().forEach(n->addOpenStackDomain(n));
+            this.os.identity().serviceEndpoints().listEndpoints().forEach(n->addOpenStackEndpoint(n));
+            this.os.identity().serviceEndpoints().list().forEach(n-> addOpenStackService(n));
+            this.os.identity().regions().list().forEach(n->addOpenStackRegion(n));
+            this.os.identity().credentials().list().forEach(n->addOpenStackCredential(n));
+            this.os.identity().groups().list().forEach(n->addOpenStackGroup(n));
+            this.os.identity().policies().list().forEach(n->addOpenStackPolicy(n));
+            this.os.identity().roles().list().forEach(n->addOpenStackRole(n));
             this.keystone.projectList().stream().forEach(n->addOpenStackProject(n));
             /* Get elements of Network(NEUTRON)*/
-             os.networking().network().list().forEach(n -> addOpenStackNetwork(n));
-             os.networking().subnet().list().forEach(n -> addOpenStackSubnet(n));
-             os.networking().router().list().stream().forEach(n -> addOpenStackRouter(n));
-             os.networking().port().list().stream().forEach(n -> addOpenStackPort(n));
+            this.os.networking().network().list().forEach(n -> addOpenStackNetwork(n));
+            this.os.networking().subnet().list().forEach(n -> addOpenStackSubnet(n));
+            this.os.networking().router().list().stream().forEach(n -> addOpenStackRouter(n));
+            this.os.networking().port().list().stream().forEach(n -> addOpenStackPort(n));
 
             /*Get elements of Compute(NOVA)*/
-             os.compute().servers().list().stream().forEach(n -> addOpenStackServer(n));
-             os.compute().flavors().list().stream().forEach(n -> addOpenStackFlavor(n));
-             os.compute().floatingIps().list().forEach(n -> addOpenStackFloatingIP(n));
-             os.compute().keypairs().list().stream().forEach(n -> addOpenStackKeypair(n));
-             os.compute().securityGroups().list().stream().forEach(n -> addOpenStackSecurityGroup(n));
+           // System.out.println("SERVERS "+this.os_auth_url+ " "+OSFactory.clientFromToken(token).compute().servers().list().size());
+            this.os.compute().servers().list().stream().forEach(n -> addOpenStackServer(n));
+            this.os.compute().flavors().list().stream().forEach(n -> addOpenStackFlavor(n));
+            this.os.compute().floatingIps().list().forEach(n -> addOpenStackFloatingIP(n));
+            this.os.compute().keypairs().list().stream().forEach(n -> addOpenStackKeypair(n));
+            this.os.compute().securityGroups().list().stream().forEach(n -> addOpenStackSecurityGroup(n));
 
             final List<? extends HostResource> hosts = os.compute().host().list();
             hosts.stream().forEach(n -> os.compute().host().hostDescribe(((HostResource) n).getHostName()).stream().forEach(p -> addOpenStackHostResource(p)));
 
             /*Get elements of Image(GLANCE)*/
-             os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
+            this.os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
 
             /*Get elements of Telmetry(Ceilometer)*/
             gnocchi.resourcesList().forEach(n->addOpenStackResource(n));
@@ -231,6 +242,7 @@ public class OpenStackClient {
             ex.printStackTrace();
         }
 
+        System.out.println("Filling OpenStackClient "+name);
         return this;
     }
 
@@ -261,14 +273,17 @@ public class OpenStackClient {
     public String getName(){return this.name;}
     public String getProjectId(){return this.os_project_id;}
     public Boolean isConnected(){return this.connect;}
+
     public OSClient.OSClientV3 getClient(){
         return this.os;
     }
     public OpenStackNetCreate getOpenStackNetCreate(){ return this.openStackNetCreate; }
     public OpenStackNetDelete getOpenStackNetDelete(){ return this.openStackNetDelete; }
     public OpenStackNet getOsn (){return  this.osn;}
+
     /* Add OpenStackNetworkElements of Keystone*/
     public OpenStackUser addOpenStackUser (User user){
+        System.out.println("Adding OpenStackUser to list from OpenStackClient: "+ this.os_auth_url);
         final OpenStackUser res = OpenStackUser.createFromAddUser(this.osn ,user,this);
         if(openStackUsers.contains(res)) return res;
         openStackUsers.add(res);
@@ -419,7 +434,7 @@ public class OpenStackClient {
 
 
     /*Get list from OpenStackNetworkElements of KEYSTONE*/
-    public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(openStackUsers); }
+    public List<OpenStackUser> getOpenStackUsers () {  System.out.println("Getting OpenStackUsers from OpenStackClient: " + this.os_auth_url); return Collections.unmodifiableList(openStackUsers); }
     public List<OpenStackProject> getOpenStackProjects () { return Collections.unmodifiableList(openStackProjects); }
     public List<OpenStackDomain> getOpenStackDomains () { return Collections.unmodifiableList(openStackDomains); }
     public List<OpenStackEndpoint> getOpenStackEndpoints () { return Collections.unmodifiableList(openStackEndpoints); }
