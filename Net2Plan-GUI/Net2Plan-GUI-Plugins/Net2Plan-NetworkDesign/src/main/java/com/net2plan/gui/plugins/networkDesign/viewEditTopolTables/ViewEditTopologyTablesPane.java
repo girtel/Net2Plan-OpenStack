@@ -13,6 +13,7 @@ package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables;
 import java.awt.BorderLayout;
 import java.awt.LayoutManager;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -31,12 +32,14 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.telemetry.AdvancedJTable_measures;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.telemetry.AdvancedJTable_meters;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.telemetry.AdvancedJTable_resources;
+import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.plugins.utils.FilteredTablePanel;
 import com.net2plan.interfaces.networkDesign.Net2PlanException;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.compute.AbsoluteLimit;
 
@@ -123,6 +126,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     private JTextArea upperText;
     private JScrollPane jScrollPane;
     private JTabbedPane openstack;
+    public Boolean myboolean= false;
 
     final String NEWLINE = String.format("%n");
 
@@ -173,6 +177,27 @@ public class ViewEditTopologyTablesPane extends JPanel
         for (AJTableType ajType : AJTableType.values())
             ajTables.put(ajType, createPanelComponentInfo(ajType,new OpenStackClient()));
 
+
+        viewEditHighLevelTabbedPane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if(viewEditHighLevelTabbedPane.getSelectedIndex() > 0) {
+
+                    System.out.println("Tab: " + viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()));
+                    OpenStackClient openStackClient = callback.getOpenStackNet().getOsClients().stream().filter(n -> n.getName().equals(viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()))).collect(Collectors.toList()).get(0);
+                    System.out.println("Net2plan nodes "+ openStackClient.getNetPlanDesign().getNodes().size());
+                    callback.setDesign(openStackClient.getNetPlanDesign());
+
+                    final VisualizationState vs = callback.getVisualizationState();
+                    Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                            vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
+                    vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
+                    callback.updateVisualizationAfterNewTopology();
+                    callback.addNetPlanChange();
+
+                }
+
+            }
+        });
         this.recomputNetPlanView ();
 
         this.add(viewEditHighLevelTabbedPane,BorderLayout.CENTER);
@@ -192,8 +217,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 table = new AdvancedJTable_users(callback,openStackClient);
                 break;
             case USERS:
-                System.out.println("CREATING PANEL COMPONENT "+type+" INFO FOR OPENSTACKCLIENT: " + openStackClient.os_auth_url);
-                table = new AdvancedJTable_users(callback,openStackClient);
+                 table = new AdvancedJTable_users(callback,openStackClient);
                 break;
             case PROJECTS:
                 table = new AdvancedJTable_projects(callback,openStackClient);
@@ -297,7 +321,6 @@ public class ViewEditTopologyTablesPane extends JPanel
                 table = new AdvancedJTable_subnets(callback,openStackClient);
                 break;
             case LIMITS:
-                System.out.println("Creating LIMITWSSSSSSSSSSSSSSS TABLE");
                 table = new AdvancedJTable_limits(callback,openStackClient);
                 break;
             case QUOTAS:
@@ -320,7 +343,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     }
 
     public void updateView() {
-        System.out.println("Update View on ViewEditTopologyTablesPane");
+
          /* Load current network state */
         this.callback.getOpenStackNet().getOsClients().forEach(n-> {n.clearList();n.fillList();});
         this.callback.getOpenStackNet().fillQuotasAndLimits();
@@ -330,20 +353,19 @@ public class ViewEditTopologyTablesPane extends JPanel
 
         this.recomputNetPlanView();
 
-        System.out.println("PRINTS UPDATE: " +  this.callback.getOpenStackNet().getOsClients());
-        System.out.println("PRINTS UPDATE: " +  netPlanViewTable.keySet());
 
         for(OpenStackClient openStackClient: netPlanViewTable.keySet()){
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaa" + openStackClient.os_auth_url);
             netPlanViewTable.get(openStackClient).values().stream().forEach(t -> {t.getFirst().updateView(); t.getSecond().updateHeader();});
         }
 
-        System.out.println("Problem with de problem");
-        //ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
+        System.out.println("Problem with de problem" + callback.getOpenStackNet().openStackLimits.size() +" " + ajTables.size());
+
+        ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
+        ajTables.values().stream().map(t -> t.getSecond()).forEach(t -> t.updateHeader());
 
 
         // Update filter header
-        for (AJTableType type :  Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS,AJTableType.QUOTASUSAGE))
+       /* for (AJTableType type :  Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS,AJTableType.QUOTASUSAGE))
         {
             ((FilteredTablePanel) ajTables.get(type).getSecond()).updateHeader();
             ((AdvancedJTable_abstractElement<Object>) ajTables.get(type).getFirst()).updateView();
@@ -356,8 +378,8 @@ public class ViewEditTopologyTablesPane extends JPanel
                 ((FilteredTablePanel)((JSplitPane) ajTables.get(type).getSecond()).getTopComponent()).updateHeader();
             }
             else
-                throw new Net2PlanException("Bad");*/
-        }
+                throw new Net2PlanException("Bad");
+        }*/
 
 
 
@@ -368,7 +390,6 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     public void recomputNetPlanView() {
 
-        System.out.println("Recomputing");
         /* Save current selected tab */
         final int selectedIndexFirstLevel = viewEditHighLevelTabbedPane.getSelectedIndex() == -1 ? 0 : viewEditHighLevelTabbedPane.getSelectedIndex();
         int selectedIndexSecondLevel = -1;
@@ -383,20 +404,23 @@ public class ViewEditTopologyTablesPane extends JPanel
         viewEditHighLevelTabbedPane.removeAll();
         slicingTabbedPane.removeAll();
 
-        for (AJTableType ajType :  Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS,AJTableType.QUOTASUSAGE))
-            ajTables.put(ajType, createPanelComponentInfo(ajType,new OpenStackClient()));
+        ajTables.clear();
 
-        for (AJTableType type : Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS,AJTableType.QUOTASUSAGE))
-            slicingTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+        if(callback.getOpenStackNet().getOsClients().size() >0) {
+            for (AJTableType ajType : Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS, AJTableType.QUOTASUSAGE))
+                ajTables.put(ajType, createPanelComponentInfo(ajType, callback.getOpenStackNet().getOsClients().get(0)));
 
+            for (AJTableType type : Arrays.asList(AJTableType.LIMITS, AJTableType.QUOTAS, AJTableType.QUOTASUSAGE))
+                slicingTabbedPane.addTab(type.getTabName(), ajTables.get(type).getSecond());
+        }
         viewEditHighLevelTabbedPane.addTab(AJTableType.SLICING.tabName, slicingTabbedPane);
 
-        System.out.println("------------------------------------" + callback.getOpenStackNet().getOsClients());
-        for (OpenStackClient openStackClient : callback.getOpenStackNet().getOsClients()) {
-            System.out.println("Recomputing OpenStackClient" + openStackClient.getName());
+         for (OpenStackClient openStackClient : callback.getOpenStackNet().getOsClients()) {
+
              layerSubTabbedPaneMap.put(openStackClient, new JTabbedPane());
 
             final JTabbedPane subpaneThisLayer = layerSubTabbedPaneMap.get(openStackClient);
+
             identityTabbedPane.put(openStackClient, new JTabbedPane ());
             networkTabbedPane.put(openStackClient, new JTabbedPane ());
             computeTabbedPane.put(openStackClient, new JTabbedPane ());
@@ -418,8 +442,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 if (ajType == ajType.KEYSTONE)
                 {
 
-                    System.out.println("KEYSTONE for OpenStackClient: "+ openStackClient.getName());
-                    for (AJTableType type : Arrays.asList(AJTableType.USERS, AJTableType.PROJECTS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.SERVICES,AJTableType.REGIONS,AJTableType.CREDENTIALS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.ROLES))
+                     for (AJTableType type : Arrays.asList(AJTableType.USERS, AJTableType.PROJECTS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.SERVICES,AJTableType.REGIONS,AJTableType.CREDENTIALS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.ROLES))
                         identityTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
 
                     subpaneThisLayer.addTab(ajType.getTabName(), identityTabbedPane.get(openStackClient));

@@ -46,10 +46,10 @@ import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 public class OpenStackNetCreate{
 
     private OSClient.OSClientV3 osClientV3;
-
+    private OpenStackClient openStackClient;
     public OpenStackNetCreate(OpenStackClient openStackClient){
-        System.out.println("OpenStackNetCreated created for OpenStackClient: "+ openStackClient.getName());
         this.osClientV3 = openStackClient.getClient();
+        this.openStackClient = openStackClient;
     }
 
     //Identity

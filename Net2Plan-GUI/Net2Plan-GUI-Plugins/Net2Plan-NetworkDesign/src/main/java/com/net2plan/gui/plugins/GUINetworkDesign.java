@@ -591,7 +591,7 @@ import java.util.List;
             topologyPanel.updateMultilayerPanel();
             topologyPanel.getCanvas().rebuildGraph();
             topologyPanel.getCanvas().zoomAll();
-            viewEditTopTables.updateView();
+            //viewEditTopTables.updateView();
            // aboutIt.updateView();
             focusPanel.updateView();
         }

@@ -104,7 +104,6 @@ public abstract class ITableRowFilter
 		{
 			/*OpenStackNetworkElements of KEYSTONE*/
 			case USERS:
-				System.out.println("Client associated Visible elements" + os.getName() + " "+ os.os_auth_url);
 				return os.getOpenStackUsers();
 			case PROJECTS:
 				return os.getOpenStackProjects();
@@ -182,7 +181,6 @@ public abstract class ITableRowFilter
 		{
 			/*OpenStackNetworkElements of KEYSTONE*/
 			case USERS:
-				System.out.println("Client associated All elements" + os.getName() + " "+ os.os_auth_url);
 				return os.getOpenStackUsers();
 			case PROJECTS:
 				return os.getOpenStackProjects();
@@ -215,7 +213,6 @@ public abstract class ITableRowFilter
 
 			/*OpenStackNetworkElements of NOVA*/
 			case SERVERS:
-				System.out.println("Client associated All elements server ssss" + os.os_auth_url + " server sixe"+ os.getOpenStackServers().size());
 				return os.getOpenStackServers();
 			case FLAVORS:
 				return os.getOpenStackFlavor();

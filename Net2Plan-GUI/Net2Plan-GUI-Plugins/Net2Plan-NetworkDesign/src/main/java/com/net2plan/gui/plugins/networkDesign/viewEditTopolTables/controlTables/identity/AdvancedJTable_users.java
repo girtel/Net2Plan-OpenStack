@@ -20,7 +20,6 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
     public AdvancedJTable_users(GUINetworkDesign callback, OpenStackClient openStackClient)
     {
         super(callback, ViewEditTopologyTablesPane.AJTableType.USERS , true, openStackClient);
-        System.out.println("Created table for USERS of OpenStackClient "+openStackClient.getName());
     }
 
     @Override

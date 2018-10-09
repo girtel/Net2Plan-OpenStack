@@ -33,7 +33,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     private Router osRouter;
 
     public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router,OpenStackClient openStackClient) {
-        final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", null);
+        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", null);
         npNode2.setName(router.getId());
 
         if (router.getName().equals("router1")) {

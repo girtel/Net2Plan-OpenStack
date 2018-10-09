@@ -93,7 +93,6 @@ public class FilteredTablePanel extends JPanel
 
     public void updateHeader()
     {
-        System.out.println("FilteredTablePanel" + openStackClient.getName());
         final int numEntries = table.getModel().getRowCount() - 1; // last columns is for the aggregation
         if (callback.getVisualizationState().getTableRowFilter() != null && table instanceof AdvancedJTable_networkElement)
         {

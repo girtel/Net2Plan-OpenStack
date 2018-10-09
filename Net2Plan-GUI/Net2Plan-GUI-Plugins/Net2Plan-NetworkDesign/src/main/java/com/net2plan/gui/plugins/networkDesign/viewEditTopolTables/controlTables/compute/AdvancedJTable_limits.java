@@ -17,6 +17,7 @@ import java.util.*;
 public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenStackLimits> {
     public AdvancedJTable_limits(GUINetworkDesign callback, OpenStackClient openStackClient) {
         super(callback, ViewEditTopologyTablesPane.AJTableType.LIMITS, true, openStackClient);
+        System.out.println("Creating advancedjtable Limits");
     }
 
     @Override

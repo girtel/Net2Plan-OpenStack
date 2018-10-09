@@ -15,6 +15,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 
+import com.net2plan.interfaces.networkDesign.NetPlan;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
@@ -99,14 +100,14 @@ public class OpenStackClient {
     private Keystone keystone;
     private OpenStackNet osn;
     private Token token;
+    private NetPlan netPlan;
 
     public OpenStackClient (){
         this.osn= new OpenStackNet();
+        this.netPlan = new NetPlan();
     }
     public OpenStackClient create(OpenStackNet osn,JSONObject jsonObject,String name){
 
-        System.out.println("Creating OpenStackClient "+ name);
-        //System.out.println(jsonObject);
         try {
             this.os_auth_url = jsonObject.getString("os_auth_url");
             this.os_username = jsonObject.getString("os_username");
@@ -129,11 +130,10 @@ public class OpenStackClient {
             this.openStackNetDelete = new OpenStackNetDelete(this);
             this.token = os.getToken();
             this.os = OSFactory.clientFromToken(token);
+            this.netPlan = new NetPlan();
             prepareApis();
 
             connect=true;
-
-            System.out.println("Created new OpenStackClient with token: " + os.getToken());
 
         }catch (Exception ex){
             ex.printStackTrace();
@@ -142,7 +142,6 @@ public class OpenStackClient {
     }
 
     public void prepareApis(){
-        System.out.println("Preparing APIS for OpenStackClient "+ name);
         Token token = os.getToken();
         MyRunnable newR = new MyRunnable(token,Facing.PUBLIC);
         submit(newR);
@@ -154,10 +153,8 @@ public class OpenStackClient {
             Service service = services.get(0);
             Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
             this.gnocchi = new Gnocchi(endpoint.getUrl().toString() + "/v1/", this.os);
-            System.out.println("GNOCCHI API SUPPORT "+ gnocchi.url);
         }
         this.keystone = new Keystone(os_auth_url,this.os);
-        System.out.println("KEYSTONE API SUPPORT"+ keystone.url);
 
 
     }
@@ -195,14 +192,13 @@ public class OpenStackClient {
         /*Clear Ceilometer list*/
         openStackResources.clear();
 
-        System.out.println("Clearing OpenStackClient "+ name);
-
+        netPlan.removeAllNodes();
         return this;
     }
     public OpenStackClient fillList(){
 
         try {
-            OSFactory.clientFromToken(token);
+            this.os = OSFactory.clientFromToken(token);
             /* Get elements of Identity(Keystone)*/
             this.os.identity().users().list().forEach(n->addOpenStackUser(n));
             this.os.identity().domains().list().forEach(n->addOpenStackDomain(n));
@@ -242,7 +238,6 @@ public class OpenStackClient {
             ex.printStackTrace();
         }
 
-        System.out.println("Filling OpenStackClient "+name);
         return this;
     }
 
@@ -280,11 +275,13 @@ public class OpenStackClient {
     public OpenStackNetCreate getOpenStackNetCreate(){ return this.openStackNetCreate; }
     public OpenStackNetDelete getOpenStackNetDelete(){ return this.openStackNetDelete; }
     public OpenStackNet getOsn (){return  this.osn;}
+    public Token getToken (){return this.token;}
+    public NetPlan getNetPlanDesign(){return this.netPlan;}
+    public void setNetPlanDesign(NetPlan netPlan){this.netPlan = netPlan;}
 
     /* Add OpenStackNetworkElements of Keystone*/
     public OpenStackUser addOpenStackUser (User user){
-        System.out.println("Adding OpenStackUser to list from OpenStackClient: "+ this.os_auth_url);
-        final OpenStackUser res = OpenStackUser.createFromAddUser(this.osn ,user,this);
+       final OpenStackUser res = OpenStackUser.createFromAddUser(this.osn ,user,this);
         if(openStackUsers.contains(res)) return res;
         openStackUsers.add(res);
         return res;
@@ -434,7 +431,7 @@ public class OpenStackClient {
 
 
     /*Get list from OpenStackNetworkElements of KEYSTONE*/
-    public List<OpenStackUser> getOpenStackUsers () {  System.out.println("Getting OpenStackUsers from OpenStackClient: " + this.os_auth_url); return Collections.unmodifiableList(openStackUsers); }
+    public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(openStackUsers); }
     public List<OpenStackProject> getOpenStackProjects () { return Collections.unmodifiableList(openStackProjects); }
     public List<OpenStackDomain> getOpenStackDomains () { return Collections.unmodifiableList(openStackDomains); }
     public List<OpenStackEndpoint> getOpenStackEndpoints () { return Collections.unmodifiableList(openStackEndpoints); }
@@ -467,4 +464,7 @@ public class OpenStackClient {
     public List<OpenStackResource> getOpenStackResources () { return Collections.unmodifiableList(openStackResources); }
     public List<OpenStackGnocchiMeasure> getOpenStackMeasures () { return Collections.unmodifiableList(openStackMeasures); }
 
+    public void doTopology(){
+
+    }
 }

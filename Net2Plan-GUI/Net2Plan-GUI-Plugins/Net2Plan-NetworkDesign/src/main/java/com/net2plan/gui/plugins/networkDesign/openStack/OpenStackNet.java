@@ -78,32 +78,28 @@ public class OpenStackNet
     }
     public void AddOsClient(JSONObject credential,int index){
 
-            System.out.println("Adding OpenStackClient in OpenStackNet method(AddOsClient) " + credential);
-            OpenStackClient openStackClient =new OpenStackClient().create(this,credential,"Openstack " + index);
+             OpenStackClient openStackClient =new OpenStackClient().create(this,credential,"Openstack " + index);
             if(openStackClient.isConnected()) {
                 openStackClient
                         .clearList()
                         .fillList();
                 osClients.add(openStackClient);
                 credentiales.put(credential);
-                System.out.println("Added OpenStackClient in OpenStackNet method(AddOsClient) "+ credential);
-            }
+             }
 
 
     }
 
     public void fillQuotasAndLimits(){
 
-        System.out.println("Fill Quotas and limits in OpenStackNet method(fillQuotaAndLimits)");
         openStackQuotasUsage.clear();
         openStackQuotas.clear();
         openStackLimits.clear();
         try {
 
-            getOsClients().stream().forEach(n -> addOpenStackLimit(n.getClient().compute().quotaSets().limits().getAbsolute(), n));
-            System.out.println("LIMITTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"+ openStackLimits.size());
-            //getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(n.getClient().compute().quotaSets().get(r.getId()), n, r.getId()));});
-            //getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(n.getClient().compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
+            getOsClients().stream().forEach(n -> addOpenStackLimit(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().limits().getAbsolute(), n));
+            getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().get(r.getId()), n, r.getId()));});
+            getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
         }catch(Exception ex){
             ex.printStackTrace();
         }
@@ -181,7 +177,7 @@ public class OpenStackNet
         return res;
     }
 
-    public List<OpenStackLimits> getOpenStackLimits (){ return Collections.unmodifiableList(openStackLimits); }
+    public List<OpenStackLimits> getOpenStackLimits (){ System.out.println("Getting openstack limits" + openStackLimits.size());return Collections.unmodifiableList(openStackLimits); }
     public List<OpenStackQuotas> getOpenStackQuotas (){ return Collections.unmodifiableList(openStackQuotas); }
     public List<OpenStackQuotasUsage> getOpenStackQuotasUsage (){ return Collections.unmodifiableList(openStackQuotasUsage); }
 
