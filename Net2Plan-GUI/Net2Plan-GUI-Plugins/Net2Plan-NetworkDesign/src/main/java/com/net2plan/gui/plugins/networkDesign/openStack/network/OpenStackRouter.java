@@ -39,13 +39,13 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         if (router.getName().equals("router1")) {
             try {
 
-                npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL("https://findicons.com/files/icons/1035/human_o2/128/router_gnome_netstatus_75_100.png"));
+                npNode2.setUrlNodeIcon(openStackClient.getNetPlanDesign().getNetworkLayerDefault(), new URL("http://aux2.iconspalace.com/uploads/router-icon-256.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL("http://www.myiconfinder.com/uploads/iconsets/256-256-ab5e2d6a7b779ce5a246fb00a5f163f6-router.png"));
+                npNode2.setUrlNodeIcon(openStackClient.getNetPlanDesign().getNetworkLayerDefault(), new URL("http://aux2.iconspalace.com/uploads/router-icon-256.png"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -106,6 +106,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         npNode.setXYPositionMap(pos);
     }
 
+    public Node getNpNode() {return this.npNode;}
 
     @Override
     public String get50CharactersDescription() {

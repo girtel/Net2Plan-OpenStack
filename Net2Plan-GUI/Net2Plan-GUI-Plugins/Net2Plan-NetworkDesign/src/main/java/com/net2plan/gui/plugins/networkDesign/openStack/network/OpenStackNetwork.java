@@ -68,30 +68,14 @@ import sun.nio.ch.Net;
         {
 
             super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks,openStackClient);
-             Map<String,String> attributes = new HashMap<>();
+            Map<String,String> attributes = new HashMap<>();
             attributes.put("rightClick","no");
-            //System.out.println(osn);
-            //System.out.println(osn.getNetPlan());
 
-            NetPlan netPlan = this.osn.getCallback().getDesign();
-            final Node npNode2 = netPlan.addNode(0, 0, "", attributes);
+            final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
             npNode2.setName(network.getId());
-            if (network.getName().equals("public")) {
-                try {
 
-                    npNode2.setUrlNodeIcon(netPlan.getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Cloud.png").toURI().toURL().toString()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    npNode2.setUrlNodeIcon(netPlan.getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Layer3switch.png").toURI().toURL().toString()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
             this.npNode = npNode2;
-                this.osNetwork = network;
+            this.osNetwork = network;
 
         }
 

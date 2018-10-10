@@ -67,15 +67,8 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         this.osSubnet = subnet;
         Map<String,String> attributes = new HashMap<>();
         attributes.put("rightClick","no");
-        final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", attributes);
+        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
         npNode2.setName(subnet.getId());
-
-
-            try {
-                npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/Switch.png").toURI().toURL().toString()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
         this.npNode = npNode2;
     }
@@ -94,7 +87,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public boolean isSubnetIsDHCPEnabled () { return this.subnetIsDHCPEnabled; }
     public Ipv6AddressMode getSubnetIpv6AddressMode () { return this.subnetIpv6AddressMode; }
     public Ipv6RaMode getSubnetIpv6RaMode () { return this.subnetIpv6RaMode; }
-
+    public Subnet getSubnet() {return this.osSubnet;}
     public void setXYPositionMap(Point2D pos) {
         npNode.setXYPositionMap(pos);
     }

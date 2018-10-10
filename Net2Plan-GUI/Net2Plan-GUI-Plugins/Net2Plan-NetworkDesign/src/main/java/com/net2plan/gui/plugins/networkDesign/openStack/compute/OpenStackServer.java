@@ -3,10 +3,12 @@ package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.interfaces.networkDesign.Node;
 import org.openstack4j.model.common.Link;
 import org.openstack4j.model.compute.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +52,7 @@ public class OpenStackServer  extends OpenStackNetworkElement
     private String serverUuid;
     private String serverVmState;
     private Server osServer;
-
+    final Node npNode;
     public static OpenStackServer createFromAddServer (OpenStackNet osn , Server server,OpenStackClient openStackClient)
     {
         final OpenStackServer res = new OpenStackServer(osn,server,openStackClient);
@@ -96,6 +98,12 @@ public class OpenStackServer  extends OpenStackNetworkElement
     {
         super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackServers,openStackClient);
         this.osServer = server;
+        Map<String,String> attributes = new HashMap<>();
+        attributes.put("rightClick","no");
+        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
+        npNode2.setName(server.getId());
+
+        this.npNode = npNode2;
     }
 
     @Override
@@ -134,8 +142,8 @@ public class OpenStackServer  extends OpenStackNetworkElement
     public String getServerUserId () { return this.serverUserId; }
     public String getServerUuid () { return this.serverUuid; }
     public String getServerVmState () { return this.serverVmState; }
-
-
+    public Node getNpNode(){ return this.npNode;}
+    public Server getServer(){return this.osServer;}
     @Override
     public String get50CharactersDescription()
     {

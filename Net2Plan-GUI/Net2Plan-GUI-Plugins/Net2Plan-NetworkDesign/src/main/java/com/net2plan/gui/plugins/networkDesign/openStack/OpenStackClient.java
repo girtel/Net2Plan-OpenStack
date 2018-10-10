@@ -15,6 +15,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 
+import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,12 +35,14 @@ import org.openstack4j.model.telemetry.Meter;
 import org.openstack4j.model.telemetry.Resource;
 import org.openstack4j.openstack.OSFactory;
 
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collector;
@@ -233,7 +236,7 @@ public class OpenStackClient {
             /*Get elements of Telmetry(Ceilometer)*/
             gnocchi.resourcesList().forEach(n->addOpenStackResource(n));
 
-
+            doTopology();
         }catch(Exception ex){
             ex.printStackTrace();
         }
@@ -465,6 +468,102 @@ public class OpenStackClient {
     public List<OpenStackGnocchiMeasure> getOpenStackMeasures () { return Collections.unmodifiableList(openStackMeasures); }
 
     public void doTopology(){
+
+        // Node list
+        final List<OpenStackRouter> routerList = getOpenStackRouters();
+        final List<OpenStackNetwork> networkList = getOpenStackNetworks();
+        final List<OpenStackSubnet> subnetList = getOpenStackSubnets();
+        final List<OpenStackServer> serverList = getOpenStackServers();
+
+        double index = 0.0;
+
+        index = -routerList.size()*10/2;
+        for(OpenStackRouter openStackRouter: routerList){
+            openStackRouter.getNpNode().setXYPositionMap(new Point2D.Double(index,-20.0));
+            index = index + 15;
+        }
+        index = -networkList.size()*10/2;
+        for(OpenStackNetwork openStackNetwork: networkList){
+
+            if(openStackNetwork.getName().equals("public")){
+                openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(0.0,0.0));
+
+                    //openStackNetwork.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/nube.png").toURI().toURL().toString()));
+
+            }else{
+                openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(index,-40.0));
+                index = index + 15;
+            }
+            try {
+                openStackNetwork.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL("http://images.clipartpanda.com/cloud-icon-png-nTBXpg5Gc.png"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        index = -subnetList.size()*10/2;
+        for(OpenStackSubnet openStackSubnet: subnetList){
+
+            if(openStackSubnet.getName().equals("public_subnet")){
+                openStackSubnet.getNpNode().setXYPositionMap(new Point2D.Double(0.0,20.0));
+                try {
+                    openStackSubnet.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL("https://cdn4.iconfinder.com/data/icons/Browsers_tatice/512/Globe.png"));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                openStackSubnet.getNpNode().setXYPositionMap(new Point2D.Double(index,-60.0));
+                index = index + 15;
+                try {
+                    openStackSubnet.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL("http://icons.iconarchive.com/icons/icons8/windows-8/256/Network-Switch-icon.png"));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+
+        index = -serverList.size()*10/2;
+        for(OpenStackServer openStackServer: serverList){
+            openStackServer.getNpNode().setXYPositionMap(new Point2D.Double(index,-80.0));
+            index = index + 15;
+            try {
+                openStackServer.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL("https://cdn2.iconfinder.com/data/icons/circle-icons-1/64/computer-128.png"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for(OpenStackNetwork openStackNetwork: networkList){
+            for(OpenStackSubnet openStackSubnet:subnetList){
+                if(openStackNetwork.getId().equals(openStackSubnet.getSubnetNetworkId())){
+                    this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
+                }
+            }
+
+        }
+
+        for(OpenStackPort openStackPort: this.getOpenStackPorts()){
+            for(OpenStackRouter openStackRouter : routerList){
+                for(OpenStackNetwork openStackNetwork: networkList){
+                    if(openStackNetwork.getId().equals(openStackPort.getPortNetworkId()) && openStackRouter.getId().equals(openStackPort.getPortDeviceId())){
+                        this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,null);
+                    }
+                }
+            }
+        }
+
+        for(OpenStackServer openStackServer: this.getOpenStackServers()){
+            for(OpenStackSubnet openStackSubnet: subnetList) {
+                if(OpenStackUtils.belongsToThisNetwork(openStackServer.getServer(), openStackSubnet.getSubnet())){
+                    this.getNetPlanDesign().addLink(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
+                }
+            }
+        }
+
 
     }
 }
