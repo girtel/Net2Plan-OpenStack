@@ -54,6 +54,12 @@
             <artifactId>openstack4j</artifactId>
             <version>3.1.1-SNAPSHOT</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
 
     </dependencies>
     <repositories>

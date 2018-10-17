@@ -14,6 +14,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackGnocchiMeasure;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
+import com.net2plan.gui.plugins.utils.Graficos;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 
 import com.net2plan.gui.plugins.utils.OpenStackUtils;
@@ -287,6 +288,7 @@ public class OpenStackClient {
 
                 values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
             }
+            Graficos graficos = new Graficos(values);
             System.out.println(values);
             openStackSummaries.clear();
             OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
