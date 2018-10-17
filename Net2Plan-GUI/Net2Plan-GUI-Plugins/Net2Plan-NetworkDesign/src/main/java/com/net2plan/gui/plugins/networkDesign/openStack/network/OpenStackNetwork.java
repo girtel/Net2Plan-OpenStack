@@ -69,7 +69,10 @@ import sun.nio.ch.Net;
 
             super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks,openStackClient);
             Map<String,String> attributes = new HashMap<>();
-            attributes.put("rightClick","no");
+            attributes.put("Network ID",network.getId());
+            attributes.put("Network Name",network.getName());
+            attributes.put("Network State",network.getStatus().toString());
+            attributes.put("Type",network.getNetworkType().toString());
 
             final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
             npNode2.setName(network.getId());

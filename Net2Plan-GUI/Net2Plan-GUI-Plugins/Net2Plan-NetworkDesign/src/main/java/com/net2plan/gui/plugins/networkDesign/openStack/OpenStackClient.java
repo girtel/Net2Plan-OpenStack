@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.networkDesign.api.Gnocchi;
 import com.net2plan.gui.plugins.networkDesign.api.Keystone;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.extra.OpenStackSummary;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
@@ -99,6 +100,9 @@ public class OpenStackClient {
     public List<OpenStackMeter> openStackMetersAvailable = new ArrayList<>();
     public final List<OpenStackGnocchiMeasure> openStackMeasures = new ArrayList<>();
 
+    /*Extra*/
+    public final List<OpenStackSummary> openStackSummaries= new ArrayList<>();
+
     private Gnocchi gnocchi;
     private Keystone keystone;
     private OpenStackNet osn;
@@ -136,6 +140,7 @@ public class OpenStackClient {
             this.netPlan = new NetPlan();
             prepareApis();
 
+            System.out.println(this.name + " " + this.token);
             connect=true;
 
         }catch (Exception ex){
@@ -156,6 +161,7 @@ public class OpenStackClient {
             Service service = services.get(0);
             Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
             this.gnocchi = new Gnocchi(endpoint.getUrl().toString() + "/v1/", this.os);
+            System.out.println("GNOCCHI FOR "+ endpoint.getUrl().toString());
         }
         this.keystone = new Keystone(os_auth_url,this.os);
 
@@ -194,6 +200,8 @@ public class OpenStackClient {
 
         /*Clear Ceilometer list*/
         openStackResources.clear();
+
+
 
         netPlan.removeAllNodes();
         return this;
@@ -263,9 +271,31 @@ public class OpenStackClient {
     }
     public void updateMeasuresList(String metric_id){
        // System.out.println("Meteasures"+ gnocchi.measuresList(metric_id));
-        gnocchi.measuresList(metric_id).forEach(n -> {openStackMeasures.add( OpenStackGnocchiMeasure.createFromAddMeasure(this.osn,((JSONArray)n).get(0).toString(),((JSONArray)n).get(1).toString(),((JSONArray)n).get(2).toString(),this));});
-        //System.out.println("Meteasures"+ openStackMeasures);
-        osn.getCallback().getViewEditTopTables().updateView();
+        openStackSummaries.clear();
+        openStackMeasures.clear();
+        JSONArray jsonArray =gnocchi.measuresList(metric_id);
+        if(jsonArray.length() >0 ) {
+            jsonArray.forEach(n -> {
+                openStackMeasures.add(OpenStackGnocchiMeasure.createFromAddMeasure(this.osn, ((JSONArray) n).get(0).toString(), ((JSONArray) n).get(1).toString(), ((JSONArray) n).get(2).toString(), this));
+            });
+
+
+            double[] values = new double[jsonArray.length()];
+
+
+            for (int i = 0; i < values.length; i++) {
+
+                values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
+            }
+            System.out.println(values);
+            openStackSummaries.clear();
+            OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
+            if(!openStackSummaries.contains(openStackSummary))
+            openStackSummaries.add(openStackSummary);
+
+            //System.out.println("Meteasures"+ openStackMeasures);
+            osn.getCallback().getViewEditTopTables().updateView();
+        }
     }
 
     public String getName(){return this.name;}
@@ -466,6 +496,7 @@ public class OpenStackClient {
     public List<OpenStackMeter> getOpenStackMeters () { return Collections.unmodifiableList(openStackMeters); }
     public List<OpenStackResource> getOpenStackResources () { return Collections.unmodifiableList(openStackResources); }
     public List<OpenStackGnocchiMeasure> getOpenStackMeasures () { return Collections.unmodifiableList(openStackMeasures); }
+    public List<OpenStackSummary> getOpenStackSummmaries () { return Collections.unmodifiableList(openStackSummaries); }
 
     public void doTopology(){
 
@@ -486,9 +517,8 @@ public class OpenStackClient {
         for(OpenStackNetwork openStackNetwork: networkList){
 
             if(openStackNetwork.getName().equals("public")){
-                openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(0.0,0.0));
 
-                    //openStackNetwork.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/nube.png").toURI().toURL().toString()));
+                openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(0.0,0.0));
 
             }else{
                 openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(index,-40.0));
@@ -540,7 +570,7 @@ public class OpenStackClient {
         for(OpenStackNetwork openStackNetwork: networkList){
             for(OpenStackSubnet openStackSubnet:subnetList){
                 if(openStackNetwork.getId().equals(openStackSubnet.getSubnetNetworkId())){
-                    this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
+                    this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
                 }
             }
 
@@ -550,7 +580,7 @@ public class OpenStackClient {
             for(OpenStackRouter openStackRouter : routerList){
                 for(OpenStackNetwork openStackNetwork: networkList){
                     if(openStackNetwork.getId().equals(openStackPort.getPortNetworkId()) && openStackRouter.getId().equals(openStackPort.getPortDeviceId())){
-                        this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,null);
+                        this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,null);
                     }
                 }
             }
@@ -559,7 +589,7 @@ public class OpenStackClient {
         for(OpenStackServer openStackServer: this.getOpenStackServers()){
             for(OpenStackSubnet openStackSubnet: subnetList) {
                 if(OpenStackUtils.belongsToThisNetwork(openStackServer.getServer(), openStackSubnet.getSubnet())){
-                    this.getNetPlanDesign().addLink(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
+                    this.getNetPlanDesign().addLinkBidirectional(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
                 }
             }
         }

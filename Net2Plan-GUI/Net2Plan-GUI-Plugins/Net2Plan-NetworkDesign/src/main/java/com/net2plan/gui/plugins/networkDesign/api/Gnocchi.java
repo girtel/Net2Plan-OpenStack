@@ -146,11 +146,14 @@ public class Gnocchi extends Api {
 
         //System.out.println ("Meausres for "  + metricId + " token " + osClientV3.getToken());
         final List<OpenStackGnocchiMeasure> gnocchiMeasures = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray();
+        try {
+            Object responseObject = this.Get(url + GnocchiOption.METRIC.tabName + metricId + GnocchiOption.MEASURE.tabName, osClientV3.getToken().getId());
 
-        Object responseObject = this.Get(url+GnocchiOption.METRIC.tabName+metricId+GnocchiOption.MEASURE.tabName,osClientV3.getToken().getId());
-
-        JSONArray jsonArray = new JSONArray((String) responseObject.toString());
-
+             jsonArray = new JSONArray((String) responseObject.toString());
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
         /*for(Object object: jsonArray){
 
             JSONObject jsonObject = (JSONObject) object;

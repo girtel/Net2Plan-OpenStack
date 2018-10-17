@@ -22,6 +22,7 @@ import com.net2plan.interfaces.networkDesign.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * Class representing a node.
@@ -135,6 +136,7 @@ public class GUINode
     public String getToolTip()
     {
         StringBuilder temp = new StringBuilder();
+        final Map<String,String> attributes = npNode.getAttributes();
         final NetPlan np = npNode.getNetPlan();
         final String capUnits = np.getLinkCapacityUnitsName(layer);
         final String trafUnits = np.getDemandTrafficUnitsName(layer);
@@ -148,9 +150,15 @@ public class GUINode
         final double outOfferedMulticast = npNode.getOutgoingMulticastDemands(layer).stream().mapToDouble(e -> e.getOfferedTraffic()).sum();
         temp.append("<html>");
         temp.append("<table border=\"0\">");
-        temp.append("<tr><td colspan=\"2\"><strong>Node index " + npNode.getIndex() + " (id: " + npNode.getId() + ") - Layer " + getLayerName(layer) + "</strong></td></tr>");
+        temp.append("<tr><td colspan=\"2\"><strong>Node index " + npNode.getIndex() + " (id: " + npNode.getId() +") - Layer " + getLayerName(layer) + "</strong></td></tr>");
         temp.append("<tr><td>Name:</td><td>" + npNode.getName() + "</td></tr>");
-        temp.append("<tr><td>Total offered unicast traffic (in / out):</td>");
+
+        for(String string: attributes.keySet()){
+            temp.append("<tr><td>"+string+":</td>");
+            temp.append("<td>" + attributes.get(string)+"</td></tr>");
+
+        }
+       /* temp.append("<tr><td>Total offered unicast traffic (in / out):</td>");
         temp.append("<td>" + String.format("%.2f", inOfferedUnicast) + "  / " + String.format("%.2f", outOfferedUnicast) + " " + trafUnits + "</td></tr>");
         temp.append("<tr><td>Total offered multicast traffic (in / out):</td>");
         temp.append("<td>" + String.format("%.2f", inOfferedMulticast) + "  / " + String.format("%.2f", outOfferedMulticast) + " " + trafUnits + "</td></tr>");
@@ -158,6 +166,8 @@ public class GUINode
         temp.append("<td>" + String.format("%.2f", inLinkCapacity) + "  / " + String.format("%.2f", outLinkCapacity) + " " + capUnits + "</td></tr>");
         temp.append("<tr><td>Total link occupation (in / out):</td>");
         temp.append("<td>" + String.format("%.2f", inLinkOccup) + "  / " + String.format("%.2f", outLinkOccup) + " " + capUnits + "</td></tr>");
+        */
+
         for (Resource r : npNode.getResources())
         {
             temp.append("<tr><td>Resource " + getResourceName(r) + "</td>");

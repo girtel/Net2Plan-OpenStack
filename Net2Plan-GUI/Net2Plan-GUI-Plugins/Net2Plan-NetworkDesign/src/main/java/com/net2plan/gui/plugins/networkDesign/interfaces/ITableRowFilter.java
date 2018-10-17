@@ -167,7 +167,8 @@ public abstract class ITableRowFilter
 				return osn.getOpenStackQuotas();
 			case QUOTASUSAGE:
 				return osn.getOpenStackQuotasUsage();
-
+			case SUMMARY:
+				return os.getOpenStackSummmaries();
 			default:
 				assert false;
 				return new ArrayList<>();
@@ -244,6 +245,8 @@ public abstract class ITableRowFilter
 				return osn.getOpenStackQuotas();
 			case QUOTASUSAGE:
 				return osn.getOpenStackQuotasUsage();
+			case SUMMARY:
+				return os.getOpenStackSummmaries();
 			default:
 				assert false;
 				return new ArrayList<>();

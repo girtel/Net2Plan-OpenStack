@@ -23,6 +23,7 @@ import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.extra.AdvancedJTable_summaries;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_imagesV2;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
@@ -92,7 +93,9 @@ public class ViewEditTopologyTablesPane extends JPanel
         SLICING("Slicing"),
         QUOTAS("Quotas"),
         LIMITS("Limits"),
-        QUOTASUSAGE("Quota Usage")
+        QUOTASUSAGE("Quota Usage"),
+
+        SUMMARY("Summary")
         ;
 
         private final String tabName;
@@ -330,6 +333,10 @@ public class ViewEditTopologyTablesPane extends JPanel
                 table = new AdvancedJTable_quotasUsage(callback,openStackClient);
                 break;
 
+            case SUMMARY:
+                table = new AdvancedJTable_summaries(callback,openStackClient);
+                break;
+
             default:
                 assert false;
         }
@@ -477,7 +484,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 }else if(ajType == ajType.GNOCCHI){
 
 
-                    for (AJTableType type : Arrays.asList(AJTableType.RESOURCES,AJTableType.METERS, AJTableType.MEASURES))
+                    for (AJTableType type : Arrays.asList(AJTableType.RESOURCES,AJTableType.METERS, AJTableType.MEASURES,AJTableType.SUMMARY))
                         telemetryTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
 
                     subpaneThisLayer.addTab(ajType.getTabName(), telemetryTabbedPane.get(openStackClient));

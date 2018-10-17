@@ -7,7 +7,9 @@ import com.net2plan.interfaces.networkDesign.Node;
 import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.openstack4j.model.network.ExternalGateway;
@@ -33,7 +35,12 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     private Router osRouter;
 
     public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router,OpenStackClient openStackClient) {
-        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", null);
+        Map<String,String> attributes = new HashMap<>();
+        attributes.put("Router ID",router.getId());
+        attributes.put("Router Name",router.getName());
+        attributes.put("Router State",router.getStatus().toString());
+        attributes.put("External Gateway",router.getExternalGatewayInfo().toString());
+        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
         npNode2.setName(router.getId());
 
         if (router.getName().equals("router1")) {

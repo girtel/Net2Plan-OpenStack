@@ -63,19 +63,8 @@ public class OpenStackPort extends OpenStackNetworkElement
     {
         super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackPorts,openStackClient);
         this.osPort = port;
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("rightClick","no");
-        final Node npNode2 = osn.getCallback().getDesign().addNode(0, 0, "", attributes);
-        npNode2.setName(port.getId());
 
-
-        try {
-            npNode2.setUrlNodeIcon(osn.getCallback().getDesign().getNetworkLayerDefault(), new URL(getClass().getResource("/resources/gui/figs/DSLAM.png").toURI().toURL().toString()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        this.npNode = npNode2;
+        this.npNode = null;
     }
 
     @Override

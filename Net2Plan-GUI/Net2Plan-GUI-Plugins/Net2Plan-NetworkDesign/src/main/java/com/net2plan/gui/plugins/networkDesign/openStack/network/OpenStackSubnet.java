@@ -66,7 +66,10 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSubnets,openStackClient);
         this.osSubnet = subnet;
         Map<String,String> attributes = new HashMap<>();
-        attributes.put("rightClick","no");
+        attributes.put("Subnet ID",subnet.getId());
+        attributes.put("Subnet Name",subnet.getName());
+        attributes.put("Subnet IP version ",subnet.getIpVersion().name());
+        attributes.put("Subnet CIDR",subnet.getCidr());
         final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
         npNode2.setName(subnet.getId());
 

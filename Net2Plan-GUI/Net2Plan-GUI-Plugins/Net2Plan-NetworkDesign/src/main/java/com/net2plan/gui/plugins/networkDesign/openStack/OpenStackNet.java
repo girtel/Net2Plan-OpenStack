@@ -144,6 +144,7 @@ public class OpenStackNet
             allOpenStackNetworkElements.addAll(openStackClient.openStackResources);
             allOpenStackNetworkElements.addAll(openStackClient.openStackMeters);
             allOpenStackNetworkElements.addAll(openStackClient.openStackMeasures);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackSummaries);
 
 
         }
