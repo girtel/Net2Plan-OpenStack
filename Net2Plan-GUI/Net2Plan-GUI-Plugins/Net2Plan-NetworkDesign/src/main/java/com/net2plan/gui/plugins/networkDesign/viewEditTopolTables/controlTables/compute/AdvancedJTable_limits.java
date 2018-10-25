@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackHostResource;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackImage;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackLimits;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
@@ -40,6 +41,27 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo() {
         final List<AjtRcMenu> res = new ArrayList<>();
 
+
+        res.add(new AjtRcMenu("Adjust quotas with host", e -> getSelectedElements().forEach(n -> {
+
+            int numeroDeProyectos = n.getOpenStackClient().openStackProjects.size();
+            AbsoluteLimit absoluteLimit = n.getOpenStackClient().getClient().compute().quotaSets().limits().getAbsolute();
+
+            n.getOpenStackClient().openStackHostResources.stream().forEach(r-> {
+
+
+                if(((OpenStackHostResource)r).getHostProject().equals("(total)")) {
+                    n.getOpenStackClient().getClient().compute().quotaSets()
+                            .updateForTenant(openStackClient.openStackProjects.stream().filter(p->p.getProjectName().equals("admin")).findFirst().get().getId(), Builders.quotaSet()
+                                    .cores(r.getHostCpu())
+                                   // .keyPairs(10)
+                                    .instances(10)
+                                    .ram(r.getHostMemory())
+                                    .build());
+                }
+            });
+
+        }), (a, b) -> b == 1, null));
 
         res.add(new AjtRcMenu("Adjust percentage of quotas", e -> getSelectedElements().forEach(n -> {
 

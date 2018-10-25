@@ -10,6 +10,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.gui.plugins.utils.GeneralForm;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.State;
 
@@ -87,7 +88,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         headers.put("Network type","Select");
         headers.put("IsExternal","Boolean");
         headers.put("Provider ID","");
-        generalTableForm("Add network",headers);
+        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient);
 
 
 

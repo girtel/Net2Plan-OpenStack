@@ -15,6 +15,7 @@ package com.net2plan.gui.plugins.networkDesign.topologyPane.jung;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Paint;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -111,14 +112,15 @@ public class GUILink
     {
     	if (npLink == null) return edgeDrawPaint;
     	if (!npLink.isUp()) return Color.RED;
-    	
+    	if (npLink.isUp()) return npLink.getColor();
+
     	/* Consider worst case color if not separated links */
     	final Set<Link> overlappingLinksToConsider = shownSeparated ? Sets.newHashSet(npLink) : 
     		npLink.getNetPlan().getNodePairLinks(npLink.getOriginNode(), npLink.getDestinationNode(), true);
 
     	/* In red if any overlapping link is down */
-    	if (overlappingLinksToConsider.stream().anyMatch(ee->ee.isDown())) return Color.RED; 
-    		
+    	if (overlappingLinksToConsider.stream().anyMatch(ee->ee.isDown())) return Color.RED;
+
     	if (vs.getIsActiveLinkUtilizationColorThresholdList())
         {
     		if(!npLink.getLayer().isDefaultLayer()) return edgeDrawPaint;
@@ -127,7 +129,7 @@ public class GUILink
         }
     	else if (vs.getIsActiveLinkRunoutTimeColorThresholdList())
     	{
-                 return edgeDrawPaint;   
+                 return edgeDrawPaint;
     	} else
     		return edgeDrawPaint;
     }
@@ -173,12 +175,19 @@ public class GUILink
             temp.append("<html>");
             temp.append("<table border=\"0\">");
             temp.append("<tr><td colspan=\"2\"><strong>Link index " + npLink.getIndex() + " (id: " + npLink.getId() + ") - Layer " + getLayerName(layer) + "</strong></td></tr>");
-            temp.append("<tr><td>Link carried traffic:</td><td>" + String.format("%.2f" , npLink.getCarriedTraffic()) + " " + trafUnits + "</td></tr>");
+            final Map<String,String> attributes = npLink.getAttributes();
+            for(String string: attributes.keySet()){
+                temp.append("<tr><td>"+string+":</td>");
+                temp.append("<td>" + attributes.get(string)+"</td></tr>");
+
+            }
+            /* temp.append("<tr><td>Link carried traffic:</td><td>" + String.format("%.2f" , npLink.getCarriedTraffic()) + " " + trafUnits + "</td></tr>");
             temp.append("<tr><td>Link occupied capacity:</td><td>" + String.format("%.2f" , npLink.getOccupiedCapacity()) + " " + capUnits + "</td></tr>");
             temp.append("<tr><td>Link capacity:</td><td>" + String.format("%.2f" , npLink.getCapacity()) + " " + capUnits + "</td></tr>");
             temp.append("<tr><td>Link utilization:</td><td>" + String.format("%.2f" , npLink.getUtilization()) + "</td></tr>");
             temp.append("<tr><td>Destination layer:</td><td>" + getLayerName(destinationNode.getLayer()) + "</td></tr>");
             temp.append("<tr><td>Link length:</td><td>" + String.format("%.2f" , npLink.getLengthInKm()) + " km (" + String.format("%.2f" , npLink.getPropagationDelayInMs()) + " ms)" + "</td></tr>");
+           */
             temp.append("</table>");
             temp.append("</html>");
         }

@@ -82,117 +82,107 @@ public class GeneralForm extends JFrame implements ActionListener{
 
     }
     public void recomputFields(){
+
         for(String key : headers.keySet()){
             JLabel jlabel = new JLabel(key, SwingConstants.LEFT);
             propertiesPanel.add(jlabel);
             switch (headers.get(key)){
-
                 case "Boolean":
                     JCheckBox jCheckBox = new JCheckBox();
                     propertiesPanel.add(jCheckBox);
                     break;
                 case "Select":
                     JComboBox jComboBox;
-                    Object[] stockArr = new String[1];
-                    stockArr[0] = "empty";
-                    List<String> stockList = new ArrayList<>() ;
-                    switch (key){
-                        case "Domain ID":
-                            stockList = openStackClient.openStackDomains.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Tenant ID":
-                            stockList = openStackClient.openStackProjects.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Network ID":
-                            stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Subnet ID":
-                            stockList = openStackClient.openStackSubnets.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Flavor ID":
-                            stockList = openStackClient.openStackFlavors.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Image ID":
-                            stockList = openStackClient.openStackImages.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Port ID":
-                            stockList = openStackClient.openStackPorts.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Router ID":
-                            stockList = openStackClient.openStackRouters.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "Server ID":
-                            stockList = openStackClient.openStackServers.stream().map(n -> (String)n.getId()).collect(Collectors.toList());
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                        case "IP version":
-                            stockArr = IPVersionType.values();
-                            break;
-                        case "Network type":
-                            stockArr = NetworkType.values();
-                            break;
-                        case "Service type":
-                            stockArr = ServiceType.values();
-                            break;
-                        case "Facing":
-                            stockArr = Facing.values();
-                            break;
-                        case "Pool Name":
-                            stockList = openStackClient.getClient().compute().floatingIps().getPoolNames();
-                            stockArr = new String[stockList.size()];
-                            stockArr = stockList.toArray(stockArr);
-                            break;
-                    }
-
-                    jComboBox = new JComboBox(stockArr);
+                    jComboBox = new JComboBox(getSelectItems(key));
                     propertiesPanel.add(jComboBox);
                     break;
-                case "Special-ipv4masc":
-                    try {
-                        MaskFormatter mf = new MaskFormatter("###-###-###-###/##");
-                        JFormattedTextField f = new JFormattedTextField(mf);
-                        propertiesPanel.add(f);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Special-ipv4":
-                    try {
-                        MaskFormatter mf = new MaskFormatter("###-###-###-###");
-                        JFormattedTextField f = new JFormattedTextField(mf);
-                        propertiesPanel.add(f);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-
-                    break;
-                default:
+                case "Cidr":
                     JTextField jtextField = new JTextField();
+                    jtextField.setToolTipText("192.168.0.0/24");
                     propertiesPanel.add(jtextField);
                     break;
+                default:
+                    JTextField textField = new JTextField();
+                    propertiesPanel.add(textField);
+                    break;
             }
-
         }
 
-
+    }
+    public Object [] getSelectItems(String key){
+        Object[] stockArr = new String[1];
+        stockArr[0] = "empty";
+        List<String> stockList = new ArrayList<>() ;
+        switch (key){
+            case "Domain ID":
+                stockList = openStackClient.openStackDomains.stream().map(n -> (String)n.getDomainName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Tenant ID":
+                stockList = openStackClient.openStackProjects.stream().map(n -> (String)n.getProjectName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Network ID":
+                stockList = openStackClient.openStackNetworks.stream().map(n -> (String)n.getName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Subnet ID":
+                stockList = openStackClient.openStackSubnets.stream().map(n -> (String)n.getName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Flavor ID":
+                stockList = openStackClient.openStackFlavors.stream().map(n -> (String)n.getFlavorName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Image ID":
+                stockList = openStackClient.openStackImages.stream().map(n -> (String)n.getName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Port ID":
+                stockList = openStackClient.openStackPorts.stream().map(n -> (String)n.getName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Router ID":
+                stockList = openStackClient.openStackRouters.stream().map(n -> (String)n.getRouterName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Server ID":
+                stockList = openStackClient.openStackServers.stream().map(n -> (String)n.getServerName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Role ID":
+                stockList = openStackClient.openStackRoles.stream().map(n -> (String)n.getRoleName()).collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "IP version":
+                stockArr = IPVersionType.values();
+                break;
+            case "Network type":
+                stockArr = NetworkType.values();
+                break;
+            case "Service type":
+                stockArr = ServiceType.values();
+                break;
+            case "Facing":
+                stockArr = Facing.values();
+                break;
+            case "Pool Name":
+                stockList = openStackClient.getClient().compute().floatingIps().getPoolNames();
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+        }
+        return stockArr;
     }
     public void actionPerformed(ActionEvent e) {
         Component [] components = propertiesPanel.getComponents();
@@ -215,17 +205,17 @@ public class GeneralForm extends JFrame implements ActionListener{
                     break;
             }
         }
+        openStackClient.getClient();
 
         switch (ajTableType){
 
             case USERS:
-                openStackClient.getClient();
                 openStackClient.getOpenStackNetCreate().createOpenStackUser(jsonObject);
                 break;
             case PROJECTS:
-                openStackClient.getClient();
                 openStackClient.getOpenStackNetCreate().createOpenStackProject(jsonObject);
                 break;
+
             /*NETWORK*/
             case PORTS:
                 openStackClient.getOpenStackNetCreate().createOpenStackPort(jsonObject);
@@ -259,12 +249,7 @@ public class GeneralForm extends JFrame implements ActionListener{
 
         }
 
-        try {
-            openStackClient.getOsn().getCallback().getViewEditTopTables().updateView();
-
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
+        openStackClient.getOsn().getCallback().getViewEditTopTables().updateView();
 
         dispose();
 

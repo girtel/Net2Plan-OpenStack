@@ -141,6 +141,7 @@ public class FigureForwardingRuleSequencePanel extends FigureSequencePanel
 
         int topCoordinateLineNodes = maxIconSize + (generalMessage.size() * regularInterlineSpacePixels) + (maxNumberOfTagsPerNodeNorResource * regularInterlineSpacePixels) * iconRow;
         Point initialDnTopLeftPosition = new Point(maxIconSize, topCoordinateLineNodes);
+
         int xSeparationDnCenters = maxIconSize * 3;
 
         g2d.setFont(headerFont);

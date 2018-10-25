@@ -11,6 +11,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.gui.plugins.utils.GeneralForm;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Ipv6AddressMode;
 import org.openstack4j.model.network.Ipv6RaMode;
@@ -156,9 +157,9 @@ updateTab();
         headers.put("Name","");
         headers.put("Network ID","Select");
         headers.put("IP version","Select");
-        headers.put("Cidr","Special-ipv4masc");
+        headers.put("Cidr","Cidr");
         headers.put("Tenant ID","Select");
-        generalTableForm("Add subnet",headers);
+        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient);
 
     }
     public void removeSubnet(OpenStackSubnet subnet){

@@ -37,6 +37,7 @@ import org.openstack4j.model.telemetry.Meter;
 import org.openstack4j.model.telemetry.Resource;
 import org.openstack4j.openstack.OSFactory;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -47,6 +48,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -109,6 +111,8 @@ public class OpenStackClient {
     private OpenStackNet osn;
     private Token token;
     private NetPlan netPlan;
+
+
 
     public OpenStackClient (){
         this.osn= new OpenStackNet();
@@ -515,6 +519,8 @@ public class OpenStackClient {
 
     public void doTopology(){
 
+
+
         // Node list
         final List<OpenStackRouter> routerList = getOpenStackRouters();
         final List<OpenStackNetwork> networkList = getOpenStackNetworks();
@@ -582,10 +588,15 @@ public class OpenStackClient {
             }
         }
 
+        Map<String, Color> colores = getColores() ;
         for(OpenStackNetwork openStackNetwork: networkList){
             for(OpenStackSubnet openStackSubnet:subnetList){
                 if(openStackNetwork.getId().equals(openStackSubnet.getSubnetNetworkId())){
-                    this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
+                    Map<String,String> attributes = new HashMap<>();
+                    attributes.put("Network ",openStackNetwork.getName());
+                    attributes.put("Subnet ",openStackSubnet.getName());
+                    attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackSubnet.getSubnetTenantId())).findFirst().get().getProjectName());
+                    this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,attributes).setColor(colores.get(openStackNetwork.getNetworkTenantId()));
                 }
             }
 
@@ -595,7 +606,11 @@ public class OpenStackClient {
             for(OpenStackRouter openStackRouter : routerList){
                 for(OpenStackNetwork openStackNetwork: networkList){
                     if(openStackNetwork.getId().equals(openStackPort.getPortNetworkId()) && openStackRouter.getId().equals(openStackPort.getPortDeviceId())){
-                        this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,null);
+                        Map<String,String> attributes = new HashMap<>();
+                        attributes.put("Network ",openStackNetwork.getName());
+                        attributes.put("Router ",openStackRouter.getRouterName());
+                        attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackNetwork.getNetworkTenantId())).findFirst().get().getProjectName());
+                        this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,attributes).setColor(colores.get(openStackNetwork.getNetworkTenantId()));
                     }
                 }
             }
@@ -604,11 +619,29 @@ public class OpenStackClient {
         for(OpenStackServer openStackServer: this.getOpenStackServers()){
             for(OpenStackSubnet openStackSubnet: subnetList) {
                 if(OpenStackUtils.belongsToThisNetwork(openStackServer.getServer(), openStackSubnet.getSubnet())){
-                    this.getNetPlanDesign().addLinkBidirectional(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,null);
+                    Map<String,String> attributes = new HashMap<>();
+                    attributes.put("Subnet ",openStackSubnet.getName());
+                    attributes.put("Server ",openStackServer.getServerName());
+                    attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackSubnet.getSubnetTenantId())).findFirst().get().getProjectName());
+                    this.getNetPlanDesign().addLink(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,attributes).setColor(colores.get(openStackSubnet.getSubnetTenantId()));
                 }
             }
         }
 
 
     }
+
+    public Map<String, Color> getColores(){
+
+        Map<String,Color> colores = new HashMap<>();
+        Random random = new Random(77);
+        for(OpenStackProject openStackProject: getOpenStackProjects()){
+            colores.put(openStackProject.getId(),new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255)));
+        }
+        System.out.println(colores);
+        return colores;
+
+    }
+
+
 }

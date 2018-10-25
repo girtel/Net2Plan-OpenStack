@@ -7,6 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.gui.plugins.utils.GeneralForm;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.*;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
@@ -108,7 +109,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Flavor ID","Select");
         headers.put("Image ID", "Select");
         headers.put("Network ID","Select");
-        generalTableForm("Add server",headers);
+        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient);
     }
 
 

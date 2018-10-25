@@ -84,6 +84,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         newList.put("Domain ID","Select");
         newList.put("Tenant ID","Select");
         newList.put("Enable","Boolean");
+        newList.put("Role ID","Select");
 
         GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient);
         //generalTableForm("Add user",newList);

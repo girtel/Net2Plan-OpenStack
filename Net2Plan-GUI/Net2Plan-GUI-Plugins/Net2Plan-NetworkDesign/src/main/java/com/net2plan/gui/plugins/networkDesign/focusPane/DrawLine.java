@@ -99,7 +99,6 @@ class DrawLine
         final int y1 = dl.pFrom.y;
         final int x2 = dl.pTo.x;
         final int y2 = dl.pTo.y;
-
         if (stroke == null)
         {
             if (dl.associatedElement instanceof Link)

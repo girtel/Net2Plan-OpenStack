@@ -19,7 +19,9 @@ import com.net2plan.utils.Constants.RoutingType;
 import com.net2plan.utils.Pair;
 import com.net2plan.utils.Triple;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -54,13 +56,12 @@ public class Link extends NetworkElement
 	double propagationSpeedInKmPerSecond;
 	boolean isUp;
 	Link bidirectionalPair;
-
 	Set<SharedRiskGroup> cache_srgs;
 	Map<Route,Integer> cache_traversingRoutes; // for each traversing route, the number of times it traverses this link (in seqLinksRealPath). If the route has segments, their internal route counts also
 	Set<MulticastTree> cache_traversingTrees;
 	Demand coupledLowerLayerDemand;
 	MulticastDemand coupledLowerLayerMulticastDemand;
-	
+	Color color;
 	Map<Demand,Double> cacheHbH_frs;
 	Map<Demand,Pair<Double,Double>> cacheHbH_normCarriedOccupiedPerTraversingDemandCurrentState; // carried is normalized respect to demand total CARRIED traffic
 	
@@ -102,6 +103,7 @@ public class Link extends NetworkElement
 		this.cacheHbH_normCarriedOccupiedPerTraversingDemandCurrentState = new HashMap<> ();
 		this.capacity = capacity;
 		this.bidirectionalPair = null;
+		this.color = Color.RED;
 		if (capacity < Configuration.precisionFactor) layer.cache_linksZeroCap.add(this); // do not call here the regular updae function on purpose, there is no previous capacity info
 	}
 
@@ -157,8 +159,8 @@ public class Link extends NetworkElement
 		if (!NetPlan.isDeepCopy(this.cacheHbH_normCarriedOccupiedPerTraversingDemandCurrentState , e2.cacheHbH_normCarriedOccupiedPerTraversingDemandCurrentState)) return false;
 		return true;
 	}
-	
-	
+
+
 	/** Returns the set of demands in this layer, with non zero forwarding rules defined for them in this link. 
 	 * The link may or may not carry traffic, and may be or not be failed.
 	 * @return see above
@@ -168,6 +170,9 @@ public class Link extends NetworkElement
 		layer.checkRoutingType(RoutingType.SOURCE_ROUTING);
 		return this.cacheHbH_frs.keySet().stream().filter(d->cacheHbH_frs.get(d) != 0).collect(Collectors.toSet());
 	}
+
+	public Color getColor(){return color;}
+	public Color setColor(Color color){return this.color = color;}
 
 	/**
 	 * <p>Returns the link origin node.</p>

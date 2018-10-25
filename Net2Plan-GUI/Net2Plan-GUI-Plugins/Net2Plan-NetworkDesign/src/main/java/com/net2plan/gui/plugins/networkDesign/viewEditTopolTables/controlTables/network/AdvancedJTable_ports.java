@@ -8,6 +8,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+import com.net2plan.gui.plugins.utils.GeneralForm;
 import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
@@ -89,7 +90,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         headers.put("Name","");
         headers.put("Subnet ID","Select");
         headers.put("Router ID","Select");
-        generalTableForm("Add port",headers);
+        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient);
 
     }
     public void removePort(OpenStackPort port){

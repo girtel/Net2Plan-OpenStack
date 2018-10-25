@@ -1,5 +1,6 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackProject;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 import org.apache.commons.lang.ObjectUtils;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import org.openstack4j.model.compute.VNCConsole;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.Role;
 import org.openstack4j.model.identity.v3.Token;
+import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.image.v2.ContainerFormat;
 import org.openstack4j.model.image.v2.DiskFormat;
 import org.openstack4j.model.image.v2.Image;
@@ -54,14 +56,20 @@ public class OpenStackNetCreate{
 
     //Identity
     public void createOpenStackUser(JSONObject information){
-        changeOs(Facing.INTERNAL);
-        String userName = information.getString("Name");
-        String password = information.getString("Password");
-        String domainId = information.getString("Domain ID");
-        String projectId = information.getString("Tenant ID");
-        Boolean enabled = information.getBoolean("Enable");
-    try{
-        this.osClientV3.identity().users().create(Builders.user()
+
+        final String userName = information.getString("Name");
+        final String password = information.getString("Password");
+        final String domainName= information.getString("Domain ID");
+        final String projectName = information.getString("Tenant ID");
+        final String roleName = information.getString("Role ID");
+        final Boolean enabled = information.getBoolean("Enable");
+
+        final String projectId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals(projectName)).findFirst().get().getId();
+        final String domainId = openStackClient.openStackDomains.stream().filter(n->n.getDomainName().equals(domainName)).findFirst().get().getId();
+        final String roleId = openStackClient.openStackRoles.stream().filter(n->n.getRoleName().equals(roleName)).findFirst().get().getId();
+
+        try{
+        User user = this.osClientV3.identity().users().create(Builders.user()
                 .name(userName)
                 .password(password)
                 .domainId(domainId)
@@ -69,7 +77,10 @@ public class OpenStackNetCreate{
                 .enabled(enabled)
                 .build());
 
-    }catch(Exception ex){
+        ActionResponse grantProjectRole = this.osClientV3.identity().roles().grantProjectUserRole(projectId, user.getId(), roleId);
+
+        System.out.println(grantProjectRole.isSuccess());
+        }catch(Exception ex){
 
         logPanel();
         System.out.println(ex.toString());
@@ -77,20 +88,19 @@ public class OpenStackNetCreate{
     }
     }
     public void createOpenStackProject(JSONObject information){
-        changeOs(Facing.INTERNAL);
-        System.out.println("INFORMATION "+ information);
-        String projectName = information.getString("Name");
-        String projectDomainId = information.getString("Domain ID");
-        Boolean enabled = information.getBoolean("Enable");
 
-       try{
+        final String projectName = information.getString("Name");
+        final String projectDomainName = information.getString("Domain ID");
+        final Boolean enabled = information.getBoolean("Enable");
+        final String projectDomainId = openStackClient.openStackDomains.stream().filter(n->n.getDomainName().equals(projectDomainName)).findFirst().get().getId();
+
+        try{
+
            openStackClient.keystone.createProject(projectName,projectDomainId,enabled);
-
 
        }catch(Exception ex){
 
         logPanel();
-        System.out.println(ex.toString());
         ex.printStackTrace();
     }
     }
@@ -224,10 +234,14 @@ public class OpenStackNetCreate{
 
     //Create networks elements in OpenStack
     public void createOpenStackRouter(JSONObject information){
-        changeOs(Facing.PUBLIC);
+
         String routerName = information.getString("Name");
-        String routerTenantId = information.getString("Tenant ID");
-        String routerGateway = information.getString("Network ID");
+        String routerTenantName = information.getString("Tenant ID");
+        String routerGatewayName = information.getString("Network ID");
+
+        final String routerTenantId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals(routerTenantName)).findFirst().get().getId();
+        final String routerGateway = openStackClient.openStackNetworks.stream().filter(n->n.getName().equals(routerGatewayName)).findFirst().get().getId();
+
         try{
         this.osClientV3.networking().router().create(Builders.router()
                 .name(routerName)
@@ -244,23 +258,18 @@ public class OpenStackNetCreate{
 
     }
     public void createOpenStackNetwork(JSONObject information){
-        changeOs(Facing.PUBLIC);
-        String networkTenantId = information.getString("Tenant ID");
+
+        String networkTenantName = information.getString("Tenant ID");
         String networkName = information.getString("Name");
         String networkProvider= information.getString("Provider ID");
-        NetworkType networkType = null;
-        try {
-             networkType = NetworkType.valueOf(information.getString("Network type"));
-        }catch(Exception ex){
-            createOpenStackSubnet(information);
-            return;
-        }
+        NetworkType networkType  = NetworkType.valueOf(information.getString("Network type"));
         Boolean networkExternal = information.getBoolean("IsExternal");
+        final String projectId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals(networkTenantName)).findFirst().get().getId();
 
         try{
             this.osClientV3.networking().network().create(Builders.network()
                     .name(networkName)
-                    .tenantId(networkTenantId)
+                    .tenantId(projectId)
                     .networkType(networkType)
                     .isRouterExternal(networkExternal)
                     .segmentId(networkProvider)
@@ -273,12 +282,15 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackSubnet(JSONObject information){
-        changeOs(Facing.PUBLIC);
+
         String subnetName = information.getString("Name");
-        String subnetNetworkId = information.getString("Network ID");
-        String subnetTenantId = information.getString("Tenant ID");
+        String subnetNetworkName = information.getString("Network ID");
+        String subnetTenantName = information.getString("Tenant ID");
         IPVersionType versionType = IPVersionType.valueOf(information.getString("IP version"));
-        String subnetCidr = prepareCidr(information.getString("Cidr"));
+        String subnetCidr = information.getString("Cidr");
+
+        final String subnetNetworkId = openStackClient.openStackNetworks.stream().filter(n->n.getName().equals(subnetNetworkName)).findFirst().get().getId();
+        final String projectId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals(subnetTenantName)).findFirst().get().getId();
 
         try {
             this.osClientV3.networking().subnet().create(Builders.subnet()
@@ -286,7 +298,7 @@ public class OpenStackNetCreate{
                     .networkId(subnetNetworkId)
                     .ipVersion(versionType)
                     .cidr(subnetCidr)
-                    .tenantId(subnetTenantId)
+                    .tenantId(projectId)
                     .build());
         }catch(Exception ex){
 
@@ -295,24 +307,13 @@ public class OpenStackNetCreate{
 
         }
     }
-    public String prepareCidr(String cidr){
-
-        String[] parts = cidr.split("-");
-        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
-        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
-        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
-        String part4 = parts[3]; //###/##
-        String[] newParts = part4.split("/");
-        String part5 = String.valueOf(Integer.parseInt(newParts[0])); // ###
-        String part6 = String.valueOf(Integer.parseInt(newParts[1])); //##
-        String response = part1+"."+part2+"."+part3+"."+part5+"/"+part6;
-
-        return response;
-    }
     public void createOpenStackPort(JSONObject information){
-        changeOs(Facing.PUBLIC);
-        String portSubnetId = information.getString("Subnet ID");
-        String portDeviceId = information.getString("Router ID");
+
+        String portSubnetName= information.getString("Subnet ID");
+        String portDeviceName = information.getString("Router ID");
+
+        final String portSubnetId = openStackClient.openStackSubnets.stream().filter(n->n.getName().equals(portSubnetName)).findFirst().get().getId();
+        final String portDeviceId = openStackClient.openStackRouters.stream().filter(n->n.getRouterName().equals(portDeviceName)).findFirst().get().getId();
 
         try {
             // Attach an External Interface
@@ -326,6 +327,8 @@ public class OpenStackNetCreate{
 
         }
     }
+
+    /*
     public String prepareIp(String ip){
         String[] parts = ip.split("-");
         String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
@@ -336,16 +339,36 @@ public class OpenStackNetCreate{
 
         return response;
     }
+     public String prepareCidr(String cidr){
 
+        String[] parts = cidr.split("-");
+        String part1 = String.valueOf(Integer.parseInt(parts[0])); // ###
+        String part2 = String.valueOf(Integer.parseInt(parts[1])); //###
+        String part3 = String.valueOf(Integer.parseInt(parts[2])); // ###
+        String part4 = parts[3]; //###/##
+        String[] newParts = part4.split("/");
+        String part5 = String.valueOf(Integer.parseInt(newParts[0])); // ###
+        String part6 = String.valueOf(Integer.parseInt(newParts[1])); //##
+        String response = part1+"."+part2+"."+part3+"."+part5+"/"+part6;
+
+        return response;
+    }
+*/
     //Create compute elements in OpenStack
     public void createOpenStackServer(JSONObject information){
-        changeOs(Facing.PUBLIC);
+
         String serverName = information.getString("Name");
-        String serverFlavorId = information.getString("Flavor ID");
-        String serverImageId = information.getString("Image ID");
-        String serverNetworkId = information.getString("Network ID");
+        String serverFlavorName = information.getString("Flavor ID");
+        String serverImageName = information.getString("Image ID");
+        String serverNetworkName = information.getString("Network ID");
+
+        final String serverNetworkId = openStackClient.openStackNetworks.stream().filter(n->n.getName().equals(serverNetworkName)).findFirst().get().getId();
+        final String serverImageId = openStackClient.openStackImages.stream().filter(n->n.getName().equals(serverImageName)).findFirst().get().getId();
+        final String serverFlavorId = openStackClient.openStackFlavors.stream().filter(n->n.getFlavorName().equals(serverFlavorName)).findFirst().get().getId();
+
         List<String> list = new ArrayList<>();
         list.add(serverNetworkId);
+
         try {
             ServerCreate sc = this.osClientV3.compute().servers().serverBuilder()
                     .name(serverName)
@@ -381,9 +404,12 @@ public class OpenStackNetCreate{
         }
     }
     public void createOpenStackFloatingIp(JSONObject information){
-        changeOs(Facing.PUBLIC);
-        String serverId = information.getString("Server ID");
+
+        String serverName = information.getString("Server ID");
         String poolName = information.getString("Pool Name");
+
+        final String serverId = openStackClient.openStackServers.stream().filter(n->n.getServerName().equals(serverName)).findFirst().get().getId();
+
         try {
 
 
