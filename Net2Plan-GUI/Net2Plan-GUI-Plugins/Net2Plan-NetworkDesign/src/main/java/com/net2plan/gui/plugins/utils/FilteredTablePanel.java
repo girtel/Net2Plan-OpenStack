@@ -66,7 +66,7 @@ public class FilteredTablePanel extends JPanel
     {
         JPanel labelsPanel = new JPanel();
         labelsPanel.setLayout(new BorderLayout());
-        labelsPanel.setBackground(new Color(0, 94, 184));
+        labelsPanel.setBackground(new Color(218,57 ,39));
 
         this.numEntriesLabel = new JLabel("Number of entries: " + table.getRowCount());
         this.numEntriesLabel.setForeground(Color.WHITE);

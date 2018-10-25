@@ -152,10 +152,10 @@ public abstract class IGUIModule extends JPanel implements Plugin
 			JPanel pnl_title = new JPanel();
 
 			JLabel lbl_title = new JLabel(title);
-			pnl_title.setBackground(Color.YELLOW);
+			pnl_title.setBackground(new Color(218,57 ,39));
 			pnl_title.add(lbl_title);
 			lbl_title.setFont(new Font(lbl_title.getFont().getName(), Font.BOLD, 20));
-			lbl_title.setForeground(Color.BLACK);
+			lbl_title.setForeground(Color.WHITE);
 			add(pnl_title, "grow, wrap");
 		}
 

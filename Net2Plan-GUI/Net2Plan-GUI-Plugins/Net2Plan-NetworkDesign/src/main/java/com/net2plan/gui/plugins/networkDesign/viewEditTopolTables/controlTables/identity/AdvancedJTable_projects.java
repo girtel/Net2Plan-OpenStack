@@ -7,6 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.gui.plugins.utils.GeneralForm;
 
 import java.util.*;
 
@@ -99,7 +100,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
         newList.put("Domain ID","Select");
         newList.put("Enable","Boolean");
 
-        generalTableForm("Add project",newList);
+       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient);
     }
     public void removeProject(OpenStackProject project){
 

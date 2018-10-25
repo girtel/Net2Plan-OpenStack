@@ -111,9 +111,9 @@ public class TopologyTopBar extends JToolBar implements ActionListener
         btn_linkStyle = new JButton();
         btn_linkStyle.setToolTipText("Change link style");
 
-        btn_add.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/loadOpenStack.png")));
-        btn_load.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/loadOpenStack.png")));
-        btn_generate.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/loadOpenStack.png")));
+        btn_add.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/addOpenStack.png")));
+        btn_load.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/upOpenStack.png")));
+        btn_generate.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/downOpenStack.png")));
         btn_showNodeNames.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showNodeName.png")));
         btn_showLinkIds.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showLinkUtilization.png")));
         btn_showNonConnectedNodes.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showNonConnectedNodes.png")));

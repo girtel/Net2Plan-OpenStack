@@ -30,6 +30,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
+import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.utils.JScrollPopupMenu;
@@ -184,12 +185,13 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
         } else if (numClicks >= 2)
         {
+
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
 
             if(value != null) {
                 if (value.getClass().equals(Boolean.class)) changeValueOfBoolean(columnModelIndexOfClickOrMinus1IfOut);
 
-                pickSelectionHyperLink(value, columnModelIndexOfClickOrMinus1IfOut);
+                pickSelectionHyperLink((OpenStackNetworkElement)selectedElements.iterator().next(),value, columnModelIndexOfClickOrMinus1IfOut);
 
 
                 SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
@@ -229,7 +231,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         return completeListIncludingCommonColumns;
     }
 
-    public void pickSelectionHyperLink(Object value , int columnModelIndexOfClickOrMinus1IfOut){
+    public void pickSelectionHyperLink(OpenStackNetworkElement openStackNetworkElement,Object value , int columnModelIndexOfClickOrMinus1IfOut){
 
         switch (ajtType) {
             /*NETWORK*/
@@ -254,7 +256,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 break;
             case METERS:
 
-                callback.getOpenStackNet().getOsClients().forEach(n->n.updateMeasuresList(value.toString()));
+                callback.getOpenStackNet().getOsClients().forEach(n->n.updateMeasuresList((OpenStackMeter)openStackNetworkElement,value.toString()));
 
                 break;
 

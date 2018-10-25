@@ -78,21 +78,20 @@ public class OpenStackNetCreate{
     }
     public void createOpenStackProject(JSONObject information){
         changeOs(Facing.INTERNAL);
+        System.out.println("INFORMATION "+ information);
         String projectName = information.getString("Name");
         String projectDomainId = information.getString("Domain ID");
         Boolean enabled = information.getBoolean("Enable");
-    try{
-        this.osClientV3.identity().projects().create(Builders.project()
-                .name(projectName)
-                .domainId(projectDomainId)
-                .enabled(enabled)
-                .build());
 
-    }catch(Exception ex){
+       try{
+           openStackClient.keystone.createProject(projectName,projectDomainId,enabled);
+
+
+       }catch(Exception ex){
 
         logPanel();
         System.out.println(ex.toString());
-
+        ex.printStackTrace();
     }
     }
     public void createOpenStackDomain(JSONObject information){
