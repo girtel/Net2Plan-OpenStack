@@ -44,7 +44,7 @@ public class OpenStackQuotasUsage extends OpenStackNetworkElement
     public BigDecimal getVcpusUsage () { return this.vcpusUsage; }
     public BigDecimal getRamUsage () { return this.ramUsage; }
     public BigDecimal getVolumenGbUsage () { return this.volumenGbUsage; }
-    public OpenStackClient getOpenStackClient(){return this.openStackClient;}
+    //public OpenStackClient getOpenStackClient(){return this.openStackClient;}
 
     @Override
     public String get50CharactersDescription()

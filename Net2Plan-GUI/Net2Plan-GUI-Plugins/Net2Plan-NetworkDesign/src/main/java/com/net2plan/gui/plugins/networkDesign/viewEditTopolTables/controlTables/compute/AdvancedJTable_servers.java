@@ -76,6 +76,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Add server", e -> addServer(), (a, b) -> true, null));
         res.add(new AjtRcMenu("Get console", e -> getSelectedElements().forEach(n -> {
+            openStackClient.updateClient();
             VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
             try {
                 java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));

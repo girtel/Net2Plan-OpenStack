@@ -100,12 +100,12 @@ public class OpenStackServer  extends OpenStackNetworkElement
         this.osServer = server;
 
         Map<String,String> attributes = new HashMap<>();
-        attributes.put("rightClick","no");
+        //attributes.put("rightClick","no");
         attributes.put("Server ID",osServer.getId());
         attributes.put("Server Name",osServer.getName());
         attributes.put("Address",osServer.getAddresses().toString());
         attributes.put("Host",osServer.getHost());
-        attributes.put("Launched at",osServer.getLaunchedAt().toString());
+       // attributes.put("Launched at",osServer.getLaunchedAt().toString());
 
         final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
         npNode2.setName(server.getId());

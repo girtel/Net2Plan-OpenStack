@@ -56,7 +56,7 @@ public abstract class OpenStackNetworkElement implements Comparable<OpenStackNet
 
     public final OpenStackNet getOpenStackNet () { return this.osn; }
 
-
+    public final OpenStackClient getOpenStackClient(){return this.openStackClient;}
     @Override
     public int hashCode()
     {

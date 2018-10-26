@@ -171,8 +171,7 @@ public class Link extends NetworkElement
 		return this.cacheHbH_frs.keySet().stream().filter(d->cacheHbH_frs.get(d) != 0).collect(Collectors.toSet());
 	}
 
-	public Color getColor(){return color;}
-	public Color setColor(Color color){return this.color = color;}
+
 
 	/**
 	 * <p>Returns the link origin node.</p>

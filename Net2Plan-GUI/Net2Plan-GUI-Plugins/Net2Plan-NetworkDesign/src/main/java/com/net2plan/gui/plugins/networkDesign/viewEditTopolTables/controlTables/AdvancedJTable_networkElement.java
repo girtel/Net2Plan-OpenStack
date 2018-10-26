@@ -189,6 +189,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
 
             if(value != null) {
+
                 if (value.getClass().equals(Boolean.class)) changeValueOfBoolean(columnModelIndexOfClickOrMinus1IfOut);
 
                 pickSelectionHyperLink((OpenStackNetworkElement)selectedElements.iterator().next(),value, columnModelIndexOfClickOrMinus1IfOut);
@@ -869,6 +870,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
     public void changeValueOfBoolean(int columnModelIndexOfClickOrMinus1IfOut){
         System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
+        openStackClient.updateClient();
         final SortedSet<T> selectedElements = this.getSelectedElements();
         switch (ajtType){
             case NETWORKS:
@@ -912,7 +914,8 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                 }
                 break;
         }
-        updateTab();
+        //updateTab();
+        callback.getViewEditTopTables().updateView();
     }
 
     public String prepareIp(String ip){

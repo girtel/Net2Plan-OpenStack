@@ -69,7 +69,7 @@ public class OpenStackNetCreate{
         final String roleId = openStackClient.openStackRoles.stream().filter(n->n.getRoleName().equals(roleName)).findFirst().get().getId();
 
         try{
-        User user = this.osClientV3.identity().users().create(Builders.user()
+        User user = openStackClient.getClient().identity().users().create(Builders.user()
                 .name(userName)
                 .password(password)
                 .domainId(domainId)
@@ -77,7 +77,7 @@ public class OpenStackNetCreate{
                 .enabled(enabled)
                 .build());
 
-        ActionResponse grantProjectRole = this.osClientV3.identity().roles().grantProjectUserRole(projectId, user.getId(), roleId);
+        ActionResponse grantProjectRole = openStackClient.getClient().identity().roles().grantProjectUserRole(projectId, user.getId(), roleId);
 
         System.out.println(grantProjectRole.isSuccess());
         }catch(Exception ex){

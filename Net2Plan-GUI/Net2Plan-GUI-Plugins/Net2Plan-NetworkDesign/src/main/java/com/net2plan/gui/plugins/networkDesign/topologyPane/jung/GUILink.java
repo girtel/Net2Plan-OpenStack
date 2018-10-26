@@ -112,7 +112,8 @@ public class GUILink
     {
     	if (npLink == null) return edgeDrawPaint;
     	if (!npLink.isUp()) return Color.RED;
-    	if (npLink.isUp()) return npLink.getColor();
+    	if (npLink.isUp()) return Color.decode(npLink.getAttribute("Color"));
+
 
     	/* Consider worst case color if not separated links */
     	final Set<Link> overlappingLinksToConsider = shownSeparated ? Sets.newHashSet(npLink) : 

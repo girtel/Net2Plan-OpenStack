@@ -205,7 +205,7 @@ public class GeneralForm extends JFrame implements ActionListener{
                     break;
             }
         }
-        openStackClient.getClient();
+        openStackClient.updateClient();
 
         switch (ajTableType){
 

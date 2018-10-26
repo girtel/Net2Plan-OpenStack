@@ -17,6 +17,7 @@ import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackServer;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;
@@ -32,6 +33,9 @@ import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.types.Facing;
 import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.model.common.ActionResponse;
+import org.openstack4j.model.compute.Action;
+import org.openstack4j.model.compute.VNCConsole;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.NetworkType;
 
@@ -43,6 +47,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -129,8 +134,49 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
 
     	final NetPlan netPlan = callback.getDesign();
         if(node.getAttribute("rightClick") != null) return actions;
-        actions.add(new JMenuItem(new RemoveNodeAction("Remove node", node)));
+        //actions.add(new JMenuItem(new RemoveNodeAction("Remove node", node)));
+        JMenuItem console = new JMenuItem("Console");
+        console.addActionListener(e ->
+        {
+            OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
+            OpenStackClient openStackClient = openStackServer.getOpenStackClient();
+            openStackClient.updateClient();
+            VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(openStackServer.getId(), VNCConsole.Type.NOVNC);
+            try {
+                java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+        actions.add(console);
+        JMenuItem start = new JMenuItem("Start");
+        start.addActionListener(e ->
+        {
+            OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
+            OpenStackClient openStackClient = openStackServer.getOpenStackClient();
+            openStackClient.updateClient();
+            try {
+                ActionResponse list = openStackClient.getClient().compute().servers().action(openStackServer.getId(), Action.START);
+                System.out.println(list.toString());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        actions.add(start);
+        JMenuItem stop = new JMenuItem("Stop");
+        stop.addActionListener(e ->
+        {
+            OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
+            OpenStackClient openStackClient = openStackServer.getOpenStackClient();
+            openStackClient.updateClient();
+            try {
+                ActionResponse list = openStackClient.getClient().compute().servers().action(openStackServer.getId(), Action.STOP);
 
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+        actions.add(stop);
         if (netPlan.getNumberOfNodes() > 1)
         {
 
