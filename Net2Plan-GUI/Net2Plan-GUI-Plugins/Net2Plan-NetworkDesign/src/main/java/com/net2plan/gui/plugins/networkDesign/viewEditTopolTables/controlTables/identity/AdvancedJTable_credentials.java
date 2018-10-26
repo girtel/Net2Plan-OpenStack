@@ -42,7 +42,7 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add credential", e -> addCredential(), (a, b) -> true, null));
+      /*  res.add(new AjtRcMenu("Add credential", e -> addCredential(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove credential", e -> getSelectedElements().forEach(n -> {
 
@@ -72,7 +72,8 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
 
         }), (a, b) -> b ==1, null));
 
-
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -87,7 +88,7 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
         newList.put("Tenant ID","Select");
         newList.put("Blob","Select");
         newList.put("Type","Select");
-        generalTableForm("Add user",newList);
+        //generalTableForm("Add user",newList);
 
     }
     public void removeCredential(OpenStackCredential credential){

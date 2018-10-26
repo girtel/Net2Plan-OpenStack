@@ -70,6 +70,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         attributes.put("Subnet Name",subnet.getName());
         attributes.put("Subnet IP version ",subnet.getIpVersion().name());
         attributes.put("Subnet CIDR",subnet.getCidr());
+        attributes.put("rightClick","no");
         final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
         npNode2.setName(subnet.getId());
 
@@ -141,7 +142,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
 
         try {
             this.openStackClient.getClient().networking().subnet().update(osSubnet.toBuilder().addDNSNameServer(jsonObject.getString("DNS")).build());
-
+            //this.openStackClient.getOsn().getCallback().updateTopologyAndTables();
         }catch (Exception ex){
 
             logPanel();

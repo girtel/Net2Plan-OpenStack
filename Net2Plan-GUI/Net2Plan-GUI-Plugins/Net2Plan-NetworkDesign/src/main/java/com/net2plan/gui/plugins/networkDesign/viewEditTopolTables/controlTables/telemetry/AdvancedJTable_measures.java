@@ -37,7 +37,7 @@ public class AdvancedJTable_measures extends AdvancedJTable_networkElement<OpenS
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo() {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add new user", e -> addUser(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
 
         return res;

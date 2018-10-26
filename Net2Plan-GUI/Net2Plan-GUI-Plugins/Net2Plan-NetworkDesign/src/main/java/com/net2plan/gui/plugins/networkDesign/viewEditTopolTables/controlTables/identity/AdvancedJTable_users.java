@@ -56,6 +56,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
         }), (a, b) -> b==b, null));
 
+        /*
         res.add(new AjtRcMenu("Change the user's name", e -> getSelectedElements().forEach(n -> {
 
 
@@ -72,6 +73,8 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
             generalTableUpdate("Description",n,"");
 
         }), (a, b) -> b ==1, null));
+*/
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -86,7 +89,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         newList.put("Enable","Boolean");
         newList.put("Role ID","Select");
 
-        GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient);
+        GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient,this);
         //generalTableForm("Add user",newList);
     }
 

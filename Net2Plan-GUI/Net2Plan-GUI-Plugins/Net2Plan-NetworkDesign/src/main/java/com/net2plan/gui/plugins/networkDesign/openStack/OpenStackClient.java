@@ -241,7 +241,11 @@ public class OpenStackClient {
             this.os.compute().securityGroups().list().stream().forEach(n -> addOpenStackSecurityGroup(n));
 
             final List<? extends HostResource> hosts = os.compute().host().list();
-            hosts.stream().forEach(n -> os.compute().host().hostDescribe(((HostResource) n).getHostName()).stream().forEach(p -> addOpenStackHostResource(p)));
+
+            for(HostResource hostResource: hosts){
+                if(hostResource.getService().equals("compute"))
+                    this.os.compute().host().hostDescribe(hostResource.getHostName()).stream().forEach(p -> addOpenStackHostResource(p));
+            }
 
             /*Get elements of Image(GLANCE)*/
             this.os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
@@ -306,7 +310,7 @@ public class OpenStackClient {
                 values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
             }
             Graficos graficos = new Graficos(openStackMeter.getName(),openStackMeter.getMeter_unit(),values);
-            System.out.println(values);
+           // System.out.println(values);
             openStackSummaries.clear();
             OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
             if(!openStackSummaries.contains(openStackSummary))
@@ -600,7 +604,7 @@ public class OpenStackClient {
                     attributes.put("Subnet ",openStackSubnet.getName());
                     attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackSubnet.getSubnetTenantId())).findFirst().get().getProjectName());
                     attributes.put("Color",colores.get(openStackNetwork.getNetworkTenantId()));
-                    this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,attributes);
+                    this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,attributes);
                 }
             }
 
@@ -615,7 +619,7 @@ public class OpenStackClient {
                         attributes.put("Network ",openStackNetwork.getName());
                         attributes.put("Router ",openStackRouter.getRouterName());
                         attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackNetwork.getNetworkTenantId())).findFirst().get().getProjectName());
-                        this.getNetPlanDesign().addLink(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,attributes);
+                        this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,attributes);
                     }
                 }
             }
@@ -629,7 +633,7 @@ public class OpenStackClient {
                     attributes.put("Subnet ",openStackSubnet.getName());
                     attributes.put("Server ",openStackServer.getServerName());
                     attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackSubnet.getSubnetTenantId())).findFirst().get().getProjectName());
-                    this.getNetPlanDesign().addLink(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,attributes);
+                    this.getNetPlanDesign().addLinkBidirectional(openStackServer.getNpNode(),openStackSubnet.getNpNode(),20000,200000,20000,attributes);
                 }
             }
         }

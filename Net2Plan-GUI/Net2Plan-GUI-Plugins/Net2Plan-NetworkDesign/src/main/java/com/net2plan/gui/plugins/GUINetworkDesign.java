@@ -479,7 +479,17 @@ import java.util.List;
         public ViewEditTopologyTablesPane getViewEditTopTables(){
             return this.viewEditTopTables;
         }
+        public void updateTopologyAndTables(){
+            getDesign().removeAllNodes();
 
+            final VisualizationState vs = getVisualizationState();
+            Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                    vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(getDesign().getNetworkLayers()));
+            vs.setCanvasLayerVisibilityAndOrder(getDesign(), res.getFirst(), res.getSecond());
+            updateVisualizationAfterNewTopology();
+            addNetPlanChange();
+            getViewEditTopTables().updateView();
+        }
        /* public AboutIt getAboutIt(){
             return this.aboutIt;
         }*/

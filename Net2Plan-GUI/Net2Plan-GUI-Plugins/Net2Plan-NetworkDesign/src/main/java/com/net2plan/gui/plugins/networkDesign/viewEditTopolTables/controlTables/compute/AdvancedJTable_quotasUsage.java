@@ -35,11 +35,13 @@ public class AdvancedJTable_quotasUsage extends AdvancedJTable_networkElement<Op
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo() {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-
+/*
         res.add(new AjtRcMenu("Go to Glance", e -> getSelectedElements().forEach(n -> {
 
 
         }), (a, b) -> b == 1, null));
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

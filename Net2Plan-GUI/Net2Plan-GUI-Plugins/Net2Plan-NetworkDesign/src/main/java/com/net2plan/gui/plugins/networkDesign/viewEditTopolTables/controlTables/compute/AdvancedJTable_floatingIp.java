@@ -49,6 +49,7 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
 
         }), (a, b) -> b == 1, null));
 
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -59,11 +60,13 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
         Map<String,String> headers = new HashMap<>();
         headers.put("Server ID","Select");
         headers.put("Pool Name","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add floating ip",headers,this.ajtType,this.openStackClient);
+        GeneralForm generalTableForm = new GeneralForm("Add floating ip",headers,this.ajtType,this.openStackClient,this);
+
     }
     public void removeFloatingIp(OpenStackFloatingIp floatingIp){
 
         openStackClient.getOpenStackNetDelete().deleteOpenStackFloatingIp(floatingIp.getId());
+        updateTab();
     }
 
 }

@@ -57,6 +57,8 @@ public class AdvancedJTable_hostResources extends AdvancedJTable_networkElement<
         }), (a, b) -> b == 1, null));
 
 */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
         return res;
 
     }

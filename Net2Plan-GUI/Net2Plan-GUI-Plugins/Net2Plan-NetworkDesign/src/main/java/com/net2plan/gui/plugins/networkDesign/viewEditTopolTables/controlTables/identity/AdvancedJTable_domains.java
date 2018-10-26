@@ -42,7 +42,7 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add domain", e -> addDomain(), (a, b) -> true, null));
+       /* res.add(new AjtRcMenu("Add domain", e -> addDomain(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove domain", e -> getSelectedElements().forEach(n -> {
 
@@ -61,7 +61,8 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
             generalTableUpdate("Description",n,"");
 
         }), (a, b) -> b ==1, null));
-
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -74,7 +75,7 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
         newList.put("Name","");
         newList.put("Enable","Boolean");
 
-        generalTableForm("Add domain",newList);
+        //generalTableForm("Add domain",newList);
     }
     public void removeDomain(OpenStackDomain domain){
         System.out.println("Deleting");

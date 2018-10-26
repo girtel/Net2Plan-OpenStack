@@ -37,7 +37,7 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add region", e -> addRegion(), (a, b) -> true, null));
+       /* res.add(new AjtRcMenu("Add region", e -> addRegion(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove region", e -> getSelectedElements().forEach(n -> {
 
@@ -57,6 +57,8 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
             generalTableUpdate("Parent ID",n,"Select");
 
         }), (a, b) -> b ==1, null));
+*/
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -69,7 +71,7 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
         Map<String,String> newList = new HashMap<>();
         newList.put("Region ID","");
         newList.put("Description","");
-        generalTableForm("Add region",newList);
+        //generalTableForm("Add region",newList);
     }
     public void removeRegion(OpenStackRegion region){
 

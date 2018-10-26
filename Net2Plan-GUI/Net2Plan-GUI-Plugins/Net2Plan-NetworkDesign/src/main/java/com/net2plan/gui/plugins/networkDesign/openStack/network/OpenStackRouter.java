@@ -36,6 +36,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
 
     public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router,OpenStackClient openStackClient) {
         Map<String,String> attributes = new HashMap<>();
+        attributes.put("rightClick","no");
         attributes.put("Router ID",router.getId());
         attributes.put("Router Name",router.getName());
         attributes.put("Router State",router.getStatus().toString());

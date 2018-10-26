@@ -267,6 +267,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         }
     }
 
+    /*
     @Override
     public void generalTableForm(String title,Map<String,String> headers){
         JFrame jfM = new JFrame(title);
@@ -414,7 +415,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                 switch (ajtType){
 
-                    /*NETWORK*/
+
                     case PORTS:
                         openStackClient.getOpenStackNetCreate().createOpenStackPort(jsonObject);
                         break;
@@ -428,7 +429,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
                         openStackClient.getOpenStackNetCreate().createOpenStackRouter(jsonObject);
                         break;
 
-                    /*COMPUTE*/
+
                     case SERVERS:
                         openStackClient.getOpenStackNetCreate().createOpenStackServer(jsonObject);
                         break;
@@ -615,7 +616,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                 switch (ajtType){
 
-                    /*NETWORK*/
+
                     case PORTS:
                         switch(key){
                             case "Name":
@@ -715,7 +716,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         jfM.setVisible(true);
         jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-
+*/
     @Override
     public void updateTab(){
 
@@ -729,9 +730,10 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         vs.setCanvasLayerVisibilityAndOrder(callback.getDesign(), res.getFirst(), res.getSecond());
         callback.updateVisualizationAfterNewTopology();
         callback.addNetPlanChange();
+        callback.getViewEditTopTables().updateView();
 
     }
-
+/*
     @Override
     public void generalTableUpdate(String key, OpenStackNetworkElement osne,String type){
         JFrame jfM = new JFrame(key);
@@ -814,7 +816,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             public void actionPerformed(ActionEvent e) {
                 Component [] components = jp1.getComponents();
                 switch(ajtType){
-                    /*NETWORK*/
+
                     case PORTS:
                         switch(key){
                             case "Name":
@@ -831,7 +833,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
                         }
                         break;
-                    case ROUTERS:
+                   case ROUTERS:
                         switch(key){
                             case "Name":
                                 ((OpenStackRouter)osne).setName(null);
@@ -867,7 +869,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     }
-
+*/
     public void changeValueOfBoolean(int columnModelIndexOfClickOrMinus1IfOut){
         System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
         openStackClient.updateClient();

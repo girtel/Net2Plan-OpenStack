@@ -50,7 +50,7 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add flavor", e -> addFlavor(), (a, b) -> true, null));
+       /* res.add(new AjtRcMenu("Add flavor", e -> addFlavor(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove flavor", e -> getSelectedElements().forEach(n -> {
 
@@ -58,6 +58,8 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
 
         }), (a, b) -> b == 1, null));
 
+*/
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -69,7 +71,7 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
         newList.put("Name","");
         newList.put("RAM","");
         newList.put("CPUs","");
-        generalTableForm("Add flavor",newList);
+       // generalTableForm("Add flavor",newList);
 
     }
     public void removeFlavor(OpenStackFlavor flavor){

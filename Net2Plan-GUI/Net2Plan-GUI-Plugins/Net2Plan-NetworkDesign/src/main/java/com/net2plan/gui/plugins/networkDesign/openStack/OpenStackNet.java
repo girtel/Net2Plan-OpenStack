@@ -25,6 +25,7 @@ import org.openstack4j.model.network.*;
 import org.openstack4j.openstack.OSFactory;
 
 
+import static edu.emory.mathcs.utils.ConcurrencyUtils.setNumberOfThreads;
 import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 /**
@@ -104,6 +105,7 @@ public class OpenStackNet
             getOsClients().stream().forEach(n -> addOpenStackLimit(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().limits().getAbsolute(), n));
             getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().get(r.getId()), n, r.getId()));});
             getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
+
         }catch(Exception ex){
             ex.printStackTrace();
         }
@@ -176,6 +178,7 @@ public class OpenStackNet
         return res;
     }
     public OpenStackLimits addOpenStackLimit (AbsoluteLimit absoluteLimit, OpenStackClient openStackClient){
+        System.out.println(absoluteLimit);
         final OpenStackLimits res = OpenStackLimits.createFromAddLimit(this ,absoluteLimit,openStackClient);
         if(openStackLimits.contains(res)) return res;
         openStackLimits.add(res);

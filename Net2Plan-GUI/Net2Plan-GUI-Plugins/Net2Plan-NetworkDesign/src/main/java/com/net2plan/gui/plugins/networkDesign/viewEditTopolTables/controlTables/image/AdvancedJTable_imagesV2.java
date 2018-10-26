@@ -11,9 +11,12 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.internal.Constants;
 import com.net2plan.internal.SystemUtils;
 import org.json.JSONObject;
+import org.openstack4j.model.compute.VNCConsole;
+import org.openstack4j.model.image.v2.Image;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,8 +47,9 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
 
 
         res.add(new AjtRcMenu("Create image", e ->addImage(), (a, b) -> b >=0, null));
-
+        res.add(new AjtRcMenu("Remove image", e ->getSelectedElements().forEach(n -> {deleteImage(n);}), (a, b) -> b ==1, null));
         res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
         return res;
 
     }
@@ -59,8 +63,8 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
 
         int returnVal = chooser.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getName());
+            /*System.out.println("You chose to open this file: " +
+                    chooser.getSelectedFile().getName());*/
             JSONObject information = new JSONObject();
             information.put("PATH",chooser.getSelectedFile().getPath());
             information.put("NAME",chooser.getSelectedFile().getName());
@@ -68,6 +72,14 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
             updateTab();
         }
     }
+
+    public void deleteImage(OpenStackImageV2 image){
+
+        openStackClient.updateClient();
+        openStackClient.getOpenStackNetDelete().deleteOpenStackImage(image.getId());
+        updateTab();
+    }
+
 
 
 

@@ -50,7 +50,7 @@ public class AdvancedJTable_endpoints extends AdvancedJTable_networkElement<Open
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add endpoint", e -> addEndpoint(), (a, b) -> true, null));
+      /*  res.add(new AjtRcMenu("Add endpoint", e -> addEndpoint(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove endpoint", e -> getSelectedElements().forEach(n -> {
 
@@ -97,6 +97,8 @@ public class AdvancedJTable_endpoints extends AdvancedJTable_networkElement<Open
             generalTableUpdate("URL",n,"");
 
         }), (a, b) -> b ==1, null));
+*/
+      res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -110,7 +112,7 @@ public class AdvancedJTable_endpoints extends AdvancedJTable_networkElement<Open
         newList.put("Service ID","Select");
         newList.put("URL","");
 
-        generalTableForm("Add endpoint",newList);
+        //generalTableForm("Add endpoint",newList);
     }
     public void removeEndpoint(OpenStackEndpoint endpoint){
 

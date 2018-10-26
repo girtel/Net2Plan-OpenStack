@@ -49,6 +49,7 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
+    /*
         res.add(new AjtRcMenu("Add service", e -> addService(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove service", e -> getSelectedElements().forEach(n -> {
@@ -74,7 +75,8 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
             generalTableUpdate("Service type",n,"Select");
 
         }), (a, b) -> b ==1, null));
-
+*/
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
 
         return res;
@@ -86,7 +88,7 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
         newList.put("Name","");
         newList.put("Service type","Select");
 
-        generalTableForm("Add service",newList);
+       // generalTableForm("Add service",newList);
 
     }
     public void removeService(OpenStackService service){

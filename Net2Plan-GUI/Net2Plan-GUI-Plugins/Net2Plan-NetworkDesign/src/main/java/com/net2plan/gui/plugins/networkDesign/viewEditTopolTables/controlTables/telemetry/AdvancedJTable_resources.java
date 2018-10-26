@@ -39,8 +39,12 @@ public class AdvancedJTable_resources extends AdvancedJTable_networkElement<Open
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add new user", e->addUser(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Get metrics of resource", e -> getSelectedElements().forEach(n -> {
 
+         n.getOpenStackClient().updateMeterList(n.getId());
+
+        }), (a, b) -> b == 1, null));
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
 
         return res;

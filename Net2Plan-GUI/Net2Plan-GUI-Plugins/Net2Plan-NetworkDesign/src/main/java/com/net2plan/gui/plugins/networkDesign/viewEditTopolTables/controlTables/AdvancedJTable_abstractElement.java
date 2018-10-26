@@ -228,13 +228,13 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
 
     protected abstract List<T> getAllAbstractElementsInTable();
 
-    public abstract void generalTableForm(String title,Map<String,String> headers);
+   // public abstract void generalTableForm(String title,Map<String,String> headers);
 
-    public abstract void generalTableFormUpdate(String title,Map<String,String> headers,String key, OpenStackNetworkElement osne);
+   // public abstract void generalTableFormUpdate(String title,Map<String,String> headers,String key, OpenStackNetworkElement osne);
 
     public abstract void updateTab();
 
-    public abstract  void generalTableUpdate(String key, OpenStackNetworkElement osne,String type);
+   // public abstract  void generalTableUpdate(String key, OpenStackNetworkElement osne,String type);
 
     @Override
     public DefaultTableModel getModel()

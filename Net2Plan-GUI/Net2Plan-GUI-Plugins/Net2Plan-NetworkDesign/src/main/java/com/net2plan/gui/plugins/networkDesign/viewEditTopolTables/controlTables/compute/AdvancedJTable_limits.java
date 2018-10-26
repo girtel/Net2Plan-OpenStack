@@ -9,6 +9,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
+import com.net2plan.gui.plugins.utils.GeneralForm;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.compute.AbsoluteLimit;
 import org.openstack4j.model.compute.Image;
@@ -18,7 +19,7 @@ import java.util.*;
 public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenStackLimits> {
     public AdvancedJTable_limits(GUINetworkDesign callback, OpenStackClient openStackClient) {
         super(callback, ViewEditTopologyTablesPane.AJTableType.LIMITS, true, openStackClient);
-        System.out.println("Creating advancedjtable Limits");
+       // System.out.println("Creating advancedjtable Limits");
     }
 
     @Override
@@ -44,25 +45,15 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
 
         res.add(new AjtRcMenu("Adjust quotas with host", e -> getSelectedElements().forEach(n -> {
 
-            int numeroDeProyectos = n.getOpenStackClient().openStackProjects.size();
-            AbsoluteLimit absoluteLimit = n.getOpenStackClient().getClient().compute().quotaSets().limits().getAbsolute();
-
-            n.getOpenStackClient().openStackHostResources.stream().forEach(r-> {
-
-
-                if(((OpenStackHostResource)r).getHostProject().equals("(total)")) {
-                    n.getOpenStackClient().getClient().compute().quotaSets()
-                            .updateForTenant(openStackClient.openStackProjects.stream().filter(p->p.getProjectName().equals("admin")).findFirst().get().getId(), Builders.quotaSet()
-                                    .cores(r.getHostCpu())
-                                   // .keyPairs(10)
-                                    .instances(10)
-                                    .ram(r.getHostMemory())
-                                    .build());
-                }
-            });
+         getAllHostAndTakeQuotasForAdmin(n);
 
         }), (a, b) -> b == 1, null));
+        res.add(new AjtRcMenu("Adjust quotas manual", e -> getSelectedElements().forEach(n -> {
 
+            manualAdjust(n);
+
+        }), (a, b) -> b == 1, null));
+/*
         res.add(new AjtRcMenu("Adjust percentage of quotas", e -> getSelectedElements().forEach(n -> {
 
             int numeroDeProyectos = n.getOpenStackClient().openStackProjects.size();
@@ -76,8 +67,47 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
                     .build()));
 
         }), (a, b) -> b == 1, null));
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
+
+    }
+    public void getAllHostAndTakeQuotasForAdmin(OpenStackLimits openStackLimits){
+
+        OpenStackClient openStackClientFromLimit = openStackLimits.getOpenStackClient();
+        List<OpenStackHostResource> openStackHostResourcesFromClient = openStackClientFromLimit.openStackHostResources;
+        String adminProjectId = openStackClientFromLimit.openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get().getId();
+        int memory=0;
+        int cpu=0;
+        int disk=0;
+
+        for(OpenStackHostResource openStackHostResource: openStackHostResourcesFromClient){
+            if(openStackHostResource.getHostProject().equals("(total)")){
+                memory+=openStackHostResource.getHostMemory();
+                cpu+=openStackHostResource.getHostCpu();
+                disk+=openStackHostResource.getHostDisk();
+            }
+        }
+
+        openStackClientFromLimit.updateClient();
+
+        openStackClientFromLimit.getClient().compute().quotaSets()
+                .updateForTenant(adminProjectId, Builders.quotaSet()
+                        .cores(cpu)
+                        .ram(memory)
+                        .build());
+
+        updateTab();
+    }
+    public void manualAdjust(OpenStackLimits openStackLimits){
+
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Cores","");
+        headers.put("Ram","");
+        headers.put("Instances","");
+        GeneralForm generalTableForm = new GeneralForm("Change quotas limit",headers,this.ajtType,openStackLimits.getOpenStackClient(),this);
+
 
     }
 }

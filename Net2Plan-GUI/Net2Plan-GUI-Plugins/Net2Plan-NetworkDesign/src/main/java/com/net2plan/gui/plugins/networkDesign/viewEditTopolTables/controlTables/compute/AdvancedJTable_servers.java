@@ -87,8 +87,8 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
         }), (a, b) -> b ==1, null));
 
-        res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
-
+        /*res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
+            openStackClient.updateClient();
             try {
                 ActionResponse response = openStackClient.getClient().compute().servers().liveMigrate(n.getId(),LiveMigrateOptions.create().blockMigration(true).diskOverCommit(false));
             System.out.println("Code " + response.getCode()+ " Fault " + response.getFault() + "Success" + response.isSuccess());
@@ -98,7 +98,8 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
 
         }), (a, b) -> b ==1, null));
-
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -110,7 +111,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Flavor ID","Select");
         headers.put("Image ID", "Select");
         headers.put("Network ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient);
+        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this);
     }
 
 

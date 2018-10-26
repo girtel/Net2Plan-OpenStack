@@ -67,6 +67,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b == 1, null));
 
+        /*
         res.add(new AjtRcMenu("Change network's name", e -> getSelectedElements().forEach(n -> {
 
             Map<String,String> headers = new HashMap<>();
@@ -75,6 +76,8 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b ==1, null));
 
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -88,13 +91,14 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         headers.put("Network type","Select");
         headers.put("IsExternal","Boolean");
         headers.put("Provider ID","");
-        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient);
+        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient,this);
 
 
 
     }
     public void removeNetwork(OpenStackNetwork network){
 
+        openStackClient.updateClient();
         openStackClient.getOpenStackNetDelete().deleteOpenStackNetwork(network.getId());
         updateTab();
     }

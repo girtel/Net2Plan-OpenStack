@@ -39,11 +39,13 @@ public class AdvancedJTable_summaries extends AdvancedJTable_networkElement<Open
         final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Adjust percentage of quotas", e -> getSelectedElements().forEach(n -> {
+       /* res.add(new AjtRcMenu("Adjust percentage of quotas", e -> getSelectedElements().forEach(n -> {
 
 
 
         }), (a, b) -> b == 1, null));
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

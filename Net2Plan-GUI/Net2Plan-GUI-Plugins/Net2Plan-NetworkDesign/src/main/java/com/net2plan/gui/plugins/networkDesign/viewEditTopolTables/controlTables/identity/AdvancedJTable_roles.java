@@ -38,7 +38,7 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-
+/*
         res.add(new AjtRcMenu("Add role", e -> addRole(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove role", e -> getSelectedElements().forEach(n -> {
@@ -57,6 +57,9 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
             generalTableUpdate("Domain ID",n,"Select");
 
         }), (a, b) -> b ==1, null));
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
         return res;
 
     }
@@ -66,7 +69,7 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
         newList.put("Name","");
         newList.put("Domain ID","Select");
 
-        generalTableForm("Add role",newList);
+        //generalTableForm("Add role",newList);
 
     }
     public void removeRole(OpenStackRole role){

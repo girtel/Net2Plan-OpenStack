@@ -75,7 +75,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         SERVERS("Servers"),
         FLAVORS("Flavors"),
         FLOATINGIPS("Floating IPs"),
-        KEYPAIRS("Keypaairs"),
+        KEYPAIRS("Keypairs"),
         SECURITYGROUPS("Security groups"),
         HOSTRESOURCES("Host resources"),
 

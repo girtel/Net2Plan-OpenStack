@@ -135,7 +135,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
     	final NetPlan netPlan = callback.getDesign();
         if(node.getAttribute("rightClick") != null) return actions;
         //actions.add(new JMenuItem(new RemoveNodeAction("Remove node", node)));
-        JMenuItem console = new JMenuItem("Console");
+        JMenuItem console = new JMenuItem("Get console of server");
         console.addActionListener(e ->
         {
             OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
@@ -149,7 +149,8 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
             }
         });
         actions.add(console);
-        JMenuItem start = new JMenuItem("Start");
+        actions.add(new JPopupMenu.Separator());
+        JMenuItem start = new JMenuItem("Start server");
         start.addActionListener(e ->
         {
             OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
@@ -163,7 +164,8 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
             }
         });
         actions.add(start);
-        JMenuItem stop = new JMenuItem("Stop");
+        actions.add(new JPopupMenu.Separator());
+        JMenuItem stop = new JMenuItem("Stop server");
         stop.addActionListener(e ->
         {
             OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
@@ -177,6 +179,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
             }
         });
         actions.add(stop);
+        actions.add(new JPopupMenu.Separator());
         if (netPlan.getNumberOfNodes() > 1)
         {
 
@@ -216,7 +219,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         if (!vs.isNetPlanEditable()) return actions;
         if (vs.isWhatIfAnalysisActive()) return actions;
 
-        actions.add(new JMenuItem(new RemoveLinkAction("Remove link", link)));
+        //actions.add(new JMenuItem(new RemoveLinkAction("Remove link", link)));
 
         return actions;
     }
@@ -276,7 +279,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         final VisualizationState vs = callback.getVisualizationState();
         if (!vs.isNetPlanEditable()) return actions;
         if (vs.isWhatIfAnalysisActive()) return actions;
-
+/*
             JMenuItem addNode = new JMenuItem(new AddNodeAction("Add router here", positionInNetPlanCoordinates));
              actions.add(addNode);
              actions.add(new JPopupMenu.Separator());
@@ -300,7 +303,15 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         topologySettingMenu.add(circularSetting);
 
         actions.add(topologySettingMenu);
+*/
+        JMenuItem refresh = new JMenuItem("Refresh");
+        refresh.addActionListener(e ->
+        {
+           callback.updateVisualizationAfterNewTopology();
+           callback.getViewEditTopTables().updateView();
+        });
 
+        actions.add(refresh);
         return actions;
     }
 

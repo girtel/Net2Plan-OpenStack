@@ -12,6 +12,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.GeneralForm;
+import com.net2plan.gui.plugins.utils.GeneralFormUpdate;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Ipv6AddressMode;
 import org.openstack4j.model.network.Ipv6RaMode;
@@ -65,7 +66,16 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
             removeSubnet(n);
 
         }), (a, b) -> b == 1, null));
+        res.add(new AjtRcMenu("Add subnet's DNS", e -> getSelectedElements().forEach(n -> {
 
+            Map<String,String> headers = new HashMap<>();
+            headers.put("DNS","ip");
+            GeneralFormUpdate generalTableFormUpdate = new GeneralFormUpdate("Add dns",headers,"DNS",n,ajtType,openStackClient,this);
+            //updateTab();
+        }), (a, b) -> b ==1, null));
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
+        /*
         res.add(new AjtRcMenu("Change subnet's name", e -> getSelectedElements().forEach(n -> {
 
             Map<String,String> headers = new HashMap<>();
@@ -145,7 +155,7 @@ updateTab();
             generalTableFormUpdate("Change IP version",headers,"IP version",n);
 
         }), (a, b) -> b ==1, null));
-
+*/
 
         return res;
 
@@ -159,11 +169,12 @@ updateTab();
         headers.put("IP version","Select");
         headers.put("Cidr","Cidr");
         headers.put("Tenant ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient);
-
+        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this);
+        updateTab();
     }
     public void removeSubnet(OpenStackSubnet subnet){
 
+        openStackClient.updateClient();
         openStackClient.getOpenStackNetDelete().deleteOpenStackSubnet(subnet.getId());
         updateTab();
     }

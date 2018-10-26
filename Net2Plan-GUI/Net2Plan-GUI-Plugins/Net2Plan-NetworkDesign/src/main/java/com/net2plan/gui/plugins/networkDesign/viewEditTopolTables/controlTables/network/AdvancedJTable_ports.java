@@ -73,12 +73,14 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
         }), (a, b) -> b == 1, null));
 
+        /*
         res.add(new AjtRcMenu("Change port's name", e -> getSelectedElements().forEach(n -> {
 
             generalTableUpdate("Name",n,"");
 
         }), (a, b) -> b ==1, null));
-
+        */
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -90,11 +92,12 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         headers.put("Name","");
         headers.put("Subnet ID","Select");
         headers.put("Router ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient);
-
+        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this);
+        updateTab();
     }
     public void removePort(OpenStackPort port){
 
+        openStackClient.updateClient();
         openStackClient.getOpenStackNetDelete().deleteOpenStackPort(port.getId());
         updateTab();
     }

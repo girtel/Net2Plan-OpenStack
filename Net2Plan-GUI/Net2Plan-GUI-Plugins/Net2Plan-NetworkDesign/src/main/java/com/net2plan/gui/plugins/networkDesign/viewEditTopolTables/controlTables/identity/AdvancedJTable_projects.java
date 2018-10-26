@@ -58,7 +58,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b == 1, null));
 
-        res.add(new AjtRcMenu("Change project's name", e -> getSelectedElements().forEach(n -> {
+       /* res.add(new AjtRcMenu("Change project's name", e -> getSelectedElements().forEach(n -> {
 
             generalTableUpdate("Name",n,"");
 
@@ -89,6 +89,8 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b ==1, null));
 
+*/
+        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -100,7 +102,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
         newList.put("Domain ID","Select");
         newList.put("Enable","Boolean");
 
-       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient);
+       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient,this);
     }
     public void removeProject(OpenStackProject project){
 
