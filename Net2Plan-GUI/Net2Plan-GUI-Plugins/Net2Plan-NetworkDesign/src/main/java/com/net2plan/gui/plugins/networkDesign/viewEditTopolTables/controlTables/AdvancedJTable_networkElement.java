@@ -76,7 +76,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             @Override
             public void actionPerformed(ActionEvent actionEvent)
             {
-                final Set<T> selectedElements = AdvancedJTable_networkElement.this.getSelectedElements();
+                final Set<T> selectedElements = new TreeSet<>(AdvancedJTable_networkElement.this.getSelectedElements());
                 if (selectedElements.isEmpty()) return;
                 SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
             }
@@ -126,7 +126,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         final List<T> visibleElementsInTable = this.getAllAbstractElementsInTable();
         final List<AjtRcMenu> allPopupMenusButView = new ArrayList<> ();
         if (viewMenu.isPresent()) allPopupMenusButView.add(viewMenu.get());
-        allPopupMenusButView.add(new AjtRcMenu("Pick selection", e-> SwingUtilities.invokeLater(() -> pickSelection(this.getSelectedElements())), (a,b)->b>0, null));
+        allPopupMenusButView.add(new AjtRcMenu("Pick selection", e-> SwingUtilities.invokeLater(() -> pickSelection(new TreeSet<>(this.getSelectedElements()))), (a,b)->b>0, null));
         allPopupMenusButView.add(AjtRcMenu.createMenuSeparator());
         allPopupMenusButView.addAll(getNonBasicRightClickMenusInfo());
         for (AjtRcMenu popupInfo : allPopupMenusButView)
@@ -160,7 +160,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     @Override
     protected void reactToMouseClickInTable (int numClicks , int rowModelIndexOfClickOrMinus1IfOut , int columnModelIndexOfClickOrMinus1IfOut)
     {
-        final SortedSet<T> selectedElements = this.getSelectedElements();
+        final SortedSet<T> selectedElements = new TreeSet<>(this.getSelectedElements());
         if (numClicks == 1)
         {
             if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
@@ -873,7 +873,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     public void changeValueOfBoolean(int columnModelIndexOfClickOrMinus1IfOut){
         System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
         openStackClient.updateClient();
-        final SortedSet<T> selectedElements = this.getSelectedElements();
+        final SortedSet<T> selectedElements = new TreeSet<>(this.getSelectedElements());
         switch (ajtType){
             case NETWORKS:
                 OpenStackNetwork network = ((OpenStackNetwork)selectedElements.iterator().next());
