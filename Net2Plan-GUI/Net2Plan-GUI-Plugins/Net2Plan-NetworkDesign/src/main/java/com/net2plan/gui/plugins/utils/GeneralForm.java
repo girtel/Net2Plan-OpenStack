@@ -252,6 +252,7 @@ public class GeneralForm extends JFrame implements ActionListener{
                 break;
 
             case LIMITS:
+            case QUOTAS:
                 String adminProjectId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get().getId();
                 openStackClient.getClient().compute().quotaSets()
                         .updateForTenant(adminProjectId, Builders.quotaSet()

@@ -57,13 +57,16 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
     public void defaultAdjust(ArrayList<OpenStackQuotas> openStackQuotas){
 
         List<String> openStack = new ArrayList<>();
+        boolean adminProjectIsSelected = false;
 
         for(Iterator iterator = openStackQuotas.iterator();iterator.hasNext();){
-            String name = ((OpenStackQuotas)iterator.next()).getOpenStackClient().getName();
+            OpenStackQuotas openStackQuota = (OpenStackQuotas)iterator.next();
+            String name = openStackQuota.getOpenStackClient().getName();
             if(!openStack.contains(name))openStack.add(name);
-        }
-        System.out.println(openStack + "" +openStackQuotas.size());
+            if(!openStackQuota.getProject_id().equals(openStackQuota.getOpenStackClient().getProjectId())) adminProjectIsSelected=true;
 
+        }
+        //System.out.println(openStack + "" +openStackQuotas.size());
 
         OpenStackProject openStackProjectAdmin = openStackQuotas.get(0).getOpenStackClient().openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get();
         openStackQuotas.get(0).getOpenStackClient().updateClient();
@@ -72,9 +75,10 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
         int ram = (quotaSetAdmin.getRam()/2)/openStackQuotas.size();
         int cores = (quotaSetAdmin.getCores()/2)/openStackQuotas.size();
         int gigabytes = (quotaSetAdmin.getGigabytes()/2)/openStackQuotas.size();
+        int instances = (quotaSetAdmin.getInstances()/2)/openStackQuotas.size();
 
-        if(openStack.size()>1) {
-            JOptionPane.showMessageDialog(null, "Project openstack must be equal");
+        if(openStack.size()>1 || adminProjectIsSelected) {
+            JOptionPane.showMessageDialog(null, "Project openstack must be equal and admin project dont be selected");
         }else {
              for(Iterator iterator = openStackQuotas.iterator();iterator.hasNext();){
              OpenStackQuotas openStackQuota= (OpenStackQuotas)iterator.next();
@@ -85,6 +89,7 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
                      Builders.quotaSet()
                              .ram(ram)
                              .cores(cores)
+                             .instances(instances)
                              .build());
 
             }
