@@ -47,7 +47,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add new user", e->addUser(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add new user", e->addUser(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove user", e -> getSelectedElements().forEach(n -> {
 
@@ -80,7 +80,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
     }
 
-    public void addUser() {
+    public void addUser(ArrayList<OpenStackUser> openStackUsers) {
         Map<String,String> newList = new HashMap<>();
         newList.put("Name","");
         newList.put("Password","");
@@ -89,7 +89,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         newList.put("Enable","Boolean");
         newList.put("Role ID","Select");
 
-        GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient,this);
+        GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient,this,openStackUsers.get(0));
         //generalTableForm("Add user",newList);
     }
 

@@ -65,7 +65,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add port", e -> addPort(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add port", e -> addPort(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove port", e -> getSelectedElements().forEach(n -> {
 
@@ -86,13 +86,13 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
     }
 
-    public void addPort(){
+    public void addPort(ArrayList<OpenStackPort> openStackPorts){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
         headers.put("Subnet ID","Select");
         headers.put("Router ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this);
+        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this,openStackPorts.get(0));
         updateTab();
     }
     public void removePort(OpenStackPort port){

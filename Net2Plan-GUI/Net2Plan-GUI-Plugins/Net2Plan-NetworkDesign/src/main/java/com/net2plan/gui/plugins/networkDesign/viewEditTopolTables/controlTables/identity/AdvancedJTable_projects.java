@@ -50,7 +50,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add project", e -> addProject(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add project", e -> addProject(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove project", e -> getSelectedElements().forEach(n -> {
 
@@ -96,13 +96,13 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
 
     }
 
-    public void addProject(){
+    public void addProject(ArrayList<OpenStackProject> openStackProjects){
         Map<String,String> newList = new HashMap<>();
         newList.put("Name","");
         newList.put("Domain ID","Select");
         newList.put("Enable","Boolean");
 
-       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient,this);
+       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient,this,openStackProjects.get(0));
     }
     public void removeProject(OpenStackProject project){
 

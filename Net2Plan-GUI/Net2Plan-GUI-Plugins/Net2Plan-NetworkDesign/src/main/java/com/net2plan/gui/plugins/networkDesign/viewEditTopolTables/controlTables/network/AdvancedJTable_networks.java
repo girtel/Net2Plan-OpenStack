@@ -59,7 +59,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add network", e -> addNetwork(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add network", e -> addNetwork(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove network", e -> getSelectedElements().forEach(n -> {
 
@@ -83,7 +83,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
     }
 
-    public void addNetwork(){
+    public void addNetwork(ArrayList<OpenStackNetwork> openStackNetworks){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
@@ -91,7 +91,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         headers.put("Network type","Select");
         headers.put("IsExternal","Boolean");
         headers.put("Provider ID","");
-        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient,this);
+        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient,this,openStackNetworks.get(0));
 
 
 

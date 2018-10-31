@@ -1,6 +1,8 @@
 package com.net2plan.gui.plugins.utils;
 
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackQuotas;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import org.json.JSONObject;
@@ -30,14 +32,16 @@ public class GeneralForm extends JFrame implements ActionListener{
     ViewEditTopologyTablesPane.AJTableType ajTableType;
     OpenStackClient openStackClient;
     AdvancedJTable_networkElement advancedJTable_networkElement;
+    OpenStackNetworkElement openStackNetworkElement;
 
-    public GeneralForm(String title, Map<String,String> headers, ViewEditTopologyTablesPane.AJTableType ajTableType, OpenStackClient openStackClient, AdvancedJTable_networkElement advancedJTable_networkElement){
+    public GeneralForm(String title, Map<String,String> headers, ViewEditTopologyTablesPane.AJTableType ajTableType, OpenStackClient openStackClient, AdvancedJTable_networkElement advancedJTable_networkElement,OpenStackNetworkElement openStackNetworkElement){
 
         this.title=title;
         this.headers=headers;
         this.ajTableType= ajTableType;
         this.openStackClient=openStackClient;
         this.advancedJTable_networkElement=advancedJTable_networkElement;
+        this.openStackNetworkElement=openStackNetworkElement;
 
         init();
         recomputFields();
@@ -252,10 +256,17 @@ public class GeneralForm extends JFrame implements ActionListener{
                 break;
 
             case LIMITS:
-            case QUOTAS:
-                String adminProjectId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get().getId();
+                String noAdminProjectId = openStackClient.openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get().getId();
                 openStackClient.getClient().compute().quotaSets()
-                        .updateForTenant(adminProjectId, Builders.quotaSet()
+                        .updateForTenant(noAdminProjectId, Builders.quotaSet()
+                                .cores(Integer.valueOf(jsonObject.getString("Cores")))
+                                .ram(Integer.valueOf(jsonObject.getString("Ram")))
+                                .instances(Integer.valueOf(jsonObject.getString("Instances")))
+                                .build());
+                break;
+            case QUOTAS:
+               openStackClient.getClient().compute().quotaSets()
+                        .updateForTenant(((OpenStackQuotas)openStackNetworkElement).getOpenStackProject().getId(), Builders.quotaSet()
                                 .cores(Integer.valueOf(jsonObject.getString("Cores")))
                                 .ram(Integer.valueOf(jsonObject.getString("Ram")))
                                 .instances(Integer.valueOf(jsonObject.getString("Instances")))

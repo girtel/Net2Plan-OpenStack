@@ -27,7 +27,7 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
 
         final List<AjtColumnInfo<OpenStackQuotas>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "OpenStack", "OpenStack ID", null, n -> n.getOpenStackClient().getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Project ", " Project ID", null, n -> n.getProject_id(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Project ", " Project name", null, n -> n.getOpenStackProject().getProjectName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Cores", "Project Cores", null, n -> n.getQuotaCores(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Instances", "Project Instances", null, n -> n.getQuotaInstances(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Ram", "Project Ram", null, n -> n.getQuotaRam(), AGTYPE.NOAGGREGATION, null, null));
@@ -43,6 +43,11 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
         res.add(new AjtRcMenu("Adjust manual", e -> getSelectedElements().forEach(n -> {
 
             manualAdjust(n);
+
+        }), (a, b) -> b == 1, null));
+        res.add(new AjtRcMenu("Create instances", e -> getSelectedElements().forEach(n -> {
+
+            createInstances(n);
 
         }), (a, b) -> b == 1, null));
 
@@ -63,9 +68,11 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
             OpenStackQuotas openStackQuota = (OpenStackQuotas)iterator.next();
             String name = openStackQuota.getOpenStackClient().getName();
             if(!openStack.contains(name))openStack.add(name);
-            if(!openStackQuota.getProject_id().equals(openStackQuota.getOpenStackClient().getProjectId())) adminProjectIsSelected=true;
+            System.out.println(openStackQuota.getProject_id() +"  " +openStackQuota.getOpenStackClient().getProjectId());
+            if(openStackQuota.getProject_id().equals(openStackQuota.getOpenStackClient().getProjectId())) adminProjectIsSelected=true;
 
         }
+        System.out.println(openStack);
         //System.out.println(openStack + "" +openStackQuotas.size());
 
         OpenStackProject openStackProjectAdmin = openStackQuotas.get(0).getOpenStackClient().openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get();
@@ -104,9 +111,15 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
         headers.put("Cores","");
         headers.put("Ram","");
         headers.put("Instances","");
-        GeneralForm generalTableForm = new GeneralForm("Change quotas for project",headers,this.ajtType,openStackQuotas.getOpenStackClient(),this);
+        GeneralForm generalTableForm = new GeneralForm("Change quotas for project",headers,this.ajtType,openStackQuotas.getOpenStackClient(),this,openStackQuotas);
 
 
+    }
+    public void createInstances(OpenStackQuotas openStackQuotas){
+        openStackQuotas.getOpenStackClient().updateClient();
+        JS
+        for(int i=0;i<15;i++)
+        openStackClient.getOpenStackNetCreate().createOpenStackServer();
     }
 }
 

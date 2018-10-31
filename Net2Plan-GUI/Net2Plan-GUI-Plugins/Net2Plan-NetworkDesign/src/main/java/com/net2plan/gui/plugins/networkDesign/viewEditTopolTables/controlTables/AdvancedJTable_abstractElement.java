@@ -205,7 +205,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
     public final ArrayList<T> getSelectedElements()
     {
         final int[] rowViewIndexes = this.getSelectedRows();
-        System.out.println("ROW SELECTED  "+rowViewIndexes.length);
+        //System.out.println("ROW SELECTED  "+rowViewIndexes.length);
         final OpenStackNet os = callback.getOpenStackNet();
 
         final ArrayList<T> elements = new ArrayList<> ();
@@ -215,16 +215,16 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
             final int maxValidRowIndex = this.getModel().getRowCount() - 1 - (hasAggregationRow ? 1 : 0);
             final List<Integer> validRows = new ArrayList<>();
             for (int a : rowViewIndexes) if ((a >= 0) && (a <= maxValidRowIndex)) validRows.add(a);
-            System.out.println("ROW validRows  "+validRows.size());
+            //System.out.println("ROW validRows  "+validRows.size());
             for (int rowViewIndex : validRows)
             {
                 final int viewRowIndex = this.convertRowIndexToModel(rowViewIndex);
                 final String id = (String) getModel().getValueAt(viewRowIndex, 0);
-                System.out.println("ROW elements  id"+id);
+               // System.out.println("ROW elements  id"+id);
                 elements.add((T) os.getOpenStackNetworkElementByOpenStackId(id));
             }
         }
-        System.out.println("ROW elements  "+elements.size());
+        //System.out.println("ROW elements  "+elements.size());
         return elements;
     }
 

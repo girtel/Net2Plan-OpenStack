@@ -145,7 +145,7 @@ public class OpenStackClient {
             this.netPlan = new NetPlan();
             prepareApis();
 
-            System.out.println(this.name + " " + this.token);
+            //System.out.println(this.name + " " + this.token);
             connect=true;
 
         }catch (Exception ex){
@@ -166,7 +166,7 @@ public class OpenStackClient {
             Service service = services.get(0);
             Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
             this.gnocchi = new Gnocchi(endpoint.getUrl().toString() + "/v1/", this.os);
-            System.out.println("GNOCCHI FOR "+ endpoint.getUrl().toString());
+            //System.out.println("GNOCCHI FOR "+ endpoint.getUrl().toString());
         }
         this.keystone = new Keystone(os_auth_url,this.os);
 
@@ -618,7 +618,7 @@ public class OpenStackClient {
                         attributes.put("Color",colores.get(openStackNetwork.getNetworkTenantId()));
                         attributes.put("Network ",openStackNetwork.getName());
                         attributes.put("Router ",openStackRouter.getRouterName());
-                        attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackNetwork.getNetworkTenantId())).findFirst().get().getProjectName());
+                        attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackRouter.getRouterTenantId())).findFirst().get().getProjectName());
                         this.getNetPlanDesign().addLinkBidirectional(openStackNetwork.getNpNode(),openStackRouter.getNpNode(),20000,200000,20000,attributes);
                     }
                 }
@@ -648,7 +648,7 @@ public class OpenStackClient {
         for(OpenStackProject openStackProject: getOpenStackProjects()){
             colores.put(openStackProject.getId(),"#" +Integer.toHexString(random.nextInt(255))+Integer.toHexString(random.nextInt(255))+Integer.toHexString(random.nextInt(255)));
         }
-        System.out.println(colores);
+        //System.out.println(colores);
         return colores;
 
     }

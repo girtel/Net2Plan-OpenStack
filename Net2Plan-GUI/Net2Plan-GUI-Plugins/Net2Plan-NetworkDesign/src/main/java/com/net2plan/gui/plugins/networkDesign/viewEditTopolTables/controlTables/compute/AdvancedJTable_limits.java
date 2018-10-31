@@ -106,7 +106,7 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
         headers.put("Cores","");
         headers.put("Ram","");
         headers.put("Instances","");
-        GeneralForm generalTableForm = new GeneralForm("Change quotas limit",headers,this.ajtType,openStackLimits.getOpenStackClient(),this);
+        GeneralForm generalTableForm = new GeneralForm("Change quotas limit",headers,this.ajtType,openStackLimits.getOpenStackClient(),this,openStackLimits);
 
 
     }

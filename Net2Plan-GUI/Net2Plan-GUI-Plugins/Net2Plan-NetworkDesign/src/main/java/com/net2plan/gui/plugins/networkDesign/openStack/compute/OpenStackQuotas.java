@@ -3,6 +3,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackProject;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.QuotaSet;
 
@@ -28,10 +29,10 @@ public class OpenStackQuotas extends OpenStackNetworkElement
 
     private String project_id;
     private QuotaSet quotaSet;
-
-    public static OpenStackQuotas createFromAddQuota (OpenStackNet osn , QuotaSet quotaSet, OpenStackClient openStackClient,String project_id)
+    private OpenStackProject project;
+    public static OpenStackQuotas createFromAddQuota (OpenStackNet osn , QuotaSet quotaSet, OpenStackClient openStackClient,OpenStackProject project)
     {
-        final OpenStackQuotas res = new OpenStackQuotas(osn,quotaSet,openStackClient,project_id);
+        final OpenStackQuotas res = new OpenStackQuotas(osn,quotaSet,openStackClient,project);
         res.quotaId= quotaSet.getId()+"quota";
         res.quotaCores=quotaSet.getCores();
         res.quotaFloatingIps=quotaSet.getFloatingIps();
@@ -49,11 +50,12 @@ public class OpenStackQuotas extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackQuotas (OpenStackNet osn ,QuotaSet quotaSet,OpenStackClient openStackClient,String project_id)
+    private OpenStackQuotas (OpenStackNet osn ,QuotaSet quotaSet,OpenStackClient openStackClient,OpenStackProject project)
     {
         super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) osn.openStackQuotas,openStackClient);
         this.quotaSet = quotaSet;
-        this.project_id = project_id;
+        this.project_id = project.getId();
+        this.project = project;
 
     }
 
@@ -67,6 +69,7 @@ public class OpenStackQuotas extends OpenStackNetworkElement
     public Integer getQuotaKeypairs () { return this.quotaKeypairs; }
     public Integer getQuotaSecurityGroup () { return this.quotaSecurityGroup; }
     public Integer getQuotaVolumes () { return this.quotaVolumes; }
+    public OpenStackProject getOpenStackProject () { return this.project; }
    // public OpenStackClient getOpenStackClient(){return this.openStackClient;}
     @Override
     public String get50CharactersDescription()

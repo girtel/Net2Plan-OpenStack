@@ -74,7 +74,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
     {final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Add server", e -> addServer(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add server", e -> addServer(this.getSelectedElements()), (a, b) -> true, null));
         res.add(new AjtRcMenu("Get console", e -> getSelectedElements().forEach(n -> {
             openStackClient.updateClient();
             VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
@@ -104,14 +104,14 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         return res;
 
     }
-    public void addServer(){
+    public void addServer(ArrayList<OpenStackServer> openStackServers){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
         headers.put("Flavor ID","Select");
         headers.put("Image ID", "Select");
         headers.put("Network ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this);
+        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this,openStackServers.get(0));
     }
 
 

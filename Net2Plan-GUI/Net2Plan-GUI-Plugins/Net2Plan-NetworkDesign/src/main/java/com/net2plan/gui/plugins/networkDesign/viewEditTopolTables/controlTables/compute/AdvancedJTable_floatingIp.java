@@ -41,7 +41,7 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add floating ip", e -> addFloatingIp(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add floating ip", e -> addFloatingIp(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove floating ip", e -> getSelectedElements().forEach(n -> {
 
@@ -55,12 +55,12 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
 
     }
 
-    public void addFloatingIp(){
+    public void addFloatingIp(ArrayList<OpenStackFloatingIp> openStackFloatingIps){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Server ID","Select");
         headers.put("Pool Name","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add floating ip",headers,this.ajtType,this.openStackClient,this);
+        GeneralForm generalTableForm = new GeneralForm("Add floating ip",headers,this.ajtType,this.openStackClient,this,openStackFloatingIps.get(0));
 
     }
     public void removeFloatingIp(OpenStackFloatingIp floatingIp){

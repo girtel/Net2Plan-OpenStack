@@ -4,6 +4,7 @@ package com.net2plan.gui.plugins.networkDesign.openStack;
 import com.google.common.collect.Lists;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackProject;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 import com.net2plan.interfaces.networkDesign.NetPlan;
@@ -103,8 +104,8 @@ public class OpenStackNet
         try {
 
             getOsClients().stream().forEach(n -> addOpenStackLimit(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().limits().getAbsolute(), n));
-            getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().get(r.getId()), n, r.getId()));});
-            getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().getTenantUsage(r.getId()), n, r.getId())));
+            getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().get(r.getId()), n, r));});
+            getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().getTenantUsage(r.getId()), n, r)));
 
         }catch(Exception ex){
             ex.printStackTrace();
@@ -165,27 +166,27 @@ public class OpenStackNet
         else return null;
     }
 
-    public OpenStackQuotasUsage addOpenStackQuotaUsage (SimpleTenantUsage simpleTenantUsage, OpenStackClient openStackClient, String project_id){
-        final OpenStackQuotasUsage res = OpenStackQuotasUsage.createFromAddQuotaUsage(this ,simpleTenantUsage,openStackClient,project_id);
+    public OpenStackQuotasUsage addOpenStackQuotaUsage (SimpleTenantUsage simpleTenantUsage, OpenStackClient openStackClient, OpenStackProject project){
+        final OpenStackQuotasUsage res = OpenStackQuotasUsage.createFromAddQuotaUsage(this ,simpleTenantUsage,openStackClient,project);
         if(openStackQuotasUsage.contains(res)) return res;
         openStackQuotasUsage.add(res);
         return res;
     }
-    public OpenStackQuotas addOpenStackQuota (QuotaSet quotaSet, OpenStackClient openStackClient, String project_id){
-        final OpenStackQuotas res = OpenStackQuotas.createFromAddQuota(this ,quotaSet,openStackClient,project_id);
+    public OpenStackQuotas addOpenStackQuota (QuotaSet quotaSet, OpenStackClient openStackClient, OpenStackProject project){
+        final OpenStackQuotas res = OpenStackQuotas.createFromAddQuota(this ,quotaSet,openStackClient,project);
         if(openStackQuotas.contains(res)) return res;
         openStackQuotas.add(res);
         return res;
     }
     public OpenStackLimits addOpenStackLimit (AbsoluteLimit absoluteLimit, OpenStackClient openStackClient){
-        System.out.println(absoluteLimit);
+        //System.out.println(absoluteLimit);
         final OpenStackLimits res = OpenStackLimits.createFromAddLimit(this ,absoluteLimit,openStackClient);
         if(openStackLimits.contains(res)) return res;
         openStackLimits.add(res);
         return res;
     }
 
-    public List<OpenStackLimits> getOpenStackLimits (){ System.out.println("Getting openstack limits" + openStackLimits.size());return Collections.unmodifiableList(openStackLimits); }
+    public List<OpenStackLimits> getOpenStackLimits (){ return Collections.unmodifiableList(openStackLimits); }
     public List<OpenStackQuotas> getOpenStackQuotas (){ return Collections.unmodifiableList(openStackQuotas); }
     public List<OpenStackQuotasUsage> getOpenStackQuotasUsage (){ return Collections.unmodifiableList(openStackQuotasUsage); }
 

@@ -11,6 +11,7 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.GeneralForm;
+import org.apache.poi.ss.formula.functions.T;
 import org.openstack4j.model.network.ExternalGateway;
 import org.openstack4j.model.network.State;
 
@@ -48,7 +49,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add router", e -> addRouter(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add router", e -> addRouter(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove router", e -> getSelectedElements().forEach(n -> {
 
@@ -110,13 +111,13 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
 
     }
 
-    public void addRouter(){
+    public void addRouter(ArrayList<OpenStackRouter> openStackRouter){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
         headers.put("Tenant ID","Select");
         headers.put("Network ID", "Select");
-        GeneralForm generalTableForm = new GeneralForm("Add router",headers,this.ajtType,this.openStackClient,this);
+        GeneralForm generalTableForm = new GeneralForm("Add router",headers,this.ajtType,this.openStackClient,this,openStackRouter.get(0));
         updateTab();
     }
     public void removeRouter(OpenStackRouter router){

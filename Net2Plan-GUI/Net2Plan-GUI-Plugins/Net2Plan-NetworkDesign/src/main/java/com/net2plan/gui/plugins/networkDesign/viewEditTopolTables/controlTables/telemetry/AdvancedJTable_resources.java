@@ -41,7 +41,8 @@ public class AdvancedJTable_resources extends AdvancedJTable_networkElement<Open
 
         res.add(new AjtRcMenu("Get metrics of resource", e -> getSelectedElements().forEach(n -> {
 
-         n.getOpenStackClient().updateMeterList(n.getId());
+            System.out.println(n);
+         n.getOpenStackClient().updateMeterList(n.getSourceId());
 
         }), (a, b) -> b == 1, null));
         res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
@@ -51,7 +52,7 @@ public class AdvancedJTable_resources extends AdvancedJTable_networkElement<Open
 
     }
 
-    public void addUser() {
+    public void refrescaMetrics(ArrayList<OpenStackResource> openStackResources) {
 
     }
 

@@ -59,7 +59,7 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add subnet", e -> addSubnet(), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add subnet", e -> addSubnet(this.getSelectedElements()), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove subnet", e -> getSelectedElements().forEach(n -> {
 
@@ -161,7 +161,7 @@ updateTab();
 
     }
 
-    public void addSubnet(){
+    public void addSubnet(ArrayList<OpenStackSubnet> openStackSubnets){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
@@ -169,7 +169,7 @@ updateTab();
         headers.put("IP version","Select");
         headers.put("Cidr","Cidr");
         headers.put("Tenant ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this);
+        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this,openStackSubnets.get(0));
         updateTab();
     }
     public void removeSubnet(OpenStackSubnet subnet){

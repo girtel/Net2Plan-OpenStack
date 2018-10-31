@@ -13,6 +13,7 @@ public class OpenStackResource  extends OpenStackNetworkElement
 
     private String resource_id;
     private String resource_source ;
+    private String resource_id_real ;
     private String resource_user_id ;
     private String resource_project_id ;
 
@@ -23,7 +24,8 @@ public class OpenStackResource  extends OpenStackNetworkElement
     public static OpenStackResource createFromAddResource (OpenStackNet osn , Resource resource, OpenStackClient openStackClient)
     {
         final OpenStackResource res = new OpenStackResource(osn,resource,openStackClient);
-        res.resource_id= resource.getId();
+        res.resource_id= resource.getId()+"resource";
+        res.resource_id_real= resource.getId();
         res.resource_source=resource.getSource();
         res.resource_user_id = resource.getUserId();
         res.resource_project_id=resource.getProjectId();
@@ -44,6 +46,7 @@ public class OpenStackResource  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.resource_id; }
     public String getSource () { return this.resource_source; }
+    public String getSourceId () { return this.resource_id_real; }
     public String getResource_user_id() {return this.resource_user_id;}
     public String getResource_project_id () { return this.resource_project_id; }
 

@@ -28,7 +28,7 @@ public class AdvancedJTable_quotasUsage extends AdvancedJTable_networkElement<Op
 
         final List<AjtColumnInfo<OpenStackQuotasUsage>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackQuotasUsage>(this, String.class, null, "OpenStack", "OpenStack ID", null, n -> n.getOpenStackClient().getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackQuotasUsage>(this, String.class, null, "Project ", " Project ID", null, n -> n.getProject_id(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackQuotasUsage>(this, String.class, null, "Project ", " Project name", null, n -> n.getProject().getProjectName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotasUsage>(this, String.class, null, "Cores", "Project Cores", null, n -> n.getVcpusUsage(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotasUsage>(this, String.class, null, "Volumen", "Project Volumen GB", null, n -> n.getVolumenGbUsage(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotasUsage>(this, String.class, null, "Ram", "Project Ram", null, n -> n.getRamUsage(), AGTYPE.NOAGGREGATION, null, null));

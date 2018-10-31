@@ -365,7 +365,7 @@ public class ViewEditTopologyTablesPane extends JPanel
             netPlanViewTable.get(openStackClient).values().stream().forEach(t -> {t.getFirst().updateView(); t.getSecond().updateHeader();});
         }
 
-        System.out.println("Problem with de problem" + callback.getOpenStackNet().openStackLimits.size() +" " + ajTables.size());
+        //System.out.println("Problem with de problem" + callback.getOpenStackNet().openStackLimits.size() +" " + ajTables.size());
 
         ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
         ajTables.values().stream().map(t -> t.getSecond()).forEach(t -> t.updateHeader());
