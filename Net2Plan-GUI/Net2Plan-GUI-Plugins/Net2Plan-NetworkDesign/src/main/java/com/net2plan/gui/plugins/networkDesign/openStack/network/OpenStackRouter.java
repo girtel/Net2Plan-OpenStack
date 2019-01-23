@@ -40,7 +40,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         attributes.put("Router ID",router.getId());
         attributes.put("Router Name",router.getName());
         attributes.put("Router State",router.getStatus().toString());
-        attributes.put("External Gateway",router.getExternalGatewayInfo().toString());
+        //attributes.put("External Gateway",router.getExternalGatewayInfo().toString());
         final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
         npNode2.setName(router.getId());
 

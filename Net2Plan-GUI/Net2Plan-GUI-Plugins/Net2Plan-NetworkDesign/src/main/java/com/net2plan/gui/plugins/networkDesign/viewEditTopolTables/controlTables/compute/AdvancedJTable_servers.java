@@ -111,7 +111,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Flavor ID","Select");
         headers.put("Image ID", "Select");
         headers.put("Network ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this,openStackServers.get(0));
+        GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this,null);
     }
 
 

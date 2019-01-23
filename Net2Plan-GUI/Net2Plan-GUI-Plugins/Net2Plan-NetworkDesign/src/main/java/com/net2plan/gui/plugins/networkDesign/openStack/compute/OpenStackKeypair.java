@@ -12,13 +12,13 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
 {
 
 
-    private Integer keypairId;
+    private String keypairId;
     private String keypairName;
     private String keypairUserId;
-    private Date keypairCreatedA;
-    private boolean keypairDeleted;
-    private Date keypairDeletedAt;
-    private Date keypairUpdatedAt;
+    private String keypairCreatedA;
+    private String keypairDeleted;
+    private String keypairDeletedAt;
+    private String keypairUpdatedAt;
     private String keypairFingerprint;
     private String keypairPrivateKey;
     private String keypairPublicKey;
@@ -26,14 +26,15 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     public static OpenStackKeypair createFromAddKeypair (OpenStackNet osn , Keypair keypair,OpenStackClient openStackClient)
     {
         final OpenStackKeypair res = new OpenStackKeypair(osn,keypair,openStackClient);
-        res.keypairId= keypair.getId();
+        res.keypairId= keypair.getName();
+       // System.out.println("KEYPAIR"+keypair);
         res.keypairName=keypair.getName();
         try {
-            res.keypairUserId = keypair.getUserId();
-            res.keypairCreatedA = keypair.getCreatedAt();
-            res.keypairUpdatedAt = keypair.getUpdatedAt();
+            res.keypairUserId = keypair.getName();
+            res.keypairCreatedA = keypair.getName();
+            res.keypairUpdatedAt = keypair.getName();
             res.keypairFingerprint = keypair.getFingerprint();
-            res.keypairPrivateKey = keypair.getPrivateKey();
+            res.keypairPrivateKey = keypair.getName();
             res.keypairPublicKey = keypair.getPublicKey();
         }catch (Exception ex){
             System.out.println(ex.toString());
@@ -51,10 +52,10 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     public String getId () { return this.keypairId.toString(); }
     public String getKeypairName () { return this.keypairName; }
     public String getKeypairUserId () { return this.keypairUserId; }
-    public Date getKeypairCreatedA () { return this.keypairCreatedA; }
-    public boolean isKeypairDeleted() { return this.keypairDeleted; }
-    public Date getKeypairDeletedAt () { return this.keypairDeletedAt; }
-    public Date getKeypairUpdatedAt () { return this.keypairUpdatedAt; }
+    public String getKeypairCreatedA () { return this.keypairCreatedA; }
+    public String isKeypairDeleted() { return this.keypairDeleted; }
+    public String getKeypairDeletedAt () { return this.keypairDeletedAt; }
+    public String getKeypairUpdatedAt () { return this.keypairUpdatedAt; }
     public String getKeypairFingerprint () { return this.keypairFingerprint; }
     public String getKeypairPrivateKey () { return this.keypairPrivateKey; }
     public String getKeypairPublicKey () { return this.keypairPublicKey; }

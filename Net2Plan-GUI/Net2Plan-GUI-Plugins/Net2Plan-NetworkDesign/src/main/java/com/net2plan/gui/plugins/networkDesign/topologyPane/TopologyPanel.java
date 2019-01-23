@@ -154,8 +154,8 @@ public class TopologyPanel extends JPanel implements ActionListener
             this.addPlugin(new PopupMenuPlugin(callback, this.canvas)); // Right button pop-up
 
             // Create links
-            if (callback.getVisualizationState().isNetPlanEditable() && this.getCanvas() instanceof JUNGCanvas)
-                addPlugin(new AddLinkGraphPlugin(callback, canvas, MouseEvent.BUTTON1_MASK, MouseEvent.BUTTON1_MASK | MouseEvent.SHIFT_MASK));
+            //if (callback.getVisualizationState().isNetPlanEditable() && this.getCanvas() instanceof JUNGCanvas)
+                //(new AddLinkGraphPlugin(callback, canvas, MouseEvent.BUTTON1_MASK, MouseEvent.BUTTON1_MASK | MouseEvent.SHIFT_MASK));
 
             // Move nodes
             if (callback.getVisualizationState().isNetPlanEditable())

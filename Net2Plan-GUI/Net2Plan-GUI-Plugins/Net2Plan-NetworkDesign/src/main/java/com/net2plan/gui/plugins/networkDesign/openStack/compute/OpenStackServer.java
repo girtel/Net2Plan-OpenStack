@@ -91,6 +91,7 @@ public class OpenStackServer  extends OpenStackNetworkElement
         res.serverUserId=server.getUserId();
         res.serverUuid=server.getUuid();
         res.serverVmState=server.getVmState();
+
         return res;
     }
 

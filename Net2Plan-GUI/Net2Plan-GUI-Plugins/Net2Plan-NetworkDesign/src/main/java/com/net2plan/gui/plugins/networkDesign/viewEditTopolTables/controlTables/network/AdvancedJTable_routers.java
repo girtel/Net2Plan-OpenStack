@@ -117,8 +117,8 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Name","");
         headers.put("Tenant ID","Select");
         headers.put("Network ID", "Select");
-        GeneralForm generalTableForm = new GeneralForm("Add router",headers,this.ajtType,this.openStackClient,this,openStackRouter.get(0));
-        updateTab();
+        GeneralForm generalTableForm = new GeneralForm("Add router",headers,this.ajtType,this.openStackClient,this,null);
+        //updateTab();
     }
     public void removeRouter(OpenStackRouter router){
 

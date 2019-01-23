@@ -30,6 +30,7 @@ public class AjtCellRenderers
     private static Color computeBgColor (JTable table, Object value, boolean isSelected, boolean hasFocus, int rowInModel, int columnInModel , AjtColumnInfo colInfo)
     {
         if (value instanceof LastRowAggregatedValue) return bgColorLastRow;
+        if (value instanceof Color) return (Color) value;
         if (isSelected) return table.getSelectionBackground();
         Color spetialBgIfNotSelected = null;
         if (colInfo.getGetAllRowMandatorySpetialBgColorIfNotSelected() != null)
@@ -161,6 +162,10 @@ public class AjtCellRenderers
                     }
                     else c.setForeground(Color.BLACK);
                 }
+            }
+            else if (value instanceof Color)
+            {
+                ((JLabel) c).setText("");
             }
             else
             {

@@ -21,10 +21,7 @@ import org.openstack4j.model.identity.v3.User;
 import org.openstack4j.model.image.v2.ContainerFormat;
 import org.openstack4j.model.image.v2.DiskFormat;
 import org.openstack4j.model.image.v2.Image;
-import org.openstack4j.model.network.AttachInterfaceType;
-import org.openstack4j.model.network.IPVersionType;
-import org.openstack4j.model.network.NetworkType;
-import org.openstack4j.model.network.RouterInterface;
+import org.openstack4j.model.network.*;
 import org.openstack4j.openstack.OSFactory;
 
 import javax.swing.*;
@@ -243,7 +240,7 @@ public class OpenStackNetCreate{
         final String routerGateway = openStackClient.openStackNetworks.stream().filter(n->n.getName().equals(routerGatewayName)).findFirst().get().getId();
 
         try{
-        this.osClientV3.networking().router().create(Builders.router()
+            this.osClientV3.networking().router().create(Builders.router()
                 .name(routerName)
                 .tenantId(routerTenantId)
                 .externalGateway(routerGateway,true)
@@ -253,7 +250,6 @@ public class OpenStackNetCreate{
 
             logPanel();
             System.out.println(ex.toString());
-
         }
 
     }

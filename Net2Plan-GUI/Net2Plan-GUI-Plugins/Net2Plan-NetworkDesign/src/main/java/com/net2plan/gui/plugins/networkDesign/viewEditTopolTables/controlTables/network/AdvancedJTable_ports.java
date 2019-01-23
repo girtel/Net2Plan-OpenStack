@@ -93,7 +93,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         headers.put("Subnet ID","Select");
         headers.put("Router ID","Select");
         GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this,openStackPorts.get(0));
-        updateTab();
+        //updateTab();
     }
     public void removePort(OpenStackPort port){
 

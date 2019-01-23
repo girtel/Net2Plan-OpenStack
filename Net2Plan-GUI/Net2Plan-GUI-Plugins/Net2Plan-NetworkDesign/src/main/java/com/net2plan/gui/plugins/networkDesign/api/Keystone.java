@@ -12,12 +12,14 @@ import org.openstack4j.model.telemetry.Resource;
 
 import java.util.*;
 
-public class Keystone extends Api {
+public class Keystone extends Api
+{
 
     private final OSClient.OSClientV3 osClientV3;
     public final String url;
 
-    public enum KeystoneOption {
+    public enum KeystoneOption
+    {
         PROJECT("/projects")
         ;
 
@@ -28,7 +30,8 @@ public class Keystone extends Api {
         }
     }
 
-    public Keystone(String url, OSClient.OSClientV3 osClientV3){
+    public Keystone(String url, OSClient.OSClientV3 osClientV3)
+    {
         this.url=url;
         this.osClientV3=osClientV3;
     }

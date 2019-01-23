@@ -117,9 +117,9 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
     }
     public void createInstances(OpenStackQuotas openStackQuotas){
         openStackQuotas.getOpenStackClient().updateClient();
-        JS
-        for(int i=0;i<15;i++)
-        openStackClient.getOpenStackNetCreate().createOpenStackServer();
+        //JS
+        //for(int i=0;i<15;i++)
+       // openStackClient.getOpenStackNetCreate().createOpenStackServer();
     }
 }
 

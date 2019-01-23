@@ -11,6 +11,7 @@ import org.openstack4j.api.types.Facing;
 import org.openstack4j.api.types.ServiceType;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.NetworkType;
+import org.openstack4j.model.network.Router;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
@@ -236,6 +237,8 @@ public class GeneralForm extends JFrame implements ActionListener{
                 break;
             case ROUTERS:
                 openStackClient.getOpenStackNetCreate().createOpenStackRouter(jsonObject);
+                //callback.selectNetPlanViewItem(ajTableType);
+                //if (router != null) advancedJTable_networkElement.pi
                 break;
 
             /*COMPUTE*/

@@ -185,6 +185,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
         } else if (numClicks >= 2)
         {
+            if (rowModelIndexOfClickOrMinus1IfOut == -1) return;
 
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
 

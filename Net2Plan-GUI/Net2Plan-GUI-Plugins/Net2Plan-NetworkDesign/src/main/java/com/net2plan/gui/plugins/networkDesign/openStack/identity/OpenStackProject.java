@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.Project;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class OpenStackProject  extends OpenStackNetworkElement
     private String projectSubtree;
     private boolean projectEnabled;
     private Map<String,String> projectLinks;
-
+    private Color color = Color.WHITE;
     private Project osProject;
 
     public static OpenStackProject createFromAddProject (OpenStackNet osn ,Project project , OpenStackClient openStackClient)
@@ -39,6 +40,7 @@ public class OpenStackProject  extends OpenStackNetworkElement
         res.projectSubtree=project.getSubtree();
         res.projectEnabled=project.isEnabled();
         res.projectLinks=project.getLinks();
+
         return res;
     }
 
@@ -58,9 +60,13 @@ public class OpenStackProject  extends OpenStackNetworkElement
     public String getProjectDescription () { return this.projectDescription; }
     public String getProjectParents () { return this.projectParents; }
     public String getProjectSubtree () { return this.projectSubtree; }
+    public Color getColor () {return this.color;}
     public boolean isProjectEnabled () { return this.projectEnabled; }
     public Map<String,String> getProjectLinks () { return this.projectLinks; }
 
+    public void setColor(Color color){
+        this.color= color;
+    }
     public void setProjectName (JSONObject jsonObject) {
         try{
         this.openStackClient.getClient().identity().projects().update(osProject.toBuilder().name(jsonObject.getString("Name")).build());

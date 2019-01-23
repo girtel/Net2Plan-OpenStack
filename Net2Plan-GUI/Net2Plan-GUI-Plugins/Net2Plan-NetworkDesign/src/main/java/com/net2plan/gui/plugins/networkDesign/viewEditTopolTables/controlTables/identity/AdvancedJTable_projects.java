@@ -9,7 +9,9 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.GeneralForm;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenStackProject>
 {
@@ -25,6 +27,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
         final List<AjtColumnInfo<OpenStackProject>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "ID", "Project ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Name", "Project Name", null, n -> n.getProjectName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackProject>(this, Color.class, null, "Color", "Project color", null, n -> n.getColor(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Description", "Project description", null, n -> n.getProjectDescription(),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Domain", "Project domain", null, n -> n.getProjectDomain(),

@@ -131,8 +131,9 @@ public class OpenStackClient {
 
             OSClient.OSClientV3 os = OSFactory.builderV3()
                     .endpoint(os_auth_url)
-                    .credentials(os_username,os_password, Identifier.byName(os_user_domain_name))
+                    .credentials(os_username,os_password,Identifier.byName(os_user_domain_name))
                     .scopeToProject(Identifier.byId(os_project_id))
+                     //.scopeToDomain(Identifier.byId("Default")), Identifier.byName(os_user_domain_name)
                     .authenticate();
 
             this.os=os;
@@ -141,7 +142,7 @@ public class OpenStackClient {
             this.openStackNetCreate = new OpenStackNetCreate(this);
             this.openStackNetDelete = new OpenStackNetDelete(this);
             this.token = os.getToken();
-            this.os = OSFactory.clientFromToken(token);
+            this.os = OSFactory.clientFromToken(token,Facing.ADMIN);
             this.netPlan = new NetPlan();
             prepareApis();
 
@@ -155,10 +156,7 @@ public class OpenStackClient {
     }
 
     public void prepareApis(){
-        Token token = os.getToken();
-        MyRunnable newR = new MyRunnable(token,Facing.PUBLIC);
-        submit(newR);
-        this.os=newR.getOs();
+
         List<Service> services = this.os.identity().serviceEndpoints().list().stream().filter(n -> ((Service) n).getName().equals("gnocchi")).collect(Collectors.toList());
 
         if(services.size() >= 1) {
@@ -214,8 +212,13 @@ public class OpenStackClient {
     public OpenStackClient fillList(){
 
         try {
-            this.os = OSFactory.clientFromToken(token);
+            //this.os = OSFactory.clientFromToken(token);
             /* Get elements of Identity(Keystone)*/
+            System.out.println("servergroups"+this.os.compute().serverGroups().list().size());
+            System.out.println("server"+this.os.compute().servers().listAll(true).size());
+            System.out.println("server"+this.os.compute().servers().listAll(true).size());
+            System.out.println("server"+this.os.compute().services().list());
+
             this.os.identity().users().list().forEach(n->addOpenStackUser(n));
             this.os.identity().domains().list().forEach(n->addOpenStackDomain(n));
             this.os.identity().serviceEndpoints().listEndpoints().forEach(n->addOpenStackEndpoint(n));
@@ -234,7 +237,7 @@ public class OpenStackClient {
 
             /*Get elements of Compute(NOVA)*/
            // System.out.println("SERVERS "+this.os_auth_url+ " "+OSFactory.clientFromToken(token).compute().servers().list().size());
-            this.os.compute().servers().list().stream().forEach(n -> addOpenStackServer(n));
+            this.os.compute().servers().listAll(true).stream().forEach(n -> addOpenStackServer(n));
             this.os.compute().flavors().list().stream().forEach(n -> addOpenStackFlavor(n));
             this.os.compute().floatingIps().list().forEach(n -> addOpenStackFloatingIP(n));
             this.os.compute().keypairs().list().stream().forEach(n -> addOpenStackKeypair(n));
@@ -251,6 +254,7 @@ public class OpenStackClient {
             this.os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
 
             /*Get elements of Telmetry(Ceilometer)*/
+            if (gnocchi != null)
             gnocchi.resourcesList().forEach(n->addOpenStackResource(n));
 
             doTopology();
@@ -317,8 +321,9 @@ public class OpenStackClient {
             openStackSummaries.add(openStackSummary);
 
             //System.out.println("Meteasures"+ openStackMeasures);
-            osn.getCallback().getViewEditTopTables().updateView();
+
         }
+        osn.getCallback().getViewEditTopTables().updateView();
     }
 
     public String getName(){return this.name;}
@@ -544,7 +549,7 @@ public class OpenStackClient {
         index = -networkList.size()*10/2;
         for(OpenStackNetwork openStackNetwork: networkList){
 
-            if(openStackNetwork.getName().equals("public")){
+            if(openStackNetwork.getName().equals("provider")){
 
                 openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(0.0,0.0));
 
@@ -564,7 +569,7 @@ public class OpenStackClient {
         index = -subnetList.size()*10/2;
         for(OpenStackSubnet openStackSubnet: subnetList){
 
-            if(openStackSubnet.getName().equals("public_subnet")){
+            if(openStackSubnet.getName().equals("provider")){
                 openStackSubnet.getNpNode().setXYPositionMap(new Point2D.Double(0.0,20.0));
                 try {
                     openStackSubnet.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL("https://cdn4.iconfinder.com/data/icons/Browsers_tatice/512/Globe.png"));
@@ -615,7 +620,7 @@ public class OpenStackClient {
                 for(OpenStackNetwork openStackNetwork: networkList){
                     if(openStackNetwork.getId().equals(openStackPort.getPortNetworkId()) && openStackRouter.getId().equals(openStackPort.getPortDeviceId())){
                         Map<String,String> attributes = new HashMap<>();
-                        attributes.put("Color",colores.get(openStackNetwork.getNetworkTenantId()));
+                        attributes.put("Color",colores.get(openStackRouter.getRouterTenantId()));
                         attributes.put("Network ",openStackNetwork.getName());
                         attributes.put("Router ",openStackRouter.getRouterName());
                         attributes.put("Project",getOpenStackProjects().stream().filter(n->n.getId().equals(openStackRouter.getRouterTenantId())).findFirst().get().getProjectName());
@@ -647,6 +652,7 @@ public class OpenStackClient {
         Random random = new Random(77);
         for(OpenStackProject openStackProject: getOpenStackProjects()){
             colores.put(openStackProject.getId(),"#" +Integer.toHexString(random.nextInt(255))+Integer.toHexString(random.nextInt(255))+Integer.toHexString(random.nextInt(255)));
+            openStackProject.setColor(Color.decode(colores.get(openStackProject.getId())));
         }
         //System.out.println(colores);
         return colores;

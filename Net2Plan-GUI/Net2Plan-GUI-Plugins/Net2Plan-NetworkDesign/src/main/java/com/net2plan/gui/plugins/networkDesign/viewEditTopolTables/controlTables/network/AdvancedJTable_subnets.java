@@ -65,7 +65,7 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
 
             removeSubnet(n);
 
-        }), (a, b) -> b == 1, null));
+        }), (a, b) -> true, null));
         res.add(new AjtRcMenu("Add subnet's DNS", e -> getSelectedElements().forEach(n -> {
 
             Map<String,String> headers = new HashMap<>();
@@ -170,7 +170,7 @@ updateTab();
         headers.put("Cidr","Cidr");
         headers.put("Tenant ID","Select");
         GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this,openStackSubnets.get(0));
-        updateTab();
+        //updateTab();
     }
     public void removeSubnet(OpenStackSubnet subnet){
 

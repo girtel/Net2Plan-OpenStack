@@ -57,7 +57,7 @@ import java.util.List;
      */
     public class GUINetworkDesign extends IGUIModule
     {
-        private final static String TITLE = "Net2plan and OpenStack";
+        private final static String TITLE = "OpenStack Management Plugin";
         private final static int MAXSIZEUNDOLISTCHANGES = 0; // deactivate, not robust yet
         private final static int MAXSIZEUNDOLISTPICK = 10;
 
@@ -507,7 +507,7 @@ import java.util.List;
          * @since 0.3.0
          */
         @SuppressWarnings("unchecked")
-        private void selectNetPlanViewItem(AJTableType type)
+        public void selectNetPlanViewItem(AJTableType type)
         {
 
             viewEditTopTables.selectItemTab(type);
