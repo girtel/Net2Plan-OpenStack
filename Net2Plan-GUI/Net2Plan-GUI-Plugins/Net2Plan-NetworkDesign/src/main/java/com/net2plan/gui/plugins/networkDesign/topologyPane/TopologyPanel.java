@@ -305,7 +305,7 @@ public class TopologyPanel extends JPanel implements ActionListener
         JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain;
 
         jfM = new JFrame("Credentials");
-        jp1 = new JPanel(new GridLayout(7, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        jp1 = new JPanel(new GridLayout(5, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
 
         jfM.setLayout(null);
 
@@ -341,9 +341,9 @@ public class TopologyPanel extends JPanel implements ActionListener
 
         jbP1 = new JButton("Enter");
 
-        jp1.setBounds(10, 10, 200, 250);
+        jp1.setBounds(10, 10, 250, 200);
 
-        jbP1.setBounds(75, 300, 90, 20);
+        jbP1.setBounds(100, 225, 100, 30);
 
         jbP1.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
@@ -377,7 +377,7 @@ public class TopologyPanel extends JPanel implements ActionListener
         jfM.setIconImage(img.getImage());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-        jfM.setSize(250, 370);
+        jfM.setSize(300, 300);
         jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
 
         jfM.setResizable(false);

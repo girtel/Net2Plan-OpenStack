@@ -212,13 +212,8 @@ public class OpenStackClient {
     public OpenStackClient fillList(){
 
         try {
-            //this.os = OSFactory.clientFromToken(token);
+            this.os = OSFactory.clientFromToken(token);
             /* Get elements of Identity(Keystone)*/
-            System.out.println("servergroups"+this.os.compute().serverGroups().list().size());
-            System.out.println("server"+this.os.compute().servers().listAll(true).size());
-            System.out.println("server"+this.os.compute().servers().listAll(true).size());
-            System.out.println("server"+this.os.compute().services().list());
-
             this.os.identity().users().list().forEach(n->addOpenStackUser(n));
             this.os.identity().domains().list().forEach(n->addOpenStackDomain(n));
             this.os.identity().serviceEndpoints().listEndpoints().forEach(n->addOpenStackEndpoint(n));
@@ -247,7 +242,7 @@ public class OpenStackClient {
 
             for(HostResource hostResource: hosts){
                 if(hostResource.getService().equals("compute"))
-                    this.os.compute().host().hostDescribe(hostResource.getHostName()).stream().forEach(p -> addOpenStackHostResource(p));
+                    this.os.compute().host().hostDescribe(hostResource.getHostName()).stream().filter(x->((HostResource) x).getProject().equals("(total)")).forEach(p -> addOpenStackHostResource(p));
             }
 
             /*Get elements of Image(GLANCE)*/
@@ -313,7 +308,7 @@ public class OpenStackClient {
 
                 values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
             }
-            Graficos graficos = new Graficos(openStackMeter.getName(),openStackMeter.getMeter_unit(),values);
+            Graficos graficos = new Graficos("Graph of "+openStackMeter.getName()+" measurements",openStackMeter.getMeter_unit(),values);
            // System.out.println(values);
             openStackSummaries.clear();
             OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
@@ -547,11 +542,14 @@ public class OpenStackClient {
             index = index + 15;
         }
         index = -networkList.size()*10/2;
+        double index2= 0;
         for(OpenStackNetwork openStackNetwork: networkList){
 
-            if(openStackNetwork.getName().equals("provider")){
+            if(openStackNetwork.isNetworkIsRouterExternal()){
 
-                openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(0.0,0.0));
+                openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(index2,0));
+
+                index2 += 20;
 
             }else{
                 openStackNetwork.getNpNode().setXYPositionMap(new Point2D.Double(index,-40.0));
@@ -567,10 +565,12 @@ public class OpenStackClient {
         }
 
         index = -subnetList.size()*10/2;
+        index2 = 0;
         for(OpenStackSubnet openStackSubnet: subnetList){
 
-            if(openStackSubnet.getName().equals("provider")){
-                openStackSubnet.getNpNode().setXYPositionMap(new Point2D.Double(0.0,20.0));
+            if(openStackNetworks.stream().filter(x->x.getId().equals(openStackSubnet.getSubnetNetworkId())).findFirst().get().isNetworkIsRouterExternal()){
+                openStackSubnet.getNpNode().setXYPositionMap(new Point2D.Double(index2,20.0));
+                index2+=20;
                 try {
                     openStackSubnet.getNpNode().setUrlNodeIcon(this.getNetPlanDesign().getNetworkLayerDefault(), new URL("https://cdn4.iconfinder.com/data/icons/Browsers_tatice/512/Globe.png"));
                 } catch (MalformedURLException e) {

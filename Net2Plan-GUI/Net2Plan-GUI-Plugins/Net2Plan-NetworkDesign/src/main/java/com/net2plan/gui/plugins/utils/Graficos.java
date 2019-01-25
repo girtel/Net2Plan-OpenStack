@@ -36,11 +36,15 @@ public class Graficos extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
         this.title=title;
-        if(!yName.equals(null))
+        if(yName !="null") {
             this.yName = yName;
+            System.out.println("not null please"+this.yName);
+        }
         panel = new JPanel();
         getContentPane().add(panel);
         init(data);
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        setIconImage(img.getImage());
 
 
     }
@@ -52,36 +56,13 @@ public class Graficos extends JFrame {
             series.add(i, data[i]);
         }
         XYSeriesCollection xydata = new XYSeriesCollection(series);
-        final JFreeChart chart = ChartFactory.createXYLineChart("Measures of " + this.title,
-                "Time/Date", yName, xydata, PlotOrientation.VERTICAL, true, true, false);
+        final JFreeChart chart = ChartFactory.createXYLineChart( this.title,
+                "Timestamp", yName, xydata, PlotOrientation.VERTICAL, true, true, false);
         XYPlot plot = (XYPlot) chart.getPlot();
         final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
         xAxis.setTickUnit(new NumberTickUnit(data.length*0.25));
         ChartPanel chartPanel = new ChartPanel(chart);
         panel.add(chartPanel);
-        JButton jButton = new JButton("Save as PNG");
-        jButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                FileChooserNetworkDesign fc_netPlan = new FileChooserNetworkDesign(SystemUtils.getCurrentDir(), Constants.DialogType.NETWORK_DESIGN);;
-
-                assert fc_netPlan != null;
-
-                int rc = fc_netPlan.showOpenDialog(null);
-                if (rc != JFileChooser.APPROVE_OPTION) return;
-
-                try  {
-                    ChartUtilities.saveChartAsPNG(new File(fc_netPlan.getSelectedFile().getAbsolutePath()+".png"), chart, 400, 300);
-
-                }catch(Exception ex){
-                    System.out.println(ex.toString());
-
-                }
-
-            }
-        });
-        panel.add(jButton);
 
     }
 

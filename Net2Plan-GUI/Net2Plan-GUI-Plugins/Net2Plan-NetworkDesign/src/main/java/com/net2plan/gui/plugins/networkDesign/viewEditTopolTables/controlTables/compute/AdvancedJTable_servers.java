@@ -8,12 +8,19 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.GeneralForm;
+import com.net2plan.gui.plugins.utils.SwingBrowser;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.*;
+import org.openstack4j.model.compute.Image;
+import org.openstack4j.model.compute.actions.BaseActionOptions;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
+import org.openstack4j.openstack.compute.domain.actions.LiveMigrationAction;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenStackServer>
 {
@@ -78,27 +85,43 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         res.add(new AjtRcMenu("Get console", e -> getSelectedElements().forEach(n -> {
             openStackClient.updateClient();
             VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
+
             try {
-                java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+                //java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));
+                JFrame jFrame = new JFrame("Console from instance: "+ n.getServerName());
+                jFrame.setBounds(1, 1, 800, 510);
+                JPanel jPanel = new JPanel();
+                SwingBrowser swingBrowser = new SwingBrowser();
+                swingBrowser.loadURL(list.getURL());
+                swingBrowser.setBounds(1, 1, 500, 500);
+                jPanel.add(swingBrowser);
+                jPanel.setVisible(true);
+                jFrame.add(jPanel);
+                jFrame.setVisible(true);
+                ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+                jFrame.setIconImage(img.getImage());
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
+                jFrame.setLocation(dim.width/2-jFrame.getSize().width/2, dim.height/2-jFrame.getSize().height/2);
 
-        }), (a, b) -> b ==1, null));
+                jFrame.setResizable(false);
 
-        /*res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
-            openStackClient.updateClient();
-            try {
-                ActionResponse response = openStackClient.getClient().compute().servers().liveMigrate(n.getId(),LiveMigrateOptions.create().blockMigration(true).diskOverCommit(false));
-            System.out.println("Code " + response.getCode()+ " Fault " + response.getFault() + "Success" + response.isSuccess());
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
 
 
         }), (a, b) -> b ==1, null));
-        */
+
+        res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
+            openStackClient.updateClient();
+
+            doLiveMigration(n);
+
+
+
+        }), (a, b) -> b ==1, null));
+
         res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
@@ -112,6 +135,13 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Image ID", "Select");
         headers.put("Network ID","Select");
         GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this,null);
+    }
+    public void doLiveMigration(OpenStackServer openStackServer){
+
+        Map<String,String> headers = new HashMap<>();
+        headers.put("Hostname","Select");
+        headers.put("Migration Type","Select");
+        GeneralForm generalTableForm = new GeneralForm("Live migration",headers,this.ajtType,this.openStackClient,this,openStackServer);
     }
 
 

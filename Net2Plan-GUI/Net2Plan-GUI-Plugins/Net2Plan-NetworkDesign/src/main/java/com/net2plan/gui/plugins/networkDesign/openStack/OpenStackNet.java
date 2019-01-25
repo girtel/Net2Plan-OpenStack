@@ -74,17 +74,22 @@ public class OpenStackNet
 
        // System.out.println("OpenStackNet adding credentiales "+ jsonObject);
         JSONArray jsonArray = jsonObject.getJSONArray("Credentials");
+        System.out.println("Loading credentials from file");
+        System.out.println("Actual length of credentials " +credentiales.length());
         int num = 0;
         for(Object object: jsonArray){
             AddOsClient((JSONObject) object,credentiales.length());
             num++;
         }
+        System.out.println("After length of loading credentials " + credentiales.length());
         fillQuotasAndLimits();
         callback.getViewEditTopTables().updateView();
 
     }
     public void AddOsClient(JSONObject credential,int index){
 
+        System.out.println("Adding new credential for new client");
+        System.out.println("Actual client"+ osClients.size());
              OpenStackClient openStackClient =new OpenStackClient().create(this,credential,"Openstack " + index);
             if(openStackClient.isConnected()) {
                 openStackClient
@@ -93,7 +98,7 @@ public class OpenStackNet
                 osClients.add(openStackClient);
                 credentiales.put(credential);
              }
-
+        System.out.println("After adding clients "+ osClients.size());
 
     }
 
@@ -102,6 +107,7 @@ public class OpenStackNet
         openStackQuotasUsage.clear();
         openStackQuotas.clear();
         openStackLimits.clear();
+
         try {
 
             getOsClients().stream().forEach(n -> addOpenStackLimit(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().limits().getAbsolute(), n));

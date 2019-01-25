@@ -4,8 +4,11 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.interfaces.networkDesign.Node;
+import org.json.JSONObject;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Link;
 import org.openstack4j.model.compute.*;
+import org.openstack4j.model.compute.actions.LiveMigrateOptions;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -217,5 +220,25 @@ public class OpenStackServer  extends OpenStackNetworkElement
         return description;
     }
 
+    public void doLiveMigration(JSONObject jsonObject){
+
+        String hostname = jsonObject.getString("Hostname");
+        boolean disk = false;
+        boolean block = false;
+        if (jsonObject.getString("Migration Type").equals("Block")){
+            block = true;
+        }else{
+            disk = true;
+        }
+
+        try {
+                ActionResponse response = openStackClient.getClient().compute().servers().liveMigrate(this.getId(),LiveMigrateOptions.create().blockMigration(block).diskOverCommit(disk).host(hostname));
+            System.out.println("Code " + response.getCode()+ " Fault " + response.getFault() + "Success" + response.isSuccess());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                logPanel();
+            }
+
+    }
 
 }

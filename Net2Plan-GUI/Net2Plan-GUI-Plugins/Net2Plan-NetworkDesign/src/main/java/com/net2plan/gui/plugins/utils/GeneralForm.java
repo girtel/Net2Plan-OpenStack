@@ -3,12 +3,14 @@ package com.net2plan.gui.plugins.utils;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackQuotas;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackServer;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.types.Facing;
 import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.model.compute.HostResource;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Router;
@@ -190,6 +192,19 @@ public class GeneralForm extends JFrame implements ActionListener{
                 stockArr = new String[stockList.size()];
                 stockArr = stockList.toArray(stockArr);
                 break;
+            case "Hostname":
+                stockList = openStackClient.getClient().compute().host().list().stream().map(n->((HostResource) n).getHostName()).distinct().collect(Collectors.toList());
+                stockArr = new String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
+            case "Migration Type":
+
+                stockList.add("Normal");
+                stockList.add("Block");
+                stockList.add("Disk");
+                stockArr = new  String[stockList.size()];
+                stockArr = stockList.toArray(stockArr);
+                break;
         }
         return stockArr;
     }
@@ -243,7 +258,12 @@ public class GeneralForm extends JFrame implements ActionListener{
 
             /*COMPUTE*/
             case SERVERS:
-                openStackClient.getOpenStackNetCreate().createOpenStackServer(jsonObject);
+                if(title.equals("Live migration")){
+                    ((OpenStackServer)openStackNetworkElement).doLiveMigration(jsonObject);
+                }else {
+                    openStackClient.getOpenStackNetCreate().createOpenStackServer(jsonObject);
+                }
+
                 break;
             case FLAVORS:
                 openStackClient.getOpenStackNetCreate().createOpenStackFlavor(jsonObject);
