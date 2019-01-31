@@ -89,6 +89,54 @@ int cont = 0;
         }
         return meters;
     }
+    public Meter meter(String id){
+
+        final List<Meter> meters = new ArrayList<>();
+
+        Object responseObject = this.Get(url+GnocchiOption.METRIC.tabName+id,osClientV3.getToken().getId());
+        System.out.println("NEWWWWWWWW"+ responseObject.toString());
+            JSONObject jsonObject = new JSONObject(responseObject.toString());
+              Meter meter = new Meter() {
+                @Override
+                public String getId() {
+                    return jsonObject.getString("id");
+                }
+
+                @Override
+                public String getName() {
+                    return jsonObject.getString("name");
+                }
+
+                @Override
+                public String getResourceId() {
+                    return jsonObject.get("resource").toString();
+                }
+
+                @Override
+                public String getProjectId() {
+                    return jsonObject.getString("created_by_project_id");
+                }
+
+                @Override
+                public Type getType() {
+                    return Type.GAUGE;
+                }
+
+                @Override
+                public String getUnit() {
+                    return jsonObject.get("unit").toString();
+                }
+
+                @Override
+                public String getUserId() {
+                    return jsonObject.getString("created_by_user_id");
+                }
+            };
+
+            meters.add(meter);
+
+        return meters.get(0);
+    }
     public List<Resource> resourcesList(){
 
         final List<Resource> resources = new ArrayList<>();

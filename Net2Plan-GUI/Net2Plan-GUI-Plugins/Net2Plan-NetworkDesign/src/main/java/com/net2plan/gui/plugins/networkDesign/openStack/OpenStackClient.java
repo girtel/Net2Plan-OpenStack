@@ -19,6 +19,7 @@ import com.net2plan.gui.plugins.utils.MyRunnable;
 
 import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.interfaces.networkDesign.NetPlan;
+import com.net2plan.utils.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
@@ -337,7 +338,7 @@ public class OpenStackClient {
 
                 values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
             }
-            Graficos graficos = new Graficos("Graph of "+openStackMeter.getName()+" measurements",openStackMeter.getMeter_unit(),values);
+            Graficos graficos = new Graficos(osn.getCallback(),this,"Graph of "+openStackMeter.getName()+" measurements",openStackMeter.getMeter_unit(),values);
            // System.out.println(values);
             openStackSummaries.clear();
             OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
@@ -370,7 +371,7 @@ public class OpenStackClient {
 
                 values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
             }
-             graficos = new Graficos("Graph of "+openStackMeter.getName()+" measurements",openStackMeter.getMeter_unit(),values);
+             graficos = new Graficos(osn.getCallback(),this,"Graph of "+openStackMeter.getName()+" measurements",openStackMeter.getMeter_unit(),values);
             // System.out.println(values);
             openStackSummaries.clear();
             OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
@@ -383,6 +384,41 @@ public class OpenStackClient {
 
         osn.getCallback().getViewEditTopTables().updateView();
         return graficos;
+    }
+
+    public Pair<JPanel,Map<String,Object>> getAnalisisData(String metric_id){
+
+        openStackMeters.clear();
+        openStackMeasures.clear();
+        openStackSummaries.clear();
+
+        Map<String,Object> information = new HashMap<>();
+        JPanel grafica = new JPanel();
+
+        addOpenStackMeter(gnocchi.meter(metric_id));
+
+        OpenStackMeter openStackMeter = openStackMeters.get(0);
+
+        if(openStackMeter !=null) {
+            if (openStackMeters.size() > 0) {
+                information.put("ID", openStackMeter.getId());
+                information.put("Name", openStackMeter.getName());
+                information.put("Unit", openStackMeter.getMeter_unit());
+                information.put("Project ID", openStackMeter.getMeter_project_id());
+                //information.put("Resource ID", openStackMeter.getMeter_resource_id());
+                information.put("Type", openStackMeter.getMeter_type());
+                information.put("User ID", openStackMeter.getMeter_user_id());
+            }
+
+
+            if (updateMeasuresList2(openStackMeter, openStackMeter.getId()) != null)
+                grafica = updateMeasuresList2(openStackMeter, openStackMeter.getId()).getPanel();
+        }
+
+        return Pair.of(grafica,information);
+
+
+
     }
     public String getName(){return this.name;}
     public String getProjectId(){return this.os_project_id;}

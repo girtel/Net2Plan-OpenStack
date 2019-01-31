@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.utils;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+import com.net2plan.gui.plugins.networkDesign.openStack.extra.OpenStackSummary;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_abstractElement;
@@ -20,16 +21,18 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
 public class AnalisisFrame extends JFrame {
-    JPanel grafica;
+    JPanel firstPanel,graphPanel,informationPanel,jComboBoxPanel,secondPanel,informationPanelAboutMetric,informationPanelAboutMeasures;
     GUINetworkDesign callback;
     OpenStackResource openStackResource;
     JComboBox jComboBox;
@@ -40,60 +43,45 @@ public class AnalisisFrame extends JFrame {
     private final Map<ViewEditTopologyTablesPane.AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>> ajTables = new EnumMap<>(ViewEditTopologyTablesPane.AJTableType.class);
 
     public AnalisisFrame (GUINetworkDesign callback, OpenStackResource openStackResource){
+
         this.callback = callback;
         this.openStackResource=openStackResource;
         this.openStackClient = openStackResource.getOpenStackClient();
 
-        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
-        setIconImage(img.getImage());
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        setSize(1000, 500);
-        setLocation(dim.width/2-getSize().width/2, dim.height/2-getSize().height/2);
-        setResizable(true);
-        setVisible(true);
-        setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         jComboBox = new JComboBox(openStackResource.getMetrics().keySet().toArray());
-        jp1 = new JPanel();//filas, columnas, espacio entre filas, espacio entre columnas
+        firstPanel = new JPanel(new BorderLayout());
+        secondPanel = new JPanel(new BorderLayout());
+        graphPanel = new JPanel();
+        informationPanel = new JPanel( new BorderLayout());
+        jComboBoxPanel = new JPanel();
 
-        jp1.setVisible(true);
-        jp1.setSize(900,500);
+        informationPanelAboutMetric = new JPanel(new MigLayout("fillx, wrap 2"));
+        informationPanelAboutMeasures = new JPanel(new MigLayout("fillx, wrap 2"));
 
-        splitPane = new JSplitPane();
-        splitPane2 = new JSplitPane();
+        informationPanel.add(informationPanelAboutMetric,BorderLayout.NORTH);
+        informationPanel.add(informationPanelAboutMeasures,BorderLayout.CENTER);
 
-        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.3);
-        splitPane.setEnabled(true);
-        splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(0.4);
+        secondPanel.add(jComboBox,BorderLayout.NORTH);
+        secondPanel.add(informationPanel,BorderLayout.SOUTH);
 
-        splitPane2.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        splitPane2.setResizeWeight(0.3);
-        splitPane2.setEnabled(true);
-        splitPane2.setOneTouchExpandable(true);
-        splitPane2.setDividerLocation(0.4);
+        firstPanel.add(secondPanel,BorderLayout.WEST);
+        firstPanel.add(graphPanel,BorderLayout.EAST);
 
-        JPanel jPanel2 = new JPanel();
-        jPanel2.add(jComboBox);
-        jPanel2.add(jp1);
-        jPanel2.setVisible(true);
-        jPanel2.setSize(900,400);
-        JScrollPane jScrollPane = new JScrollPane(jPanel2);
-        add(jScrollPane);
-
-        jp1.add(splitPane);
-        jp1.add(splitPane2);
-
-         jComboBox.addActionListener(new ActionListener() {//add actionlistner to listen for change
+        add(firstPanel);
+        jComboBox.addActionListener(new ActionListener() {//add actionlistner to listen for change
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateView();
+                recomput();
             }
         });
 
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
+        setIconImage(img.getImage());
+
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setTitle("Analysis window for OpenStack metrics");
         jComboBox.setSelectedIndex(0);
 
     }
@@ -101,31 +89,51 @@ public class AnalisisFrame extends JFrame {
 
     public void recomput(){
         String s = (String) jComboBox.getSelectedItem();//get the selected item
+        String metric_id = openStackResource.getMetrics().get(s);
 
-        openStackResource.getOpenStackClient().updateMeterList2(openStackResource.getSourceId(),openStackResource.getMetrics().get(s));
-        Graficos graficos = openStackResource.getOpenStackClient().updateMeasuresList2(openStackResource.getOpenStackClient().openStackMeters.get(0),openStackResource.getMetrics().get(s));
-        //System.out.println(openStackResource.getMetrics().get(s));
-        if(graficos != null) grafica = graficos.getPanel();
+        graphPanel.removeAll();
+        informationPanelAboutMetric.removeAll();
+        informationPanelAboutMeasures.removeAll();
 
-        splitPane.setTopComponent(callback.getViewEditTopTables().createPanelComponentInfo(ViewEditTopologyTablesPane.AJTableType.METERS,openStackClient).getSecond());
-        splitPane.setBottomComponent(callback.getViewEditTopTables().createPanelComponentInfo(ViewEditTopologyTablesPane.AJTableType.MEASURES,openStackClient).getSecond());
+        Pair<JPanel,Map<String,Object>> aboutMetric = openStackClient.getAnalisisData(metric_id);
 
-        if (grafica != null)
-            splitPane2.setTopComponent(grafica);
+        if(aboutMetric.getFirst()!=null)
+            graphPanel.add(aboutMetric.getFirst());
 
-        splitPane2.setBottomComponent(callback.getViewEditTopTables().createPanelComponentInfo(ViewEditTopologyTablesPane.AJTableType.SUMMARY,openStackClient).getSecond());
+        if(aboutMetric.getSecond()!=null) {
+
+            informationPanelAboutMetric.add(new JLabel("About Metric"),"align label");
+            informationPanelAboutMetric.add(new JLabel(""),"growx");
+
+            aboutMetric.getSecond().forEach((n, k) -> {
+                informationPanelAboutMetric.add(new JLabel(n), "align label");
+                informationPanelAboutMetric.add(new JLabel(k.toString()), "growx");
+            });
+        }
+
+        if(openStackClient.openStackSummaries.size()>0){
+
+            OpenStackSummary openStackSummary = openStackClient.openStackSummaries.get(0);
+
+            informationPanelAboutMeasures.add(new JLabel("About metric`s measures"),"align label");
+            informationPanelAboutMeasures.add(new JLabel(""),"growx");
+
+            informationPanelAboutMeasures.add(new JLabel("Total"),"align label");
+            informationPanelAboutMeasures.add(new JLabel(Integer.toString(openStackClient.openStackMeasures.size())),"growx");
+
+            informationPanelAboutMeasures.add(new JLabel("Max"),"align label");
+            informationPanelAboutMeasures.add(new JLabel(Double.toString(openStackSummary.getMax())),"growx");
+
+            informationPanelAboutMeasures.add(new JLabel("Min"),"align label");
+            informationPanelAboutMeasures.add(new JLabel(Double.toString(openStackSummary.getMin())),"growx");
+
+        }
 
 
-
-    }
-    public void updateView() {
-
-        recomput();
-
-        //ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
-        //ajTables.values().stream().map(t -> t.getSecond()).forEach(t -> t.updateHeader());
-
-
+        pack();
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(dim.width/2-getSize().width/2, dim.height/2-getSize().height/2);
+        setVisible(true);
 
 
     }

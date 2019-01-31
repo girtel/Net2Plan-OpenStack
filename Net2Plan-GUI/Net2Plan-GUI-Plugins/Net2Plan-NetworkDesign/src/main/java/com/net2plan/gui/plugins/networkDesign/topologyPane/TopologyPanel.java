@@ -417,7 +417,7 @@ public class TopologyPanel extends JPanel implements ActionListener
         jDialog.setBackground(Color.black);
 
         Point point = button.getLocationOnScreen();
-        jDialog.setLocation(point.x,point.y + button.getHeight() + 8);
+        jDialog.setLocation(point.x,point.y + button.getHeight() + 7);
        //jDialog.setLocationRelativeTo(button);
         jDialog.setUndecorated(true);
         jDialog.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -550,6 +550,12 @@ public class TopologyPanel extends JPanel implements ActionListener
                     os_auth_url.setText(jsonObject.get("export OS_AUTH_URL=").toString().replaceAll(Character.toString('"'),""));
                     os_project_id.setText(jsonObject.get("export OS_PROJECT_ID=").toString().replaceAll(Character.toString('"'),""));
                     os_user_domain_name.setText(jsonObject.get("export OS_USER_DOMAIN_NAME=").toString().replaceAll(Character.toString('"'),""));
+
+                    os_username.setEnabled(false);
+                    os_auth_url.setEnabled(false);
+                    os_project_id.setEnabled(false);
+                    os_user_domain_name.setEnabled(false);
+
                     jDialog.pack();
                     jDialog.setVisible(true);
                 }catch(Exception ex){

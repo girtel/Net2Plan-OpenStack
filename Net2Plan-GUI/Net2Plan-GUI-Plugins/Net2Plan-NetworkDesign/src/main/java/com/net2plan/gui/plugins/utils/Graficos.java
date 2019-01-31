@@ -7,7 +7,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.ImageIcon;
 
+import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.FileChooserNetworkDesign;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.internal.Constants;
 import com.net2plan.internal.SystemUtils;
 import org.apache.commons.io.FileUtils;
@@ -29,7 +32,10 @@ public class Graficos extends JFrame {
     JPanel panel;
     String yName = "No unit available";
     String title;
-    public Graficos(String title, String yName, double [] data){
+    GUINetworkDesign callback;
+    OpenStackClient openStackClient;
+
+    public Graficos(GUINetworkDesign callback, OpenStackClient openStackClient,String title, String yName, double [] data){
         setTitle(title);
         setSize(800,500);
         setLocationRelativeTo(null);
@@ -40,6 +46,8 @@ public class Graficos extends JFrame {
             this.yName = yName;
             System.out.println("not null please"+this.yName);
         }
+        this.callback = callback;
+        this.openStackClient = openStackClient;
         panel = new JPanel();
         getContentPane().add(panel);
         init(data);
@@ -62,6 +70,20 @@ public class Graficos extends JFrame {
         final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
         xAxis.setTickUnit(new NumberTickUnit(data.length*0.25));
         ChartPanel chartPanel = new ChartPanel(chart);
+
+        JPopupMenu jPopupMenu = chartPanel.getPopupMenu();
+         jPopupMenu.add("Get table of measures").addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent actionEvent) {
+                 JFrame jFrame = new JFrame("Measures");
+                 JPanel jPanel = new JPanel();
+                 jPanel.add(callback.getViewEditTopTables().createPanelComponentInfo(ViewEditTopologyTablesPane.AJTableType.MEASURES,openStackClient).getSecond());
+                 jFrame.add(jPanel);
+                 jFrame.setResizable(false);
+                 jFrame.pack();
+                 jFrame.setVisible(true);
+             }
+         });
         panel.add(chartPanel);
 
     }
