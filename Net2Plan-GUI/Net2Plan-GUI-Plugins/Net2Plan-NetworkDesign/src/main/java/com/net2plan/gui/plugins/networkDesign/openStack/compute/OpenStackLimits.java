@@ -70,6 +70,7 @@ public class OpenStackLimits extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.limitId; }
+    public String getName () { return this.limitId; }
     public Integer getLimitCores () { return this.limitCores; }
     public Integer getLimitCoresUsed () { return this.limitCoresUsed; }
     public Integer getLimitRam () { return this.limitRam; }

@@ -32,7 +32,7 @@ public class AdvancedJTable_hostResources extends AdvancedJTable_networkElement<
         res.add(new AjtColumnInfo<OpenStackHostResource>(this, Integer.class, null, "Ram", "Host ram in Mb",
                 null, n -> n.getHostMemory(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackHostResource>(this, Integer.class, null, "Project", "Host Project",
-                null, n -> n.getHostProject(), AGTYPE.NOAGGREGATION, null, null));
+                null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getHostProject()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackHostResource>(this, Integer.class, null, "Service", "Host Service",
                 null, n -> n.getHostService(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackHostResource>(this, Integer.class, null, "Zone", "Host Zone",

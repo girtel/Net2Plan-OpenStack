@@ -24,7 +24,7 @@ public class AdvancedJTable_keypairs extends AdvancedJTable_networkElement<OpenS
         final List<AjtColumnInfo<OpenStackKeypair>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackKeypair>(this, String.class, null, "ID", "Keypair ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackKeypair>(this, String.class, null, "Name", "Keypair name", null, n -> n.getKeypairName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackKeypair>(this, String.class, null, "User ID", "Keypair user id", null, n -> n.getKeypairUserId(),
+        res.add(new AjtColumnInfo<OpenStackKeypair>(this, String.class, null, "User ID", "Keypair user id", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getKeypairUserId()),
                 AGTYPE.NOAGGREGATION, null, null));
            res.add(new AjtColumnInfo<OpenStackKeypair>(this, String.class, null, "Fingerprint", "Keypair Fingerprint",
                 null, n -> n.getKeypairFingerprint(), AGTYPE.NOAGGREGATION, null, null));

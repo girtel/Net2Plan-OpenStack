@@ -150,6 +150,7 @@ import java.util.List;
 
             JPanel leftPane = new JPanel(new BorderLayout());
             JPanel logSection = configureLeftBottomPanel();
+            logSection = null;
             if (logSection == null)
             {
                 leftPane.add(topologyPanel, BorderLayout.CENTER);
@@ -498,19 +499,6 @@ import java.util.List;
             vs.resetPickedState();
             topologyPanel.getCanvas().cleanSelection();
             viewEditTopTables.resetPickedState();
-        }
-
-        /**
-         * Shows the tab corresponding associated to a network element.
-         *
-         * @param type   Network element type
-         * @since 0.3.0
-         */
-        @SuppressWarnings("unchecked")
-        public void selectNetPlanViewItem(AJTableType type)
-        {
-
-            viewEditTopTables.selectItemTab(type);
         }
 
         /**

@@ -120,6 +120,7 @@ public class OpenStackServer  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.serverId; }
     public String getServerName () { return this.serverName; }
+    public String getName () { return this.serverName; }
     public String getServerAccessIPv4 () { return this.serverAccessIPv4; }
     public String getServerAccessIPv6 () { return this.serverAccessIPv6; }
     public Addresses getServerAddresses () { return this.serverAddresses; }

@@ -46,6 +46,7 @@ public class OpenStackSummary  extends OpenStackNetworkElement
     public double getDesv () { return this.desv; }
     public double getModa () { return this.mod; }
     public double getMediana () { return this.median; }
+    public String getName () { return this.id; }
 
     public static double media(double [] values){
 

@@ -40,7 +40,7 @@ public class OpenStackGnocchiMeasure extends OpenStackNetworkElement
     public String getTimestamp () { return this.timestamp; }
     public String getValue() {return this.value;}
     public String getGranularity() {return this.granularity;}
-
+    public String getName(){ return null;}
 
     @Override
     public String get50CharactersDescription()

@@ -85,7 +85,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     public String getRouterName() {
         return routerName;
     }
-
+    public String getName(){ return routerName;}
     public String getRouterTenantId() {
         return routerTenantId;
     }

@@ -30,13 +30,13 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         final List<AjtColumnInfo<OpenStackUser>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackUser>(this, Object.class, null, "ID", "User ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Name", "User Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Domain ID", "Domain ID", null, n -> n.getDomainId(),
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Domain ID", "Domain ID", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getDomainId()),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Email", "User email",
                 null, n -> n.getEmail(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Description", "User description",
                 null, n -> n.getDescription(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, Boolean.class, null, "Enable", "User enable", null, n -> n.isUserEnable(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackUser>(this, Boolean.class, null, "Enable", "User enable", (n,v) -> n.isUserEnable((Boolean) v), n -> n.isUserEnable(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, List.class, null, "Links", "User links", null, n -> n.getUserLinks(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;

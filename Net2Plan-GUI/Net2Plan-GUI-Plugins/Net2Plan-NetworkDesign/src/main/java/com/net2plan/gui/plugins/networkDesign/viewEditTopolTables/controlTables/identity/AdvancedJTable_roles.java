@@ -24,7 +24,7 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
         final List<AjtColumnInfo<OpenStackRole>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "ID", "Role ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "Name", "Role name", null, n -> n.getRoleName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "Domain ID", "Role domain id", null, n -> n.getRoleDomainId(),
+        res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "Domain ID", "Role domain id", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getRoleDomainId()),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRole>(this, List.class, null, "Links", "Role links",
                 null, n -> n.getRoleLinks(), AGTYPE.NOAGGREGATION, null, null));

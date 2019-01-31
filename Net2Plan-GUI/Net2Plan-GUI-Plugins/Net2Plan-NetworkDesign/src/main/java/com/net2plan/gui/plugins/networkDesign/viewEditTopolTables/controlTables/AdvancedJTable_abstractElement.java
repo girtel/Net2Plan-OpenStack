@@ -43,12 +43,15 @@ import com.net2plan.gui.plugins.networkDesign.LastRowAggregatedValue;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.TableColumnComparator;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
 import com.net2plan.gui.utils.AdvancedJTable;
 import com.net2plan.gui.utils.ClassAwareTableModel;
 import com.net2plan.gui.utils.ColumnHeaderToolTips;
 import com.net2plan.gui.utils.FixedColumnDecorator;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
+import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 
 
 /**
@@ -77,7 +80,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
     private String control_currentViewTypeForColumns;
     private final boolean hasAggregationRow;
     private final String tableTitle;
-
+    private BidiMap<T,Integer> mapElementId2ModelIndexWithThatValue = new DualHashBidiMap<>();
     /**
      * Constructor that allows to set the table model.
      *
@@ -408,12 +411,73 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex)
             {
-                return false;
+                if (columnIndex >= C) return false;
+                if (hasAggregationRow && rowIndex == getRowCount() - 1) return false; // the last row is for the aggregated info
+                if (getValueAt(rowIndex, columnIndex) == null) return false;
+                return tableColumns.get(columnIndex).isEditable();
+            }
+
+            @Override
+            public void setValueAt(Object newValue, int row, int column)
+            {
+                if (newValue == null) return;
+                T ne = null;
+                try
+                {
+                    final AjtColumnInfo<T> columnInfo = tableColumns.get(column);
+                    final Object oldValue = getValueAt(row, column);
+                    if (newValue.equals(oldValue)) return;
+                    ne = getElementAtModelRowIndex(row);
+//                    final long neId = (Long) getValueAt(row, 0);
+//                    ne = netPlan.getAssociatedMtnNetworkElement(neId);
+                    final Object newValueCastedOrParsed;
+                    if (!(newValue instanceof Number) && !(newValue instanceof String) && !(newValue instanceof Boolean)) assert false;
+                    if (columnInfo.getValueShownIfNotAggregation().equals(Double.class))
+                    {
+                        if (newValue instanceof Number)
+                            newValueCastedOrParsed = ((Number) newValue).doubleValue();
+                        else
+                            newValueCastedOrParsed = Double.parseDouble((String) newValue);
+                    }
+                    else if (columnInfo.getValueShownIfNotAggregation().equals(Integer.class))
+                    {
+                        if (newValue instanceof Number)
+                            newValueCastedOrParsed = ((Number) newValue).intValue();
+                        else
+                            newValueCastedOrParsed = Integer.parseInt((String) newValue);
+                    }
+                    else if (columnInfo.getValueShownIfNotAggregation().equals(Long.class))
+                    {
+                        if (newValue instanceof Number)
+                            newValueCastedOrParsed = ((Number) newValue).longValue();
+                        else
+                            newValueCastedOrParsed = Long.parseLong((String) newValue);
+                    }
+                    else if (columnInfo.getValueShownIfNotAggregation().equals(Boolean.class))
+                        newValueCastedOrParsed = newValue;
+                    else if (columnInfo.getValueShownIfNotAggregation().equals(String.class))
+                        newValueCastedOrParsed = newValue;
+                    else throw new RuntimeException ();
+                    columnInfo.getSetValueAtFunction().accept(ne , newValueCastedOrParsed);
+                    callback.updateVisualizationJustTables();
+                    final OpenStackNetworkElement openStackNetworkElement = (OpenStackNetworkElement) ne;
+                    callback.getViewEditTopTables().selectTabAndGivenItems(openStackNetworkElement.getOpenStackClient(), Arrays.asList(openStackNetworkElement));
+                    super.setValueAt(newValueCastedOrParsed, row, column);
+                }
+                catch (Throwable e)
+                {
+                    e.printStackTrace();
+                    ErrorHandling.showErrorDialog(e.getMessage(), "Error modifying value");
+                }
             }
         };
         return tableModel;
     }
-
+    public Optional<Integer> getRowModelIndexOfElement(Object element)
+    {
+        final Integer res = this.mapElementId2ModelIndexWithThatValue.get(element);
+        return res == null? Optional.empty() : Optional.of(res);
+    }
     private String[] getTableHeaders(List<AjtColumnInfo<T>> tableColumns)
     {
         final String [] res = new String [tableColumns.size()];
@@ -465,6 +529,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
 
     private Object[][] computeDataVector (List<AjtColumnInfo<T>> visibleTableColumns)
     {
+        this.mapElementId2ModelIndexWithThatValue.clear();
         final int numColVisible = visibleTableColumns.size();
         final List<T> tableElements = getAllAbstractElementsInTable();
 
@@ -485,6 +550,9 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
                 if (this.hasAggregationRow && col.getLastRowAggregationRowType().isToAggregate())
                     accumIfLastRow [col.getColumnIndexInTableModelWhenVissible()] = col.getLastRowAggregationRowType().agg(val , accumIfLastRow [col.getColumnIndexInTableModelWhenVissible()]).doubleValue();
             }
+            assert !this.mapElementId2ModelIndexWithThatValue.containsKey(visibleElement);
+            assert !this.mapElementId2ModelIndexWithThatValue.containsValue(rowCount);
+            this.mapElementId2ModelIndexWithThatValue.put(visibleElement, rowCount);
             rowCount ++;
         }
         if (hasAggregationRow)

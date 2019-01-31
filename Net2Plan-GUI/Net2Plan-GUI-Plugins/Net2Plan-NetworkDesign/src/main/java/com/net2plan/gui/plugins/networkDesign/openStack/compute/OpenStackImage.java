@@ -55,6 +55,7 @@ public class OpenStackImage  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.imageId; }
     public String getImageName () { return this.imageName; }
+    public String getName () { return this.imageName; }
     public long getImageSize () { return this.imageSize; }
     public Image.Status getImageStatus () { return this.imageStatus; }
     public Date getImageCreated () { return this.imageCreated; }

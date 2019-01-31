@@ -38,6 +38,7 @@ public class OpenStackRole  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.roleId; }
     public String getRoleName () { return this.roleName; }
+    public String getName () { return this.roleName; }
     public String getRoleDomainId () { return this.roleDomainId; }
     public Map<String,String> getRoleLinks () { return this.roleLinks; }
 

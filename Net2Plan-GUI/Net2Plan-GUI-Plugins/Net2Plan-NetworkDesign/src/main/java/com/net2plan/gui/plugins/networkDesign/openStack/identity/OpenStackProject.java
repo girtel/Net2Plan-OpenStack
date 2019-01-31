@@ -54,6 +54,7 @@ public class OpenStackProject  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.projectId; }
     public String getProjectName () { return this.projectName; }
+    public String getName () { return this.projectName; }
     public String getProjectParentId () { return this.projectParentId; }
     public String getProjectDomainId () { return this.projectDomainId; }
     public Domain getProjectDomain() { return this.projectDomain; }

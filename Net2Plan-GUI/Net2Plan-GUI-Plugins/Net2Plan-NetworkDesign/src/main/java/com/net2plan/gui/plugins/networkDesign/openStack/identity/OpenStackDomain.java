@@ -40,6 +40,7 @@ public class OpenStackDomain extends OpenStackNetworkElement
     @Override
     public String getId () { return this.domainId; }
     public String getDomainName () { return this.domainName; }
+    public String getName () { return this.domainName; }
     public String getDomainDescription () { return this.domainDescription; }
     public boolean isDomainEnabled () { return this.domainEnabled; }
     public Map<String,String> getDomainLinks () { return this.domainLinks; }

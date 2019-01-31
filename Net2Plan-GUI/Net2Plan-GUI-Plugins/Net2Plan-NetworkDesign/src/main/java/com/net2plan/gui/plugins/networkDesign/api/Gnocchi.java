@@ -7,10 +7,7 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.model.telemetry.Meter;
 import org.openstack4j.model.telemetry.Resource;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Gnocchi extends Api {
 
@@ -42,10 +39,14 @@ public class Gnocchi extends Api {
         Object responseObject = this.Get(url+GnocchiOption.METRIC.tabName,osClientV3.getToken().getId());
 
         JSONArray jsonArray = new JSONArray((String) responseObject.toString());
-
+int cont = 0;
         for(Object object: jsonArray){
 
             JSONObject jsonObject = (JSONObject) object;
+            if (cont==0)
+                System.out.println("METER"+ object);
+
+            cont++;
 
             Meter meter = new Meter() {
                 @Override
@@ -95,11 +96,14 @@ public class Gnocchi extends Api {
         Object responseObject = this.Get(url+GnocchiOption.RESOURCE.tabName,osClientV3.getToken().getId());
 
         JSONArray jsonArray = new JSONArray((String) responseObject.toString());
-
+int cont =0;
         for(Object object: jsonArray){
 
             JSONObject jsonObject = (JSONObject) object;
+            if (cont==0)
+            System.out.println("RESOURCER"+ object);
 
+            cont++;
            // System.out.println(jsonObject);
             Resource resource = new Resource() {
                 @Override
@@ -114,7 +118,7 @@ public class Gnocchi extends Api {
 
                 @Override
                 public String getSource() {
-                    return jsonObject.get("type").toString();
+                    return jsonObject.get("original_resource_id").toString();
                 }
 
                 @Override
@@ -134,8 +138,14 @@ public class Gnocchi extends Api {
 
                 @Override
                 public Map<String, Object> getMeataData() {
-                    return null;
+
+
+                    Map<String,Object> meta = new HashMap<>();
+                    meta.put("meta",jsonObject);
+                    return meta;
                 }
+
+
             };
 
             resources.add(resource);

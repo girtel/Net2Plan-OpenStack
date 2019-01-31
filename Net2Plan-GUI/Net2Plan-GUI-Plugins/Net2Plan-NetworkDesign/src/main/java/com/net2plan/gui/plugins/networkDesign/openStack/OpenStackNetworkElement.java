@@ -84,6 +84,7 @@ public abstract class OpenStackNetworkElement implements Comparable<OpenStackNet
 
     public abstract String getId ();
 
+    public abstract String getName();
 
     @Override
     public final int compareTo(OpenStackNetworkElement o)

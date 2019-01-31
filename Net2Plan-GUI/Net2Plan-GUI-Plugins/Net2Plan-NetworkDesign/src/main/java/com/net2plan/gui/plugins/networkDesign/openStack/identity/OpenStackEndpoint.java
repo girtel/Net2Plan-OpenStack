@@ -57,6 +57,7 @@ public class OpenStackEndpoint  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.endpointId; }
     public String getEndpointName () { return this.endpointName; }
+    public String getName () { return this.endpointName; }
     public String getEndpointDescription () { return this.endpointDescription; }
     public Boolean isEndpointEnabled () { return this.endpointEnabled; }
     public Map<String,String> getEndpointLinks () { return this.endpointLinks; }

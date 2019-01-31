@@ -51,6 +51,7 @@ public class OpenStackKeypair  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.keypairId.toString(); }
     public String getKeypairName () { return this.keypairName; }
+    public String getName () { return this.keypairName; }
     public String getKeypairUserId () { return this.keypairUserId; }
     public String getKeypairCreatedA () { return this.keypairCreatedA; }
     public String isKeypairDeleted() { return this.keypairDeleted; }

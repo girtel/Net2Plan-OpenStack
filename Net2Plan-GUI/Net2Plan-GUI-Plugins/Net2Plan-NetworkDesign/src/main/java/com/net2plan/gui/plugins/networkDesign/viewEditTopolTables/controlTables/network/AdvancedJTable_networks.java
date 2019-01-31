@@ -2,6 +2,7 @@ package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
@@ -35,15 +36,15 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Provider ID", "Network Provider SegID",
                 null, n -> n.getNetworkProviderSegID(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Tenant ID", "NetworkTenantId",
-                null, n -> n.getNetworkTenantId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Project ", "Network project",
+                null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getNetworkTenantId()), AGTYPE.NOAGGREGATION, null, null));
 
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, State.class, null, "State", "Network state", null, n -> n.getNetworkState(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, NetworkType.class, null, "Type", "Network type", null, n -> n.getNetworkType(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, List.class, null, "Neutron", "Network neutron subnets", null, n -> n.getNetworkNeutronSubnets(),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, List.class, null, "Subnets", "Network subnets",
-                null, n -> n.getNetworkSubnets(), AGTYPE.NOAGGREGATION, null, null));
+                null, n -> n.getNetworkSubnets().stream().map(x-> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(x)).collect(Collectors.toList()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Admin State", "Network admin state",
                 null, n -> n.isNetworkIsAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
 

@@ -28,7 +28,7 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
                 null, n -> n.getFloatingIPFloatingIpAddress(), AGTYPE.NOAGGREGATION, null, null));
 
         res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "Pool", "Pool floating ID", null, n -> n.getFloatingIPPool(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "Instance ID", "Instance ID floatingip", null, n -> n.getFloatingIPInstanceId(),
+        res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "Instance ID", "Instance ID floatingip", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getFloatingIPInstanceId()),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "Fixed Address", "Floating IP Fixed Ip address",
                 null, n -> n.getFloatingIPFixedIpAddress(), AGTYPE.NOAGGREGATION, null, null));

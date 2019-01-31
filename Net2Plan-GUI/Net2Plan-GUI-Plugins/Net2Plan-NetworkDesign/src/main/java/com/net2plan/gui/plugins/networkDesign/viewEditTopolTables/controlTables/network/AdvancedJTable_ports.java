@@ -37,23 +37,23 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Name", "Port Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Set.class, null, "Allowed Address", "Port allowed address", null, n -> n.getPortAllowedAddressPair(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Device ID", "Port device ID",
-                null, n -> n.getPortDeviceId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Router", "Port device ",
+                null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortDeviceId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Device Owner", "Port device owner",
                 null, n -> n.getPortDeviceOwner(), AGTYPE.NOAGGREGATION, null, null));
 
         res.add(new AjtColumnInfo<OpenStackPort>(this, Set.class, null, "Fixed IPs", "Port fiexd ips", null, n -> n.getPortFixedIps(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Host ID", "Port host id", null, n -> n.getPortHostId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Host ", "Port host", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortHostId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Mac Address", "Port mac address", null, n -> n.getPortMacAddress(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Network ID", "Port network id",
-                null, n -> n.getPortNetworkId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Network ", "Port network ",
+                null, n ->callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortNetworkId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Map.class, null, "Profile", "Port profile",
                 null, n -> n.getPortProfile(), AGTYPE.NOAGGREGATION, null, null));
 
         res.add(new AjtColumnInfo<OpenStackPort>(this, List.class, null, "Segurity Groups", "Port security groups", null, n -> n.getPortSecurityGroups(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, State.class, null, "State", "Port state", null, n -> n.getPortState(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Tenant ID", "Port tenant id", null, n -> n.getPortTenantId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Project", "Port project", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortTenantId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Boolean.class, null, "Admin state", "Port admin state", null, n -> n.isAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Boolean.class, null, "Segurity", "Port security enable", null, n -> n.isPortSecurityEnable(), AGTYPE.NOAGGREGATION, null, null));
 

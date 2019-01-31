@@ -53,6 +53,7 @@ public class OpenStackFlavor  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.flavorId; }
     public String getFlavorName () { return this.flavorName; }
+    public String getName () { return this.flavorName; }
     public Integer getFlavorDisk () { return this.flavorDisk; }
     public Integer getFlavorEphemeral () { return this.flavorEphemeral; }
     public Integer getFlavorRam () { return this.flavorRam; }

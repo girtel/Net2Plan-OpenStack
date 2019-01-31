@@ -46,6 +46,7 @@ public class OpenStackService  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.serviceId; }
     public String getServiceName () { return this.serviceName; }
+    public String getName () { return this.serviceName; }
     public String getServiceDescription () { return this.serviceDescription; }
     public String getServiceType () { return this.serviceType; }
     public Integer getServiceVersion () { return this.serviceVersion; }

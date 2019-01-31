@@ -34,7 +34,7 @@ public class Graficos extends JFrame {
         setSize(800,500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setVisible(true);
+        setVisible(false);
         this.title=title;
         if(yName !="null") {
             this.yName = yName;
@@ -66,5 +66,6 @@ public class Graficos extends JFrame {
 
     }
 
+    public JPanel getPanel () {return this.panel;}
 
 }

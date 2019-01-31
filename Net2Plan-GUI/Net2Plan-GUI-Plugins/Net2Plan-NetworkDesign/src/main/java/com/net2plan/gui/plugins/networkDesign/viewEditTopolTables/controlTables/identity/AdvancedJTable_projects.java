@@ -32,7 +32,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Domain", "Project domain", null, n -> n.getProjectDomain(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Domain ID", "Project domain id", null, n -> n.getProjectDomainId(),
+        res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Domain ID", "Project domain id", null, n ->callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getProjectDomainId()),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Parents", "Project parents", null, n -> n.getProjectParents(),
                 AGTYPE.NOAGGREGATION, null, null));

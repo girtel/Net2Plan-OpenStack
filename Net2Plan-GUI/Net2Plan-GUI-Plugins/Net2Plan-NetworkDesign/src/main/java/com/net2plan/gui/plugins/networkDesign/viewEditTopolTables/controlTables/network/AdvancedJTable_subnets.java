@@ -38,14 +38,14 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Gateway", "Subnet Gateway",
                 null, n -> n.getSubnetGateway(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Network ID", "Subnet network ID",
-                null, n -> n.getSubnetNetworkId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, Object.class, null, "Network ", "Subnet network ",
+                null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getSubnetNetworkId()), AGTYPE.NOAGGREGATION, null, null));
 
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, List.class, null, "Allocation pool", "Subnet allocation pool", null, n -> n.getSubnetAllocationPools(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, List.class, null, "DNS", "Subnet dns list", null, n -> n.getSubnetDnsNames(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, List.class, null, "Host routes", "Subnet host routes", null, n -> n.getSubnetHostRoutes(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, IPVersionType.class, null, "Ip version type", "Subnet ip version type", null, n -> n.getSubnetIpVersion(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Tenant ID", "Subnet tenant ID", null, n -> n.getSubnetTenantId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Project ", "Subnet project", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getSubnetTenantId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, Boolean.class, null, "DHCP", "Subnet dhcp", null, n -> n.isSubnetIsDHCPEnabled(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, Ipv6AddressMode.class, null, "IPv6 address mode", "Subnet ipv6 address mode", null, n -> n.getSubnetIpv6AddressMode(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, Ipv6RaMode.class, null, "IPv6 Ra mode", "Subnet ipv6 ra mode", null, n -> n.getSubnetIpv6RaMode(), AGTYPE.NOAGGREGATION, null, null));

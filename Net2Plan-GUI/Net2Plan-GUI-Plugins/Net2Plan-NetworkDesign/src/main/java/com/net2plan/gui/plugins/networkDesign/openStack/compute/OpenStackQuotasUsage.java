@@ -42,6 +42,7 @@ public class OpenStackQuotasUsage extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.tenantId; }
+    public String getName () { return this.tenantId; }
     public String getProject_id () { return this.project_id; }
     public BigDecimal getVcpusUsage () { return this.vcpusUsage; }
     public BigDecimal getRamUsage () { return this.ramUsage; }

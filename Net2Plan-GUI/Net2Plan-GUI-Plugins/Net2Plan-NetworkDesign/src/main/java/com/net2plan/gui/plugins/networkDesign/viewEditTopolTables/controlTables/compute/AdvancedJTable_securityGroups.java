@@ -28,8 +28,8 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Rules", "Security rules",
                 null, n -> n.getSecGroupExtensionRules(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Tenant ID", "Security tenant id",
-                null, n -> n.getSecGroupExtensionTenantId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Project ID", "Security tenant id",
+                null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getSecGroupExtensionTenantId()), AGTYPE.NOAGGREGATION, null, null));
 
         return res;
     }

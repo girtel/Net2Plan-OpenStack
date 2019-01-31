@@ -23,6 +23,7 @@ import com.net2plan.io.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
@@ -83,6 +84,7 @@ public class FileChooserNetworkDesign extends FileChooserConfirmOverwrite
 
         setAcceptAllFileFilterUsed(false);
         setFileSelectionMode(JFileChooser.FILES_ONLY);
+        //setFileFilter(new FileNameExtensionFilter("All files","*"));
 
         finishConfiguration = true;
     }

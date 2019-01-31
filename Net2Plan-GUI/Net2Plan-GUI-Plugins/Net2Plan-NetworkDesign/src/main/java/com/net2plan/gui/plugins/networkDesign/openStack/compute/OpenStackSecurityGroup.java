@@ -42,6 +42,7 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.secGroupExtensionId; }
     public String getSecGroupExtensionName () { return this.secGroupExtensionName; }
+    public String getName () { return this.secGroupExtensionName; }
     public String getSecGroupExtensionDescription () { return this.secGroupExtensionDescription; }
     public String getSecGroupExtensionTenantId () { return this.secGroupExtensionTenantId; }
     public List<? extends SecGroupExtension.Rule> getSecGroupExtensionRules () { return this.secGroupExtensionRules; }

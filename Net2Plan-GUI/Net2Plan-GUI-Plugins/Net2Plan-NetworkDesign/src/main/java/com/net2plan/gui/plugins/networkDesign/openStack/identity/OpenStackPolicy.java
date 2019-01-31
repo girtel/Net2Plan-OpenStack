@@ -41,6 +41,7 @@ public class OpenStackPolicy extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.policyId; }
+    public String getName () { return this.policyId; }
     public String getPolicyUserId () { return this.policyUserId; }
     public String getPolicyProjectId () { return this.policyProjectId; }
     public String getPolicyType () { return this.policyType; }

@@ -51,7 +51,7 @@ public class OpenStackCredential extends OpenStackNetworkElement
     public String getCredentialBlob () { return this.credentialBlob; }
     public String getCredentialType () { return this.credentialType; }
     public Map<String,String> getCredentialLinks () { return this.credentialLinks; }
-
+    public String getName () { return this.credentialBlob; }
     public void setCredentialUserId (JSONObject jsonObject) {
 try{
     this.openStackClient.getClient().identity().credentials().update(osCredential.toBuilder().userId(jsonObject.getString("User ID")).build());

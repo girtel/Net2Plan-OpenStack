@@ -34,6 +34,7 @@ public class OpenStackRegion  extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.regionId; }
+    public String getName () { return this.regionId; }
     public String getRegionDescription () { return this.regionDescription; }
     public String getRegionParentRegionId () { return this.regionParentRegionId; }
 

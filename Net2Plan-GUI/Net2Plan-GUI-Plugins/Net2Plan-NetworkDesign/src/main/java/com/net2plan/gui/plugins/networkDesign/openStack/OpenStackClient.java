@@ -37,6 +37,7 @@ import org.openstack4j.model.telemetry.Meter;
 import org.openstack4j.model.telemetry.Resource;
 import org.openstack4j.openstack.OSFactory;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -288,6 +289,34 @@ public class OpenStackClient {
         osn.getCallback().getViewEditTopTables().updateView();
 
     }
+    public void updateMeterList2(String resource_id, String metric_id){
+
+        //System.out.println ("Clearing meter for " + resource_id);
+        openStackMeters.clear();
+
+        for(Meter meter : gnocchi.metersList()){
+            if(meter.getResourceId().equals(resource_id) && meter.getId().equals(metric_id)){
+                addOpenStackMeter(meter);
+            }
+        }
+        /*gnocchi.metersList().forEach(n->addOpenStackMeter(n));
+        //System.out.println("Meters "+ openStackMeters);
+        openStackMeters.forEach(n->openStackMetersAvailable.add(n));
+        openStackMeters.clear();
+       // System.out.println("Meters available"+ openStackMetersAvailable);
+        openStackMetersAvailable.stream().forEach(n->{if(n.getMeter_resource_id().equals(resource_id) && !openStackMeters.contains(n)) {
+
+            System.out.println("DISTINTO!!!!!!!");
+            openStackMeters.add(n);
+
+        }else{
+            System.out.println("IGUAL" + openStackMeters + " este metric " + n);
+        }
+        });*/
+        //  System.out.println("Meters available"+ openStackMeters);
+        osn.getCallback().getViewEditTopTables().updateView();
+
+    }
     public void updateMeasuresList(OpenStackMeter openStackMeter,String metric_id){
        // System.out.println("Meteasures"+ gnocchi.measuresList(metric_id));
         openStackSummaries.clear();
@@ -320,7 +349,41 @@ public class OpenStackClient {
         }
         osn.getCallback().getViewEditTopTables().updateView();
     }
+    public Graficos updateMeasuresList2(OpenStackMeter openStackMeter, String metric_id){
+        // System.out.println("Meteasures"+ gnocchi.measuresList(metric_id));
+        openStackSummaries.clear();
+        openStackMeasures.clear();
+        JSONArray jsonArray =gnocchi.measuresList(metric_id);
+        Graficos graficos = null;
+        if(jsonArray.length() >0 ) {
+            jsonArray.forEach(n -> {
+                OpenStackGnocchiMeasure openStackGnocchiMeasure = OpenStackGnocchiMeasure.createFromAddMeasure(this.osn, ((JSONArray) n).get(0).toString(), ((JSONArray) n).get(1).toString(), ((JSONArray) n).get(2).toString(), this);
+                if(!openStackMeasures.contains(openStackGnocchiMeasure))
+                    openStackMeasures.add(openStackGnocchiMeasure);
+            });
 
+
+            double[] values = new double[jsonArray.length()];
+
+
+            for (int i = 0; i < values.length; i++) {
+
+                values[i] = (double) ((JSONArray) jsonArray.get(i)).get(2);
+            }
+             graficos = new Graficos("Graph of "+openStackMeter.getName()+" measurements",openStackMeter.getMeter_unit(),values);
+            // System.out.println(values);
+            openStackSummaries.clear();
+            OpenStackSummary openStackSummary = OpenStackSummary.createFromAddSummary(this.osn, metric_id, values, this);
+            if(!openStackSummaries.contains(openStackSummary))
+                openStackSummaries.add(openStackSummary);
+
+            //System.out.println("Meteasures"+ openStackMeasures);
+
+        }
+
+        osn.getCallback().getViewEditTopTables().updateView();
+        return graficos;
+    }
     public String getName(){return this.name;}
     public String getProjectId(){return this.os_project_id;}
     public Boolean isConnected(){return this.connect;}

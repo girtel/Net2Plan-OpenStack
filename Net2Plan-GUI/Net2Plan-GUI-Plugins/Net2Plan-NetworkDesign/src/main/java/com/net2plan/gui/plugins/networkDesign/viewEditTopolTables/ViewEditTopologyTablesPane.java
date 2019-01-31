@@ -18,9 +18,21 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableModel;
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
+import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
+import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackGnocchiMeasure;
+import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
+import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.extra.AdvancedJTable_summaries;
@@ -41,8 +53,6 @@ import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
-import org.openstack4j.api.OSClient;
-import org.openstack4j.model.compute.AbsoluteLimit;
 
 @SuppressWarnings("unchecked")
 public class ViewEditTopologyTablesPane extends JPanel
@@ -51,7 +61,6 @@ public class ViewEditTopologyTablesPane extends JPanel
     {
 
         //Identity (Keystone)
-        KEYSTONE("Keystone"),
         USERS("Users"),
         PROJECTS("Projects"),
         DOMAINS("Domains"),
@@ -64,14 +73,12 @@ public class ViewEditTopologyTablesPane extends JPanel
         ROLES("Roles"),
 
         //Network (Neutron)
-        NEUTRON("Neutron"),
         NETWORKS("Networks"),
         ROUTERS("Routers"),
         PORTS("Ports"),
         SUBNETS("Subnets"),
 
         //Compute (Nova)
-        NOVA("Nova"),
         SERVERS("Servers"),
         FLAVORS("Flavors"),
         FLOATINGIPS("Floating IPs"),
@@ -80,11 +87,9 @@ public class ViewEditTopologyTablesPane extends JPanel
         HOSTRESOURCES("Host resources"),
 
         //Image (Glance)
-        GLANCE("Glance"),
         IMAGES("Images"),
 
         //Telemetry (Ceilometer)
-        GNOCCHI("Ceilometer"),
         RESOURCES("Resources"),
         METERS("Metrics"),
         MEASURES("Measures"),
@@ -146,24 +151,6 @@ public class ViewEditTopologyTablesPane extends JPanel
         this.viewEditHighLevelTabbedPane = new JTabbedPane();
 
         upperText = new JTextArea();
-        jScrollPane = new JScrollPane(upperText);
-        upperText.setFont(new JLabel().getFont());
-        upperText.setBackground(new JLabel().getBackground());
-        upperText.setAutoscrolls(true);
-        upperText.setLineWrap(true);
-        upperText.setEditable(false);
-        upperText.setWrapStyleWord(true);
-        upperText.setText("Identity Service (Keystone) V3"+ NEWLINE+NEWLINE
-        +"The Identity (Keystone) V3 service provides the central directory of users, groups, region, service, endpoints, role management and authorization."+ NEWLINE
-                +"This API is responsible for authenticating and providing access to all the other OpenStack services. "+NEWLINE
-                +"The API also enables administrators to configured centralized access policies, users, domains and projects."+ NEWLINE
-                +NEWLINE+NEWLINE
-                +"Network (Neutron)" + NEWLINE+NEWLINE
-                +"Neutron is the Network service for OpenStack. Unlike Nova Networking, Neutron is broken up into the following abstractions: Networks, Subnets and Routers."+NEWLINE
-                +"Each has functionality that mimics the physical layers.");
-
-
-
        /*final JSplitPane splitPane = new JSplitPane();
 
         splitPane.setLeftComponent(viewEditHighLevelTabbedPane);
@@ -210,15 +197,10 @@ public class ViewEditTopologyTablesPane extends JPanel
         this.add(menuBar, BorderLayout.SOUTH);
     }
 
-    private Pair<AdvancedJTable_abstractElement, FilteredTablePanel> createPanelComponentInfo(AJTableType type, OpenStackClient openStackClient) {
+    public Pair<AdvancedJTable_abstractElement, FilteredTablePanel> createPanelComponentInfo(AJTableType type, OpenStackClient openStackClient) {
         AdvancedJTable_networkElement table = null;
          switch (type)
         {
-
-            /*IDENTITY*/
-            case KEYSTONE:
-                table = new AdvancedJTable_users(callback,openStackClient);
-                break;
             case USERS:
                  table = new AdvancedJTable_users(callback,openStackClient);
                 break;
@@ -249,11 +231,6 @@ public class ViewEditTopologyTablesPane extends JPanel
             case ROLES:
                 table = new AdvancedJTable_roles(callback,openStackClient);
                 break;
-
-            /*NETWORK*/
-            case NEUTRON:
-                table = new AdvancedJTable_subnets(callback,openStackClient);
-                break;
             case NETWORKS:
                 table = new AdvancedJTable_networks(callback,openStackClient);
                 break;
@@ -269,9 +246,6 @@ public class ViewEditTopologyTablesPane extends JPanel
 
 
             /*COMPUTE*/
-            case NOVA:
-                table = new AdvancedJTable_subnets(callback,openStackClient);
-                break;
             case SERVERS:
                 table = new AdvancedJTable_servers(callback,openStackClient);
                 break;
@@ -292,23 +266,11 @@ public class ViewEditTopologyTablesPane extends JPanel
                 break;
 
             /*IMAGE*/
-            case GLANCE:
-                table = new AdvancedJTable_imagesV2(callback,openStackClient);
-                break;
             case IMAGES:
                 table = new AdvancedJTable_imagesV2(callback,openStackClient);
                 break;
 
             /*TELEMETRY*/
-            case GNOCCHI:
-                table = new AdvancedJTable_subnets(callback,openStackClient);
-              /*  final FilteredTablePanel filteredTablePanel =  new FilteredTablePanel(callback, table.getTableScrollPane(),openStackClient);
-                final JSplitPane sp = new JSplitPane();
-                final JPanel bottomPanel = new JPanel();
-                sp.setTopComponent(filteredTablePanel);
-                sp.setBottomComponent(bottomPanel);
-                return Pair.of(table, sp);*/
-                break;
             case METERS:
                 table = new AdvancedJTable_meters(callback,openStackClient);
                 break;
@@ -397,14 +359,32 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     public void recomputNetPlanView() {
 
+        /*
+        private final Map<OpenStackClient,Map<AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>>> netPlanViewTable = new HashMap<> (); //new EnumMap<>(AJTableType.class);
+    private final Map<AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>> ajTables = new EnumMap<>(AJTableType.class);
+    private final JTabbedPane viewEditHighLevelTabbedPane;
+    private final Map<OpenStackClient, JTabbedPane> layerSubTabbedPaneMap = new HashMap<>();
+
+    private final JTabbedPane slicingTabbedPane = new JTabbedPane();
+    private final Map<OpenStackClient,JTabbedPane> identityTabbedPane = new HashMap<>();
+    private final Map<OpenStackClient,JTabbedPane> networkTabbedPane = new HashMap<>();
+    private final Map<OpenStackClient,JTabbedPane> computeTabbedPane = new HashMap<>();
+    private final Map<OpenStackClient,JTabbedPane> imageTabbedPane = new HashMap<>();
+    private final Map<OpenStackClient,JTabbedPane> telemetryTabbedPane = new HashMap<>();
+         */
         /* Save current selected tab */
         final int selectedIndexFirstLevel = viewEditHighLevelTabbedPane.getSelectedIndex() == -1 ? 0 : viewEditHighLevelTabbedPane.getSelectedIndex();
         int selectedIndexSecondLevel = -1;
+        int selectedIndexThirdLevel = -1;
         if (viewEditHighLevelTabbedPane.getSelectedComponent() instanceof JTabbedPane)
+        {
             selectedIndexSecondLevel = ((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedIndex();
+            if (((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedComponent() instanceof  JTabbedPane)
+                selectedIndexThirdLevel = ((JTabbedPane) ((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedComponent()).getSelectedIndex();
+        }
 
 
-        final NetPlan np = callback.getDesign();
+
         netPlanViewTable.clear();
         layerSubTabbedPaneMap.clear();
 
@@ -443,95 +423,142 @@ public class ViewEditTopologyTablesPane extends JPanel
 
             netPlanViewTable.put(openStackClient,ajTables_prub);
 
-            for (AJTableType ajType : AJTableType.values())
-            {
 
-                if (ajType == ajType.KEYSTONE)
-                {
+            for (AJTableType type : Arrays.asList(AJTableType.USERS, AJTableType.PROJECTS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.SERVICES,AJTableType.REGIONS,AJTableType.CREDENTIALS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.ROLES))
+                identityTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
 
-                     for (AJTableType type : Arrays.asList(AJTableType.USERS, AJTableType.PROJECTS,AJTableType.DOMAINS,AJTableType.ENDPOINTS,AJTableType.SERVICES,AJTableType.REGIONS,AJTableType.CREDENTIALS,AJTableType.GROUPS,AJTableType.POLICIES,AJTableType.ROLES))
-                        identityTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+            subpaneThisLayer.addTab("Keystone", identityTabbedPane.get(openStackClient));
 
-                    subpaneThisLayer.addTab(ajType.getTabName(), identityTabbedPane.get(openStackClient));
-
-
-                }
-                else if (ajType == ajType.NEUTRON)
-                {
-
-                    for (AJTableType type : Arrays.asList(AJTableType.NETWORKS, AJTableType.SUBNETS,AJTableType.ROUTERS,AJTableType.PORTS))
-                        networkTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
-
-                    subpaneThisLayer.addTab(ajType.getTabName(), networkTabbedPane.get(openStackClient));
+            for (AJTableType type : Arrays.asList(AJTableType.NETWORKS, AJTableType.SUBNETS,AJTableType.ROUTERS,AJTableType.PORTS))
+                networkTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+            subpaneThisLayer.addTab("Neutron", networkTabbedPane.get(openStackClient));
 
 
-                }else if(ajType == ajType.NOVA){
+            for (AJTableType type : Arrays.asList(AJTableType.SERVERS, AJTableType.FLAVORS,AJTableType.FLOATINGIPS,AJTableType.KEYPAIRS,AJTableType.SECURITYGROUPS,AJTableType.HOSTRESOURCES))
+                computeTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+            subpaneThisLayer.addTab("Nova", computeTabbedPane.get(openStackClient));
 
+            for (AJTableType type : Arrays.asList(AJTableType.IMAGES))
+                imageTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+            subpaneThisLayer.addTab("Glance", imageTabbedPane.get(openStackClient));
 
-                    for (AJTableType type : Arrays.asList(AJTableType.SERVERS, AJTableType.FLAVORS,AJTableType.FLOATINGIPS,AJTableType.KEYPAIRS,AJTableType.SECURITYGROUPS,AJTableType.HOSTRESOURCES))
-                        computeTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+            for (AJTableType type : Arrays.asList(AJTableType.RESOURCES,AJTableType.METERS, AJTableType.MEASURES,AJTableType.SUMMARY))
+                telemetryTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+            subpaneThisLayer.addTab("Ceilometer", telemetryTabbedPane.get(openStackClient));
 
-                    subpaneThisLayer.addTab(ajType.getTabName(), computeTabbedPane.get(openStackClient));
-
-                } else if(ajType == ajType.GLANCE){
-
-
-                    for (AJTableType type : Arrays.asList(AJTableType.IMAGES))
-                        imageTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
-
-                    subpaneThisLayer.addTab(ajType.getTabName(), imageTabbedPane.get(openStackClient));
-
-                }else if(ajType == ajType.GNOCCHI){
-
-
-                    for (AJTableType type : Arrays.asList(AJTableType.RESOURCES,AJTableType.METERS, AJTableType.MEASURES,AJTableType.SUMMARY))
-                        telemetryTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
-
-                    subpaneThisLayer.addTab(ajType.getTabName(), telemetryTabbedPane.get(openStackClient));
-
-                }
-                else
-                {
-
-                }
-            }
             viewEditHighLevelTabbedPane.addTab(openStackClient.getName().equals("")? openStackClient.getName() : openStackClient.getName() , subpaneThisLayer);
         }
 
 
         viewEditHighLevelTabbedPane.setSelectedIndex(selectedIndexFirstLevel);
-        if (viewEditHighLevelTabbedPane.getSelectedComponent() instanceof JTabbedPane && selectedIndexSecondLevel >= 0)
+        if (viewEditHighLevelTabbedPane.getSelectedComponent() instanceof JTabbedPane && selectedIndexSecondLevel >= 0) {
             ((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).setSelectedIndex(selectedIndexSecondLevel);
-
-
+            if (((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedComponent() instanceof  JTabbedPane && selectedIndexThirdLevel >= 0)
+                ((JTabbedPane) ((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedComponent()).setSelectedIndex(selectedIndexThirdLevel);
+        }
         }
 
     /**
      * Shows the tab corresponding associated to a network element.
      *
-     * @param type   Network element type
      */
-    public void selectItemTab(AJTableType type) {
+
+    public void selectTabAndGivenItems( OpenStackClient openStackClient , List<OpenStackNetworkElement> elements)
+    {
+        if (elements == null) return;
+        if (elements.isEmpty()) return;
+        
+        AJTableType tableType = getType(elements.get(0));
+
+      //  private final Map<OpenStackClient,Map<AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>>> netPlanViewTable = new HashMap<> (); //new EnumMap<>(AJTableType.class);
+
+        final AdvancedJTable_abstractElement table = netPlanViewTable.get(openStackClient).get(tableType).getFirst();
+
+        table.clearSelection();
+
+        final TableModel model = table.getModel();
+        final int numRows = table.getRowCount();
+        selectItemTab(openStackClient, tableType);
+
+        final Set<String> idsToSelect = elements.stream().map(e->e.getId()).collect(Collectors.toSet());
+
+        for (int row = 0; row < numRows; row++)
+        {
+            try
+            {
+                final Object obj = model.getValueAt(row, 0);
+                if (obj == null) continue;
+
+                final String idThisRow = (String) obj;
+                if (idsToSelect.contains(idThisRow))
+                {
+                    final int viewRow = table.convertRowIndexToView(row);
+
+                    table.addRowSelectionInterval(viewRow, viewRow);
+                    table.scrollRectToVisible(table.getCellRect(viewRow, 0, true));
+
+                    if (table.getSelectedRowCount() == elements.size()) return;
+                }
+            } catch (ClassCastException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+   
+    public void selectItemTab(OpenStackClient openStackClient, AJTableType type)
+    {
+        if (!layerSubTabbedPaneMap.containsKey(openStackClient))
+            throw new Net2PlanException("Wrong openstack client");
+
+        final FilteredTablePanel pane = netPlanViewTable.get(openStackClient).get(type).getSecond();
+
+        viewEditHighLevelTabbedPane.setSelectedComponent(layerSubTabbedPaneMap.get(openStackClient));
+
         switch (type)
         {
-            /*network*/
+            case USERS:
+            case PROJECTS:
+            case DOMAINS:
+            case ENDPOINTS:
+            case SERVICES:
+            case REGIONS:
+            case CREDENTIALS:
+            case GROUPS:
+            case POLICIES:
+            case ROLES:
+                layerSubTabbedPaneMap.get(openStackClient).setSelectedComponent(identityTabbedPane.get(openStackClient));
+                identityTabbedPane.get(openStackClient).setSelectedComponent(pane);
+                break;
+
             case NETWORKS:
-            case SUBNETS:
             case ROUTERS:
             case PORTS:
+            case SUBNETS:
+                layerSubTabbedPaneMap.get(openStackClient).setSelectedComponent(networkTabbedPane.get(openStackClient));
+                networkTabbedPane.get(openStackClient).setSelectedComponent(pane);
+                break;
 
-            /*compute*/
             case SERVERS:
             case FLAVORS:
-            case IMAGES:
             case FLOATINGIPS:
             case KEYPAIRS:
             case SECURITYGROUPS:
             case HOSTRESOURCES:
-
-                viewEditHighLevelTabbedPane.setSelectedComponent(ajTables.get(type).getSecond());
+                layerSubTabbedPaneMap.get(openStackClient).setSelectedComponent(computeTabbedPane.get(openStackClient));
+                computeTabbedPane.get(openStackClient).setSelectedComponent(pane);
+            break;
+            case IMAGES:
+                layerSubTabbedPaneMap.get(openStackClient).setSelectedComponent(imageTabbedPane.get(openStackClient));
+                imageTabbedPane.get(openStackClient).setSelectedComponent(pane);
                 break;
-
+            case RESOURCES:
+            case METERS:
+            case MEASURES:
+                layerSubTabbedPaneMap.get(openStackClient).setSelectedComponent(telemetryTabbedPane.get(openStackClient));
+                telemetryTabbedPane.get(openStackClient).setSelectedComponent(pane);
+                break;
             default:
                 System.out.println(type);
                 assert false;
@@ -574,31 +601,38 @@ public class ViewEditTopologyTablesPane extends JPanel
         filteredTablePanel.updateTableSelection(type,value);*/
     }
 
-    public void changeViewOfTable(AJTableType ajTableType, Integer indexSubTab){
+    public AJTableType getType(OpenStackNetworkElement openStackNetworkElement){
 
-        /*switch (ajTableType){
+        if(openStackNetworkElement instanceof OpenStackNetwork) return AJTableType.NETWORKS;
+        if(openStackNetworkElement instanceof OpenStackRouter)  return AJTableType.ROUTERS;
+        if(openStackNetworkElement instanceof OpenStackSubnet) return  AJTableType.SUBNETS;
+        if(openStackNetworkElement instanceof OpenStackPort) return  AJTableType.PORTS;
 
-            case NETWORKS:
-            case PORTS:
-            case SUBNETS:
-            case ROUTERS:
-                this.networkTabbedPane.setSelectedIndex(indexSubTab);
-                break;
+        if(openStackNetworkElement instanceof OpenStackFlavor) return  AJTableType.FLAVORS;
+        if(openStackNetworkElement instanceof OpenStackFloatingIp) return  AJTableType.FLOATINGIPS;
+        if(openStackNetworkElement instanceof OpenStackHostResource) return  AJTableType.HOSTRESOURCES;
+        if(openStackNetworkElement instanceof OpenStackImageV2) return  AJTableType.IMAGES;
+        if(openStackNetworkElement instanceof OpenStackKeypair) return  AJTableType.KEYPAIRS;
+        if(openStackNetworkElement instanceof OpenStackQuotas) return  AJTableType.QUOTAS;
+        if(openStackNetworkElement instanceof OpenStackQuotasUsage) return  AJTableType.QUOTASUSAGE;
+        if(openStackNetworkElement instanceof OpenStackSecurityGroup) return  AJTableType.SECURITYGROUPS;
+        if(openStackNetworkElement instanceof OpenStackServer) return  AJTableType.SERVERS;
 
-            /*compute
-            case SERVERS:
-            case FLAVORS:
-            case IMAGES:
-            case FLOATINGIPS:
-            case KEYPAIRS:
-            case SECURITYGROUPS:
-            case HOSTRESOURCES:
-                this.computeTabbedPane.setSelectedIndex(indexSubTab);
-                break;
+        if(openStackNetworkElement instanceof OpenStackCredential) return  AJTableType.CREDENTIALS;
+        if(openStackNetworkElement instanceof OpenStackDomain) return  AJTableType.DOMAINS;
+        if(openStackNetworkElement instanceof OpenStackEndpoint) return  AJTableType.ENDPOINTS;
+        if(openStackNetworkElement instanceof OpenStackGroup) return  AJTableType.GROUPS;
+        if(openStackNetworkElement instanceof OpenStackPolicy) return  AJTableType.POLICIES;
+        if(openStackNetworkElement instanceof OpenStackProject) return  AJTableType.PROJECTS;
+        if(openStackNetworkElement instanceof OpenStackRegion) return  AJTableType.REGIONS;
+        if(openStackNetworkElement instanceof OpenStackRole) return  AJTableType.ROLES;
+        if(openStackNetworkElement instanceof OpenStackService) return  AJTableType.SERVICES;
+        if(openStackNetworkElement instanceof OpenStackUser) return  AJTableType.USERS;
 
-            default:
-        }
+        if(openStackNetworkElement instanceof OpenStackMeter) return  AJTableType.METERS;
+        if(openStackNetworkElement instanceof OpenStackResource) return  AJTableType.RESOURCES;
+        if(openStackNetworkElement instanceof OpenStackGnocchiMeasure) return  AJTableType.MEASURES;
 
-        updateView();*/
+        return  AJTableType.NETWORKS;
     }
 }

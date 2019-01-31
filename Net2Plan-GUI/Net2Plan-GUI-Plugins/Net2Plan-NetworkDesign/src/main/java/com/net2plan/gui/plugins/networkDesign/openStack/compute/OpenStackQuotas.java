@@ -61,6 +61,7 @@ public class OpenStackQuotas extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.quotaId; }
+    public String getName () { return this.quotaId; }
     public String getProject_id () { return this.project_id; }
     public Integer getQuotaCores () { return this.quotaCores; }
     public Integer getQuotaFloatingIps () { return this.quotaFloatingIps; }

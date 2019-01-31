@@ -27,7 +27,7 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
 
         final List<AjtColumnInfo<OpenStackQuotas>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "OpenStack", "OpenStack ID", null, n -> n.getOpenStackClient().getName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Project ", " Project name", null, n -> n.getOpenStackProject().getProjectName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Project ", " Project name", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getOpenStackProject().getId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Cores", "Project Cores", null, n -> n.getQuotaCores(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Instances", "Project Instances", null, n -> n.getQuotaInstances(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackQuotas>(this, String.class, null, "Ram", "Project Ram", null, n -> n.getQuotaRam(), AGTYPE.NOAGGREGATION, null, null));

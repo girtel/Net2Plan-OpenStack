@@ -41,6 +41,7 @@ public class OpenStackGroup  extends OpenStackNetworkElement
     @Override
     public String getId () { return this.groupId; }
     public String getGroupName () { return this.groupName; }
+    public String getName () { return this.groupName; }
     public String getGroupDescription () { return this.groupDescription; }
     public String getGroupDomainId () { return this.groupDomainId; }
     public Map<String,String> getGroupLinks () { return this.groupLinks; }

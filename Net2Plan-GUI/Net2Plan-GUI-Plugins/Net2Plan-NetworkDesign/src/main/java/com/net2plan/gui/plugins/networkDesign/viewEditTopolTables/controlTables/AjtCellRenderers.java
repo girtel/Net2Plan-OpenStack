@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -129,7 +130,12 @@ public class AjtCellRenderers
             {
                 if (isSelected || this.getBackground() == Color.RED) c.setForeground(Color.WHITE);
                 else c.setForeground(Color.BLUE);
-                ((JLabel) c).setText(((OpenStackNetworkElement)value).get50CharactersDescription());
+                ((JLabel) c).setText(((OpenStackNetworkElement)value).getName());
+            }
+            else if (value instanceof Map){
+                /*if (isSelected || this.getBackground() == Color.RED) c.setForeground(Color.WHITE);
+                else c.setForeground(Color.BLUE);*/
+                ((JLabel) c).setText(Integer.toString(((Map)value).size()));
             }
             else if (value instanceof Double)
             {

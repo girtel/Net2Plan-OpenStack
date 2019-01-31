@@ -24,6 +24,7 @@ import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -193,10 +194,11 @@ public class TopologyTopBar extends JToolBar implements ActionListener
 
         if (src == btn_add)
         {
-            topologyPanel.addCredentials();
+            topologyPanel.loadCredentialsDialog(btn_add,btn_add.getX(),btn_add.getY());
 
         }  else if (src == btn_load)
         {
+
             topologyPanel.loadCredentials();
 
         }  else if (src == btn_generate)
