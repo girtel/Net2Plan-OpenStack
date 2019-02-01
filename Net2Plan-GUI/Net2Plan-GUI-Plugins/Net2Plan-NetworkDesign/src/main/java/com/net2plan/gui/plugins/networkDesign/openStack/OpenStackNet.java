@@ -7,6 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackProject;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
 import com.net2plan.gui.plugins.utils.MyRunnable;
+import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 
 import java.awt.*;
@@ -41,12 +42,11 @@ public class OpenStackNet
     private NetPlan np;
 
     private List<OpenStackClient> osClients = new ArrayList<>();
-    private JSONArray credentiales = new JSONArray();
+    private JSONArray loginInformation = new JSONArray();
 
     public List<OpenStackQuotas> openStackQuotas = new ArrayList<>();
     public List<OpenStackQuotasUsage> openStackQuotasUsage = new ArrayList<>();
     public List<OpenStackLimits> openStackLimits = new ArrayList<>();
-
 
 
     public OpenStackNet()
@@ -64,45 +64,58 @@ public class OpenStackNet
     public NetPlan getNetPlan () { return this.np; }
     public List<OpenStackClient> getOsClients(){return this.osClients;}
 
-    public JSONObject getJSONObjectOsClients(){
+    public JSONObject getLoginInformationOfNet(){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("Credentials",credentiales);
-       // System.out.println("OpenStackNet Getting credentiales "+ jsonObject);
+        jsonObject.put("information",loginInformation);
         return jsonObject;
     }
-    public void AddJSONObjectOsClients(JSONObject jsonObject){
+    public void addNewLoginInformationToNet(JSONObject jsonObject){
 
-       // System.out.println("OpenStackNet adding credentiales "+ jsonObject);
-        JSONArray jsonArray = jsonObject.getJSONArray("Credentials");
-        System.out.println("Loading credentials from file");
-        System.out.println("Actual length of credentials " +credentiales.length());
-        int num = 0;
+        JSONArray jsonArray = jsonObject.getJSONArray("information");
+
         for(Object object: jsonArray){
-            AddOsClient((JSONObject) object,credentiales.length());
-            num++;
-        }
-        System.out.println("After length of loading credentials " + credentiales.length());
-        fillQuotasAndLimits();
+            this.addNewOpenStackClientToNet((JSONObject) object,this.loginInformation.length());
+          }
+
+        this.fillSlicingTabTablesOfNet();
         callback.getViewEditTopTables().updateView();
 
     }
-    public void AddOsClient(JSONObject credential,int index){
+    public void addNewOpenStackClientToNet(JSONObject information,int index){
 
-        System.out.println("Adding new credential for new client");
-        System.out.println("Actual client"+ osClients.size());
-             OpenStackClient openStackClient =new OpenStackClient().create(this,credential,"Openstack " + index);
+          if(determinesIfExistInNet(information))
+              return;
+
+            OpenStackClient openStackClient = new OpenStackClient().create(this,information,"Openstack " + index);
+
             if(openStackClient.isConnected()) {
                 openStackClient
                         .clearList()
                         .fillList();
                 osClients.add(openStackClient);
-                credentiales.put(credential);
-             }
-        System.out.println("After adding clients "+ osClients.size());
+                loginInformation.put(information);
+
+             }else {
+                OpenStackUtils.openStackLogDialog("The connection was not possible. Please check the input data or the network. For more information look console. ");
+            }
 
     }
 
-    public void fillQuotasAndLimits(){
+    public boolean determinesIfExistInNet(JSONObject information){
+        boolean answer = false;
+
+        for(Object o: loginInformation){
+            JSONObject client = (JSONObject)o;
+            if(client.get("os_auth_url").equals(information.get("os_auth_url")))
+                 if(client.get("os_user_domain_name").equals(information.get("os_user_domain_name")))
+                         if(client.get("os_username").equals(information.get("os_username")))
+                                if(client.get("os_project_id").equals(information.get("os_project_id"))) answer=true;
+
+        }
+
+        return answer;
+    }
+    public void fillSlicingTabTablesOfNet(){
 
         openStackQuotasUsage.clear();
         openStackQuotas.clear();

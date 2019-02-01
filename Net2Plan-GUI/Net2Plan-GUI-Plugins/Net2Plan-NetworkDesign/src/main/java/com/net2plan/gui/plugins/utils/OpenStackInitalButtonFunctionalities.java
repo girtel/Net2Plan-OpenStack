@@ -24,7 +24,7 @@ public class OpenStackInitalButtonFunctionalities {
 
     public static final CipherClass cc = new CipherClass();
     public static final OpenStackFileChooser fc_netPlan = new OpenStackFileChooser();
-    public static String name ="",url="",project="",domain="",password="";
+    public static String name="",url="",project="",domain="",password="";
 
 
     public static void generatedLoginUserFile(GUINetworkDesign callback){
@@ -35,7 +35,7 @@ public class OpenStackInitalButtonFunctionalities {
 
         try  {
 
-            FileUtils.writeByteArrayToFile(new File(fc_netPlan.getSelectedFile().getAbsolutePath()+".n2p"), cc.cifra(callback.getOpenStackNet().getJSONObjectOsClients().toString()));
+            FileUtils.writeByteArrayToFile(new File(fc_netPlan.getSelectedFile().getAbsolutePath()+".n2p"), cc.cifra(callback.getOpenStackNet().getLoginInformationOfNet().toString()));
 
         }catch(Exception ex){
             System.out.println(ex.toString());
@@ -55,7 +55,7 @@ public class OpenStackInitalButtonFunctionalities {
             String everything = cc.descifra(bytes);
             JSONObject jsonObject = new JSONObject(everything);
             //System.out.println("TopologyPanel loading  OSClientV3s " + jsonObject);
-            callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject);
+            callback.getOpenStackNet().addNewLoginInformationToNet(jsonObject);
 
         } catch (Exception ex) {
             System.out.println(ex.toString());
@@ -102,11 +102,19 @@ public class OpenStackInitalButtonFunctionalities {
         labelUDomain = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
 
 
-        os_username = new JTextField(name);
-        os_password = new JPasswordField(password);
-        os_auth_url = new JTextField(url);
-        os_project_id = new JTextField(project);
-        os_user_domain_name = new JTextField(domain);
+        if(name.length()==0) {
+            os_username = new JTextField(20);
+            os_password = new JPasswordField(20);
+            os_auth_url = new JTextField(20);
+            os_project_id = new JTextField(20);
+            os_user_domain_name = new JTextField(20);
+        }else{
+            os_username = new JTextField(name);
+            os_password = new JPasswordField(password);
+            os_auth_url = new JTextField(url);
+            os_project_id = new JTextField(project);
+            os_user_domain_name = new JTextField(domain);
+        }
 
         jp1.add(labelUser, "align label");
         jp1.add(os_username, "growx");
@@ -141,10 +149,10 @@ public class OpenStackInitalButtonFunctionalities {
                 JSONArray jsonArray = new JSONArray();
                 jsonArray.put(jsonObject);
                 JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("Credentials",jsonArray);
+                jsonObject1.put("information",jsonArray);
 
                 System.out.println("TopologyPanel adding new OSClientV3 " + jsonObject1);
-                callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject1);
+                callback.getOpenStackNet().addNewLoginInformationToNet(jsonObject1);
 
                 //callback.getAboutIt().updateText();
                 jDialog.dispose();
@@ -179,21 +187,12 @@ public class OpenStackInitalButtonFunctionalities {
                     String line;
 
                     while ((line = br.readLine()) != null) {
-                        // process the line.
-                        // System.out.println(line);
-                        // Create a Pattern object
-
-                        for (Pattern r: patterns) {
-                            // Now create matcher object.
-                            //System.out.println(r.toString());
-                            Matcher m = r.matcher(line);
+                           for (Pattern r: patterns) {
+                              Matcher m = r.matcher(line);
                             if (m.find()) {
-                                //System.out.println("Found value: " + m.group(0));
-                                System.out.println("Found value: " + m.group(1));
-                                System.out.println("Found value: " + m.group(2));
-                                jsonObject.put(m.group(1),m.group(2));
+                                  jsonObject.put(m.group(1),m.group(2));
                             } else {
-                                //System.out.println("NO MATCH");
+
                             }
                         }
 

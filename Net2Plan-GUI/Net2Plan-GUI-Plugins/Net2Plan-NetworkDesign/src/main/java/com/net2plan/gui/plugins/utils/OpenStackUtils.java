@@ -6,6 +6,7 @@ import org.openstack4j.model.compute.Address;
 import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.network.Subnet;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,7 @@ public class OpenStackUtils {
         return Pair.unmodifiableOf(fixedIPAddress, floatingIPAddress);
     }
 
-    public static void openStackLogDialog (){
-
+    public static void openStackLogDialog (String log){
+        JOptionPane.showMessageDialog(null, log);
     }
 }

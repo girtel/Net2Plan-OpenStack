@@ -315,7 +315,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 
          /* Load current network state */
         this.callback.getOpenStackNet().getOsClients().forEach(n-> {n.clearList();n.fillList();});
-        this.callback.getOpenStackNet().fillQuotasAndLimits();
+        this.callback.getOpenStackNet().fillSlicingTabTablesOfNet();
 
         final NetPlan currentState = callback.getDesign();
         if (ErrorHandling.isDebugEnabled()) currentState.checkCachesConsistency();
