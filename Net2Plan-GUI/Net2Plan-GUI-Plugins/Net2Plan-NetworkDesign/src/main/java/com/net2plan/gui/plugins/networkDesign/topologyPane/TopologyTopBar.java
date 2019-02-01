@@ -15,6 +15,7 @@ import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.osmSupport.OSMException;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.state.CanvasOption;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+import com.net2plan.gui.plugins.utils.OpenStackInitalButtonFunctionalities;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkElement;
 import com.net2plan.interfaces.networkDesign.NetworkLayer;
@@ -43,7 +44,8 @@ public class TopologyTopBar extends JToolBar implements ActionListener
     private final TopologyPanel topologyPanel;
     private final ITopologyCanvas canvas;
 
-    private final JButton btn_add,btn_load,btn_generate, btn_zoomIn, btn_zoomOut, btn_zoomAll, btn_takeSnapshot, btn_reset;
+    public JButton btn_add;
+    private final JButton btn_load,btn_generate, btn_zoomIn, btn_zoomOut, btn_zoomAll, btn_takeSnapshot, btn_reset;
     private final JButton btn_increaseNodeSize, btn_decreaseNodeSize, btn_increaseFontSize, btn_decreaseFontSize;
     private final JButton btn_increaseLinkSize, btn_decreaseLinkSize, btn_tableControlWindow;
     private final JToggleButton btn_showNodeNames, btn_showLinkIds, btn_showNonConnectedNodes, btn_osmMap, btn_siteMode;
@@ -194,16 +196,19 @@ public class TopologyTopBar extends JToolBar implements ActionListener
 
         if (src == btn_add)
         {
-            topologyPanel.loadCredentialsDialog(btn_add,btn_add.getX(),btn_add.getY());
+            OpenStackInitalButtonFunctionalities.addLoginUserInformationDialog(callback,btn_add);
+            //topologyPanel.loadCredentialsDialog(btn_add,btn_add.getX(),btn_add.getY());
 
         }  else if (src == btn_load)
         {
 
-            topologyPanel.loadCredentials();
+            OpenStackInitalButtonFunctionalities.loadLoginUserFile(callback);
+            //topologyPanel.loadCredentials();
 
         }  else if (src == btn_generate)
         {
-            topologyPanel.generateCredentials();
+            OpenStackInitalButtonFunctionalities.generatedLoginUserFile(callback);
+            //topologyPanel.generateCredentials();
 
         }  else if (src == btn_showNodeNames)
         {

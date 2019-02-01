@@ -277,7 +277,11 @@ import java.util.List;
 
 
         public OpenStackNet getOpenStackNet() { return this.currentOpenStackNet; }
-
+        public void clearDesign(){
+            this.currentNetPlan = new NetPlan();
+            this.currentOpenStackNet = new OpenStackNet(this);
+            this.updateTopologyAndTables();
+        }
         private JPanel configureLeftBottomPanel()
         {
             this.focusPanel = new FocusPane(this);

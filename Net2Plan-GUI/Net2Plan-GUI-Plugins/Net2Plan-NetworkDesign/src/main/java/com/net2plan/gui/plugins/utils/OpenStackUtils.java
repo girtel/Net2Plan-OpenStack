@@ -66,4 +66,8 @@ public class OpenStackUtils {
 
         return Pair.unmodifiableOf(fixedIPAddress, floatingIPAddress);
     }
+
+    public static void openStackLogDialog (){
+
+    }
 }

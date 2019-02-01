@@ -12,45 +12,28 @@
 
 package com.net2plan.gui.plugins.networkDesign.topologyPane;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.google.common.collect.Sets;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.FileChooserNetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvasPlugin;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
-import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.plugins.AddLinkGraphPlugin;
-import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.JUNGCanvas;
-import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.state.CanvasOption;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.plugins.MoveNodePlugin;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.plugins.PanGraphPlugin;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.plugins.PopupMenuPlugin;
-import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
-import com.net2plan.gui.plugins.utils.CipherClass;
-import com.net2plan.gui.plugins.utils.ShFileChooser;
-import com.net2plan.gui.utils.FileDrop;
-import com.net2plan.interfaces.networkDesign.*;
+import com.net2plan.gui.plugins.utils.OpenStackInitalButtonFunctionalities;
+import com.net2plan.gui.plugins.utils.OpenStackFileChooser;
 import com.net2plan.internal.Constants.DialogType;
-import com.net2plan.internal.Constants.NetworkElementType;
 import com.net2plan.internal.ErrorHandling;
 import com.net2plan.internal.SystemUtils;
-import com.net2plan.utils.Pair;
 import com.net2plan.utils.SwingUtils;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.collections15.BidiMap;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -67,11 +50,8 @@ public class TopologyPanel extends JPanel implements ActionListener
     private final TopologyTopBar topBar;
     private final TopologySideBar sideBar;
 
-    private final CipherClass cc = new CipherClass();
-
     private FileChooserNetworkDesign fc_netPlan;
-    private JComboBox systemList;
-    private String[] systems = { "ubuntu", "rhel", "centOs"};
+
     /**
      * Simplified constructor that does not require to indicate default locations
      * for {@code .n2p} files.
@@ -223,14 +203,45 @@ public class TopologyPanel extends JPanel implements ActionListener
     {
         final TopologyPanel topologyPanel = TopologyPanel.this;
 
-        callback.addKeyCombinationAction("Load design", new AbstractAction()
+        callback.addKeyCombinationAction("Add credentials", new AbstractAction()
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                topologyPanel.loadCredentials();
+                OpenStackInitalButtonFunctionalities.addLoginUserInformationDialog(callback,topBar.btn_add);
+                //topologyPanel.loadCredentials();
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+
+        callback.addKeyCombinationAction("Load credentials", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                OpenStackInitalButtonFunctionalities.loadLoginUserFile(callback);
+                //topologyPanel.loadCredentials();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
+
+        callback.addKeyCombinationAction("Generate credentials", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                OpenStackInitalButtonFunctionalities.generatedLoginUserFile(callback);
+                //topologyPanel.loadCredentials();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
+
+        callback.addKeyCombinationAction("Clear design", new AbstractAction()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                callback.clearDesign();
+                //topologyPanel.loadCredentials();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
 
         callback.addKeyCombinationAction("Zoom in", new AbstractAction()
         {
@@ -299,448 +310,6 @@ public class TopologyPanel extends JPanel implements ActionListener
         return canvas;
     }
 
-    public void addCredentials(){
-
-        JPanel jp1;
-        JButton jbP1;
-        JTextField os_username, os_auth_url,os_project_id,os_user_domain_name;
-        JPasswordField os_password;
-        JFrame jfM;
-        JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain;
-
-        jfM = new JFrame("Credentials");
-        jp1 = new JPanel(new GridLayout(5, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
-
-        jfM.setLayout(null);
-
-        labelUser = new JLabel("OS_USERNAME",  SwingConstants.LEFT);
-        labelPassword = new JLabel("OS_PASSWORD",  SwingConstants.LEFT);
-        labelUrl = new JLabel("OS_AUTH_URL",  SwingConstants.LEFT);
-        labelProject = new JLabel("OS_PROJECT_NAME",  SwingConstants.LEFT);
-        labelUDomain = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
-
-
-        os_username = new JTextField(10);
-        os_password = new JPasswordField();
-        os_auth_url = new JTextField();
-        os_project_id = new JTextField();
-        os_user_domain_name = new JTextField();
-
-        jp1.add(labelUser);
-        jp1.add(os_username);
-
-        jp1.add(labelPassword);
-        jp1.add(os_password);
-
-        jp1.add(labelUrl);
-        jp1.add(os_auth_url);
-
-        jp1.add(labelProject);
-        jp1.add(os_project_id);
-
-        jp1.add(labelUDomain);
-        jp1.add(os_user_domain_name);
-
-        jp1.setVisible(true);
-
-        jbP1 = new JButton("Enter");
-
-        jp1.setBounds(10, 10, 250, 200);
-
-        jbP1.setBounds(100, 225, 100, 30);
-
-        jbP1.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent e)
-            {
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("os_auth_url",os_auth_url.getText());
-                jsonObject.put("os_username",os_username.getText());
-                jsonObject.put("os_password",String.valueOf(os_password.getPassword()));
-                jsonObject.put("os_project_id",os_project_id.getText());
-                jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
-
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(jsonObject);
-                JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("Credentials",jsonArray);
-
-                System.out.println("TopologyPanel adding new OSClientV3 " + jsonObject1);
-                callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject1);
-
-                   //callback.getAboutIt().updateText();
-                jfM.dispose();
-            }
-        });
-
-        jfM.add(jp1);
-        jfM.add(jbP1);
-
-
-        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
-        jfM.setIconImage(img.getImage());
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        jfM.setSize(300, 300);
-        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
-
-        jfM.setResizable(false);
-        jfM.setVisible(true);
-        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-    }
-    public void loadCredentials(){
-
-
-        assert fc_netPlan != null;
-
-        int rc = fc_netPlan.showOpenDialog(null);
-        if (rc != JFileChooser.APPROVE_OPTION) return;
-
-
-        try{
-            byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
-            String everything = cc.descifra(bytes);
-            JSONObject jsonObject = new JSONObject(everything);
-            //System.out.println("TopologyPanel loading  OSClientV3s " + jsonObject);
-            callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject);
-
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }
-
-    }
-
-    public void loadCredentialsDialog(JButton button,int x, int y){
-
-        JDialog jDialog = new JDialog();
-        jDialog.setBackground(Color.black);
-
-        Point point = button.getLocationOnScreen();
-        jDialog.setLocation(point.x,point.y + button.getHeight() + 7);
-       //jDialog.setLocationRelativeTo(button);
-        jDialog.setUndecorated(true);
-        jDialog.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        jDialog.addWindowFocusListener(new WindowFocusListener() {
-            @Override
-            public void windowGainedFocus(WindowEvent windowEvent) {
-
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent windowEvent) {
-                jDialog.setVisible(false);
-            }
-        });
-
-        JPanel jp1;
-        JButton jbP1,jbP2;
-        JTextField os_username, os_auth_url,os_project_id,os_user_domain_name;
-        JPasswordField os_password;
-        JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain;
-
-
-//        jp1 = new JPanel(new GridLayout(5, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
-
-        jp1 = new JPanel(new MigLayout("fillx, wrap 2"));
-
-        labelUser = new JLabel("OS_USERNAME",  SwingConstants.LEFT);
-        labelPassword = new JLabel("OS_PASSWORD",  SwingConstants.LEFT);
-        labelUrl = new JLabel("OS_AUTH_URL",  SwingConstants.LEFT);
-        labelProject = new JLabel("OS_PROJECT_NAME",  SwingConstants.LEFT);
-        labelUDomain = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
-
-
-        os_username = new JTextField(10);
-        os_password = new JPasswordField();
-        os_auth_url = new JTextField();
-        os_project_id = new JTextField();
-        os_user_domain_name = new JTextField();
-
-        jp1.add(labelUser, "align label");
-        jp1.add(os_username, "growx");
-
-        jp1.add(labelPassword,  "align label");
-        jp1.add(os_password, "growx");
-
-        jp1.add(labelUrl,  "align label");
-        jp1.add(os_auth_url, "growx");
-
-        jp1.add(labelProject,  "align label");
-        jp1.add(os_project_id, "growx");
-
-        jp1.add(labelUDomain,  "align label");
-        jp1.add(os_user_domain_name, "growx");
-
-        jbP1 = new JButton("Enter");
-        jbP2 = new JButton("Load RC file");
-
-        jbP1.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent e)
-            {
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("os_auth_url",os_auth_url.getText());
-                jsonObject.put("os_username",os_username.getText());
-                jsonObject.put("os_password",String.valueOf(os_password.getPassword()));
-                jsonObject.put("os_project_id",os_project_id.getText());
-                jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
-
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(jsonObject);
-                JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("Credentials",jsonArray);
-
-                System.out.println("TopologyPanel adding new OSClientV3 " + jsonObject1);
-                callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject1);
-
-                //callback.getAboutIt().updateText();
-                jDialog.dispose();
-            }
-        });
-
-        jbP2.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent e)
-            {
-
-                assert fc_netPlan != null;
-
-               // fc_netPlan.setFileFilter(new FileNameExtensionFilter("All files","*"));
-
-                JFileChooser jFileChooser = new ShFileChooser();
-                jFileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-
-                int rc = jFileChooser.showOpenDialog(null);
-                if (rc != JFileChooser.APPROVE_OPTION) return;
-
-                Pattern r_url = Pattern.compile("(export OS_AUTH_URL=)(.*)");
-                Pattern r_project_id = Pattern.compile("(export OS_PROJECT_ID=)(.*)");
-                Pattern r_project_domain = Pattern.compile("(export OS_USER_DOMAIN_NAME=)(.*)");
-                Pattern r_user = Pattern.compile("(export OS_USERNAME=)(.*)");
-                ArrayList<Pattern> patterns = new ArrayList<>();
-                patterns.add(r_url);
-                patterns.add(r_project_id);
-                patterns.add(r_project_domain);
-                patterns.add(r_user);
-                JSONObject jsonObject = new JSONObject();
-                try (BufferedReader br = new BufferedReader(new FileReader(jFileChooser.getSelectedFile()))) {
-                    String line;
-
-                    while ((line = br.readLine()) != null) {
-                        // process the line.
-                       // System.out.println(line);
-                        // Create a Pattern object
-
-                        for (Pattern r: patterns) {
-                            // Now create matcher object.
-                            //System.out.println(r.toString());
-                            Matcher m = r.matcher(line);
-                            if (m.find()) {
-                                //System.out.println("Found value: " + m.group(0));
-                                System.out.println("Found value: " + m.group(1));
-                                System.out.println("Found value: " + m.group(2));
-                                jsonObject.put(m.group(1),m.group(2));
-                            } else {
-                                //System.out.println("NO MATCH");
-                            }
-                        }
-
-                    }
-                    os_username.setText(jsonObject.get("export OS_USERNAME=").toString().replaceAll(Character.toString('"'),""));
-                    os_auth_url.setText(jsonObject.get("export OS_AUTH_URL=").toString().replaceAll(Character.toString('"'),""));
-                    os_project_id.setText(jsonObject.get("export OS_PROJECT_ID=").toString().replaceAll(Character.toString('"'),""));
-                    os_user_domain_name.setText(jsonObject.get("export OS_USER_DOMAIN_NAME=").toString().replaceAll(Character.toString('"'),""));
-
-                    os_username.setEnabled(false);
-                    os_auth_url.setEnabled(false);
-                    os_project_id.setEnabled(false);
-                    os_user_domain_name.setEnabled(false);
-
-                    jDialog.pack();
-                    jDialog.setVisible(true);
-                }catch(Exception ex){
-                    ex.printStackTrace();
-                    jDialog.dispose();
-                }
-            }
-        });
-
-        final JPanel buttonsPanel = new JPanel();
-        buttonsPanel.add(jbP1);
-        buttonsPanel.add(jbP2);
-
-        final JPanel aux = new JPanel(new BorderLayout());
-        aux.add(jp1, BorderLayout.CENTER);
-        aux.add(buttonsPanel, BorderLayout.SOUTH);
-
-        jDialog.add(aux);
-        jDialog.pack();
-
-        jDialog.setResizable(false);
-        jDialog.setVisible(true);
-        jDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    }
-    public void loadCredentialsWithRCFile(){
-        assert fc_netPlan != null;
-
-        int rc = fc_netPlan.showOpenDialog(null);
-        if (rc != JFileChooser.APPROVE_OPTION) return;
-
-        Pattern r_url = Pattern.compile("(export OS_AUTH_URL=)(.*)");
-        Pattern r_project_id = Pattern.compile("(export OS_PROJECT_ID=)(.*)");
-        Pattern r_project_domain = Pattern.compile("(export OS_USER_DOMAIN_NAME=)(.*)");
-        Pattern r_user = Pattern.compile("(export OS_USERNAME=)(.*)");
-        ArrayList<Pattern> patterns = new ArrayList<>();
-        patterns.add(r_url);
-        patterns.add(r_project_id);
-        patterns.add(r_project_domain);
-        patterns.add(r_user);
-        JSONObject jsonObject = new JSONObject();
-        try (BufferedReader br = new BufferedReader(new FileReader(fc_netPlan.getSelectedFile()))) {
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                // process the line.
-                //System.out.println(line);
-                // Create a Pattern object
-
-                for (Pattern r: patterns) {
-                    // Now create matcher object.
-                    System.out.println(r.toString());
-                    Matcher m = r.matcher(line);
-                    if (m.find()) {
-                        //System.out.println("Found value: " + m.group(0));
-                        System.out.println("Found value: " + m.group(1));
-                        System.out.println("Found value: " + m.group(2));
-                        jsonObject.put(m.group(1),m.group(2));
-                    } else {
-                        //System.out.println("NO MATCH");
-                    }
-                }
-
-
-            }
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-        System.out.println(jsonObject);
-        JPanel jp1;
-        JButton jbP1;
-        JTextField os_username, os_auth_url,os_project_id,os_user_domain_name;
-        JPasswordField os_password;
-        JFrame jfM;
-        JLabel labelUser,labelPassword,labelUrl,labelProject,labelUDomain;
-
-        jfM = new JFrame("Credentials");
-        jp1 = new JPanel(new GridLayout(5, 2, 30, 10));//filas, columnas, espacio entre filas, espacio entre columnas
-
-        jfM.setLayout(null);
-
-        labelUser = new JLabel("OS_USERNAME",  SwingConstants.LEFT);
-        labelPassword = new JLabel("OS_PASSWORD",  SwingConstants.LEFT);
-        labelUrl = new JLabel("OS_AUTH_URL",  SwingConstants.LEFT);
-        labelProject = new JLabel("OS_PROJECT_NAME",  SwingConstants.LEFT);
-        labelUDomain = new JLabel("OS_U_DOMAIN_NAME", SwingConstants.LEFT);
-
-
-        os_username = new JTextField(jsonObject.get("export OS_USERNAME=").toString().replaceAll(Character.toString('"'),""));
-        os_password = new JPasswordField();
-        os_auth_url = new JTextField(jsonObject.get("export OS_AUTH_URL=").toString().replaceAll(Character.toString('"'),""));
-        os_project_id = new JTextField(jsonObject.get("export OS_PROJECT_ID=").toString().replaceAll(Character.toString('"'),""));
-        os_user_domain_name = new JTextField(jsonObject.get("export OS_USER_DOMAIN_NAME=").toString().replaceAll(Character.toString('"'),""));
-
-        jp1.add(labelUser);
-        jp1.add(os_username);
-
-        jp1.add(labelPassword);
-        jp1.add(os_password);
-
-        jp1.add(labelUrl);
-        jp1.add(os_auth_url);
-
-        jp1.add(labelProject);
-        jp1.add(os_project_id);
-
-        jp1.add(labelUDomain);
-        jp1.add(os_user_domain_name);
-
-        jp1.setVisible(true);
-
-        jbP1 = new JButton("Enter");
-
-        jp1.setBounds(10, 10, 250, 200);
-
-        jbP1.setBounds(100, 225, 100, 30);
-
-        jbP1.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent e)
-            {
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("os_auth_url",os_auth_url.getText());
-                jsonObject.put("os_username",os_username.getText());
-                jsonObject.put("os_password",String.valueOf(os_password.getPassword()));
-                jsonObject.put("os_project_id",os_project_id.getText());
-                jsonObject.put("os_user_domain_name",os_user_domain_name.getText());
-
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(jsonObject);
-                JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("Credentials",jsonArray);
-
-                System.out.println("TopologyPanel adding new OSClientV3 " + jsonObject1);
-                callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject1);
-
-                //callback.getAboutIt().updateText();
-                jfM.dispose();
-            }
-        });
-
-        jfM.add(jp1);
-        jfM.add(jbP1);
-
-
-        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
-        jfM.setIconImage(img.getImage());
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        jfM.setSize(300, 300);
-        jfM.setLocation(dim.width/2-jfM.getSize().width/2, dim.height/2-jfM.getSize().height/2);
-
-        jfM.setResizable(false);
-        jfM.setVisible(true);
-        jfM.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        /*try{
-
-            byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
-            String everything = cc.descifra(bytes);
-            JSONObject jsonObject = new JSONObject(everything);
-            //System.out.println("TopologyPanel loading  OSClientV3s " + jsonObject);
-            callback.getOpenStackNet().AddJSONObjectOsClients(jsonObject);
-
-        } catch (Exception ex) {
-            System.out.println(ex.toString());
-        }*/
-
-    }
-    public void generateCredentials(){
-
-
-        assert fc_netPlan != null;
-
-        int rc = fc_netPlan.showOpenDialog(null);
-        if (rc != JFileChooser.APPROVE_OPTION) return;
-
-        try  {
-
-            FileUtils.writeByteArrayToFile(new File(fc_netPlan.getSelectedFile().getAbsolutePath()), cc.cifra(callback.getOpenStackNet().getJSONObjectOsClients().toString()));
-            System.out.println("TopologyPanel generated  OSClientV3s " + callback.getOpenStackNet().getJSONObjectOsClients());
-        }catch(Exception ex){
-            System.out.println(ex.toString());
-
-        }
-
-    }
     @Override
     public void actionPerformed(ActionEvent e) {
 

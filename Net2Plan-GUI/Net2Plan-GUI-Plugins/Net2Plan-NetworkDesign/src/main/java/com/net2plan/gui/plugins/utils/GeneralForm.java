@@ -6,6 +6,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackQuotas;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackServer;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
+import net.miginfocom.swing.MigLayout;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.types.Facing;
@@ -25,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class GeneralForm extends JFrame implements ActionListener{
+public class GeneralForm extends JDialog implements ActionListener{
 
     JButton enterButton;
-    JPanel propertiesPanel;
+    JPanel propertiesPanel,buttonPanel,firstPanel;
     JLabel propertiesLabel;
     String title;
     Map<String,String> headers;
@@ -47,7 +48,7 @@ public class GeneralForm extends JFrame implements ActionListener{
         this.openStackNetworkElement=openStackNetworkElement;
 
         init();
-        recomputFields();
+
 
 
     }
@@ -55,69 +56,65 @@ public class GeneralForm extends JFrame implements ActionListener{
     public void init(){
 
         setTitle(title);
-        setLayout(null);
-
         enterButton = new JButton("Enter");
 
-        propertiesPanel = new JPanel(new GridLayout(headers.size()+1, 2, 15, 10));//filas, columnas, espacio entre filas, espacio entre columnas
+        propertiesPanel = new JPanel(new MigLayout("fillx, wrap 2"));//filas, columnas, espacio entre filas, espacio entre columnas
+        buttonPanel = new JPanel();//filas, columnas, espacio entre filas, espacio entre columnas
+        firstPanel = new JPanel(new BorderLayout());//filas, columnas, espacio entre filas, espacio entre columnas
 
-        propertiesLabel = new JLabel("Properties", SwingConstants.LEFT);
-        propertiesPanel.add(propertiesLabel);
+        propertiesLabel = new JLabel("Properties");
+        propertiesPanel.add(propertiesLabel,"align label");
+
         JLabel label = new JLabel("", SwingConstants.LEFT);
-        propertiesPanel.add(label);
+        propertiesPanel.add(label,"growx");
 
-        propertiesPanel.setVisible(true);
-        propertiesPanel.setBounds(10, 10, 200, 50*headers.size());
+        recomputFields();
 
-        enterButton.setBounds(75, 60*headers.size(), 90, 25);
         enterButton.addActionListener(this);
-        add(enterButton);
-        add(propertiesPanel);
+
+        buttonPanel.add(enterButton);
+        firstPanel.add(buttonPanel,BorderLayout.SOUTH);
+        firstPanel.add(propertiesPanel,BorderLayout.NORTH);
+        add(firstPanel);
         getRootPane().setDefaultButton(enterButton);
 
         ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
         setIconImage(img.getImage());
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-        if(headers.size()<3) {
-            setSize(250, 130 * headers.size());
-        }else {
-            setSize(250, 80 * headers.size());
-        }
 
-        setLocation(dim.width/2-getSize().width/2, dim.height/2-getSize().height/2);
-
-        setResizable(false);
-        setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(dim.width/2-getSize().width/2, dim.height/2-getSize().height/2);
+        setVisible(true);
+        pack();
     }
     public void recomputFields(){
 
         for(String key : headers.keySet()){
             JLabel jlabel = new JLabel(key, SwingConstants.LEFT);
-            propertiesPanel.add(jlabel);
+            propertiesPanel.add(jlabel,"align label");
             switch (headers.get(key)){
                 case "Boolean":
                     JCheckBox jCheckBox = new JCheckBox();
-                    propertiesPanel.add(jCheckBox);
+                    propertiesPanel.add(jCheckBox,"growx");
                     break;
                 case "Select":
                     JComboBox jComboBox;
                     jComboBox = new JComboBox(getSelectItems(key));
-                    propertiesPanel.add(jComboBox);
+                    propertiesPanel.add(jComboBox,"growx");
                     break;
                 case "Cidr":
                     JTextField jtextField = new JTextField();
                     jtextField.setToolTipText("192.168.0.0/24");
-                    propertiesPanel.add(jtextField);
+                    propertiesPanel.add(jtextField,"growx");
                     break;
                 default:
                     JTextField textField = new JTextField();
-                    propertiesPanel.add(textField);
+                    propertiesPanel.add(textField,"growx");
                     break;
             }
         }
+
 
     }
     public Object [] getSelectItems(String key){

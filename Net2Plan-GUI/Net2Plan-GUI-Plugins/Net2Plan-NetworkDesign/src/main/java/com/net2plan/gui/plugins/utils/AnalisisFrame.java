@@ -24,6 +24,7 @@ import com.net2plan.utils.Pair;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,7 +54,7 @@ public class AnalisisFrame extends JFrame {
         secondPanel = new JPanel(new BorderLayout());
         graphPanel = new JPanel();
         informationPanel = new JPanel( new BorderLayout());
-        jComboBoxPanel = new JPanel();
+        jComboBoxPanel = new JPanel(new MigLayout("fillx, wrap"));
 
         informationPanelAboutMetric = new JPanel(new MigLayout("fillx, wrap 2"));
         informationPanelAboutMeasures = new JPanel(new MigLayout("fillx, wrap 2"));
@@ -61,8 +62,18 @@ public class AnalisisFrame extends JFrame {
         informationPanel.add(informationPanelAboutMetric,BorderLayout.NORTH);
         informationPanel.add(informationPanelAboutMeasures,BorderLayout.CENTER);
 
-        secondPanel.add(jComboBox,BorderLayout.NORTH);
+        UIManager.put("ComboBox.selectionBackground", new ColorUIResource(Color.white));
+        jComboBoxPanel.add(jComboBox);
+        secondPanel.add(jComboBoxPanel,BorderLayout.NORTH);
         secondPanel.add(informationPanel,BorderLayout.SOUTH);
+
+        informationPanelAboutMetric.setBackground(new Color(218,57 ,39));
+        informationPanelAboutMeasures.setBackground(new Color(218,57 ,39));
+        informationPanel.setBackground(new Color(218,57 ,39));
+        secondPanel.setBackground(new Color(218,57 ,39));
+        jComboBoxPanel.setBackground(new Color(218,57 ,39));
+
+        graphPanel.setBackground(Color.WHITE);
 
         firstPanel.add(secondPanel,BorderLayout.WEST);
         firstPanel.add(graphPanel,BorderLayout.EAST);
@@ -106,8 +117,12 @@ public class AnalisisFrame extends JFrame {
             informationPanelAboutMetric.add(new JLabel(""),"growx");
 
             aboutMetric.getSecond().forEach((n, k) -> {
-                informationPanelAboutMetric.add(new JLabel(n), "align label");
-                informationPanelAboutMetric.add(new JLabel(k.toString()), "growx");
+                JLabel etiqueta = new JLabel(n) ;
+                JLabel valor = new JLabel(k.toString());
+                etiqueta.setForeground(Color.WHITE);
+                valor.setForeground(Color.WHITE);
+                informationPanelAboutMetric.add(etiqueta, "align label");
+                informationPanelAboutMetric.add(valor, "growx");
             });
         }
 
@@ -115,8 +130,13 @@ public class AnalisisFrame extends JFrame {
 
             OpenStackSummary openStackSummary = openStackClient.openStackSummaries.get(0);
 
-            informationPanelAboutMeasures.add(new JLabel("About metric`s measures"),"align label");
-            informationPanelAboutMeasures.add(new JLabel(""),"growx");
+            JLabel etiqueta = new JLabel("About metric`s measures") ;
+            JLabel valor = new JLabel("");
+            etiqueta.setForeground(Color.black);
+            valor.setForeground(Color.black);
+
+            informationPanelAboutMeasures.add(etiqueta,"align label");
+            informationPanelAboutMeasures.add(valor,"growx");
 
             informationPanelAboutMeasures.add(new JLabel("Total"),"align label");
             informationPanelAboutMeasures.add(new JLabel(Integer.toString(openStackClient.openStackMeasures.size())),"growx");
