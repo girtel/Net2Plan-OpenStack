@@ -29,6 +29,7 @@ public class OpenStackGroup  extends OpenStackNetworkElement
         res.groupDomainId=group.getDomainId();
         res.groupLinks=group.getLinks();
 
+
         return res;
     }
 

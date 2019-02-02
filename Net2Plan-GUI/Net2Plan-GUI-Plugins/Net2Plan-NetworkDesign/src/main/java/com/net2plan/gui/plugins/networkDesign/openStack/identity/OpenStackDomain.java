@@ -65,7 +65,7 @@ public class OpenStackDomain extends OpenStackNetworkElement
 
         }
         }
-    public void isDomainEnabled (boolean value) {
+    public void setDomainEnabled (boolean value) {
         this.openStackClient.getClient().identity().domains().update(osDomain.toBuilder().enabled(value).build()); }
 
     @Override

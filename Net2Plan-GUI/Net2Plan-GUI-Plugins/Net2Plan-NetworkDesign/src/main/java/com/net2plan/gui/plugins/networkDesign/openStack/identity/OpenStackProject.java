@@ -41,6 +41,8 @@ public class OpenStackProject  extends OpenStackNetworkElement
         res.projectEnabled=project.isEnabled();
         res.projectLinks=project.getLinks();
 
+
+
         return res;
     }
 
@@ -141,7 +143,9 @@ public class OpenStackProject  extends OpenStackNetworkElement
     }
     public void setProjectEnabled (boolean value) {
         try{
-        this.openStackClient.getClient().identity().projects().update(osProject.toBuilder().enabled(value).build());
+
+            this.openStackClient.getClient().identity().projects().update(osProject.toBuilder().enabled(value).build());
+
         }catch(Exception ex){
 
             logPanel();

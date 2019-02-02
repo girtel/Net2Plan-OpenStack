@@ -22,9 +22,9 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
     {
 
         final List<AjtColumnInfo<OpenStackCredential>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "ID", "Credential ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "User ID", "Credential user ID", null, n -> n.getCredentialUserId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "Project ID", "Credential project ID", null, n -> n.getCredentialProjectId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "ID", "Credential ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "User ID", "Credential user ID", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getCredentialUserId()), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "Project ID", "Credential project ID", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getCredentialProjectId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "Type", "Credential type", null, n -> n.getCredentialType(),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackCredential>(this, String.class, null, "Blob", "Credential blob",
@@ -73,7 +73,7 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
         }), (a, b) -> b ==1, null));
 
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
 
         return res;
 

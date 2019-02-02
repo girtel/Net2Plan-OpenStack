@@ -172,9 +172,9 @@ public class ViewEditTopologyTablesPane extends JPanel
             public void stateChanged(ChangeEvent e) {
                 if(viewEditHighLevelTabbedPane.getSelectedIndex() > 0) {
 
-                    System.out.println("Tab: " + viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()));
+                  //  System.out.println("Tab: " + viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()));
                     OpenStackClient openStackClient = callback.getOpenStackNet().getOsClients().stream().filter(n -> n.getName().equals(viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()))).collect(Collectors.toList()).get(0);
-                    System.out.println("Net2plan nodes "+ openStackClient.getNetPlanDesign().getNodes().size());
+                   // System.out.println("Net2plan nodes "+ openStackClient.getNetPlanDesign().getNodes().size());
                     callback.setDesign(openStackClient.getNetPlanDesign());
 
                     final VisualizationState vs = callback.getVisualizationState();
@@ -442,7 +442,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 imageTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
             subpaneThisLayer.addTab("Glance", imageTabbedPane.get(openStackClient));
 
-            for (AJTableType type : Arrays.asList(AJTableType.RESOURCES,AJTableType.METERS, AJTableType.MEASURES,AJTableType.SUMMARY))
+            for (AJTableType type : Arrays.asList(AJTableType.RESOURCES))
                 telemetryTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
             subpaneThisLayer.addTab("Ceilometer", telemetryTabbedPane.get(openStackClient));
 

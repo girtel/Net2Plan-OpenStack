@@ -28,15 +28,18 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
     {
 
         final List<AjtColumnInfo<OpenStackUser>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackUser>(this, Object.class, null, "ID", "User ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackUser>(this, Object.class, null, "ID", "User ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Name", "User Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Domain ID", "Domain ID", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getDomainId()),
                 AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Project ID", "Domain ID", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getUserDefaultProjectId()),
+                AGTYPE.NOAGGREGATION, null, null));
+
+        res.add(new AjtColumnInfo<OpenStackUser>(this, Boolean.class, null, "Enable", "User enable", (n,v) -> n.changeUserEnabledState((Boolean) v), n -> n.isUserEnable(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Email", "User email",
                 null, n -> n.getEmail(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, String.class, null, "Description", "User description",
                 null, n -> n.getDescription(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackUser>(this, Boolean.class, null, "Enable", "User enable", (n,v) -> n.isUserEnable((Boolean) v), n -> n.isUserEnable(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackUser>(this, List.class, null, "Links", "User links", null, n -> n.getUserLinks(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;
@@ -45,16 +48,12 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add new user", e->addUser(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add new user", e->addUser(), (a, b) -> b==b, null));
 
-        res.add(new AjtRcMenu("Remove user", e -> getSelectedElements().forEach(n -> {
-
-            removeUser(n);
-
-
-        }), (a, b) -> b==b, null));
+        res.add(new AjtRcMenu("Delete selected users", e -> removeUser(getSelectedElements()), (a, b) -> b>=1, null));
 
         /*
         res.add(new AjtRcMenu("Change the user's name", e -> getSelectedElements().forEach(n -> {
@@ -74,13 +73,12 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
         }), (a, b) -> b ==1, null));
 */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
     }
 
-    public void addUser(ArrayList<OpenStackUser> openStackUsers) {
+    public void addUser() {
         Map<String,String> newList = new HashMap<>();
         newList.put("Name","");
         newList.put("Password","");
@@ -89,14 +87,14 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
         newList.put("Enable","Boolean");
         newList.put("Role ID","Select");
 
-        GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient,this,openStackUsers.get(0));
+        GeneralForm generalForm = new GeneralForm("Add user",newList,this.ajtType,this.openStackClient,this,null);
         //generalTableForm("Add user",newList);
     }
 
-    public void removeUser(OpenStackUser user){
+    public void removeUser(ArrayList<OpenStackUser> user){
 
-        openStackClient.getOpenStackNetDelete().deleteOpenStackUser(user.getId());
-        updateTab();
+        user.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackUser(n.getId()));
+        updateThisTab();
     }
 
 

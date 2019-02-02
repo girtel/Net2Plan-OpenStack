@@ -63,7 +63,7 @@ public class OpenStackResource  extends OpenStackNetworkElement
             map.put(key, metrics.getString(key));
         }
 
-        System.out.println(metrics);
+        //System.out.println(metrics);
        return map;
     }
     @Override

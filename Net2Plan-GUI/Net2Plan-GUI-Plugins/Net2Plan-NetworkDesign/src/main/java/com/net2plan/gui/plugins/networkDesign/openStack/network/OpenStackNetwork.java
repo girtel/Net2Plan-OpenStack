@@ -144,7 +144,7 @@ import sun.nio.ch.Net;
 
             }
             }
-        public void isNetworkIsAdminStateUp (boolean value) {
+        public void setNetworkIsAdminStateUp (boolean value) {
             try{
             this.openStackClient.getClient().networking().network().update(this.networkId, Builders.networkUpdate().adminStateUp(value).build());
 

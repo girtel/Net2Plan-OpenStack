@@ -33,7 +33,7 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
     {
 
         final List<AjtColumnInfo<OpenStackImageV2>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackImageV2>(this, Object.class, null, "ID", "Image ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackImageV2>(this, Object.class, null, "ID", "Image ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackImageV2>(this, String.class, null, "Name", " Image Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;
@@ -46,9 +46,9 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
         final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Create image", e ->addImage(), (a, b) -> b >=0, null));
+        res.add(new AjtRcMenu("Create image", e ->addImage(), (a, b) -> b == b, null));
         res.add(new AjtRcMenu("Remove image", e ->getSelectedElements().forEach(n -> {deleteImage(n);}), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+       // res.add(new AjtRcMenu("Refresh table", e ->updateTab(), (a, b) -> b == b, null));
 
         return res;
 
@@ -77,7 +77,7 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
 
         openStackClient.updateClient();
         openStackClient.getOpenStackNetDelete().deleteOpenStackImage(image.getId());
-        updateTab();
+        updateThisTab();
     }
 
 

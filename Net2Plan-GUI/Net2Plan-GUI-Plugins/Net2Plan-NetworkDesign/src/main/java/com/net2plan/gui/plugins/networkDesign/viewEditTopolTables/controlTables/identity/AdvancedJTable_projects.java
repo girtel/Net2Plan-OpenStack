@@ -25,21 +25,23 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
     {
 
         final List<AjtColumnInfo<OpenStackProject>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "ID", "Project ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "ID", "Project ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Name", "Project Name", null, n -> n.getProjectName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, Color.class, null, "Color", "Project color", null, n -> n.getColor(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackProject>(this, Object.class, null, "Domain ID", "Project domain id", null, n ->callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getProjectDomainId()),
+                AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackProject>(this, Boolean.class, null, "Enabled", "Project enabled", (n,v) -> n.setProjectEnabled((Boolean) v), n -> n.isProjectEnabled(),
+                AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Description", "Project description", null, n -> n.getProjectDescription(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Domain", "Project domain", null, n -> n.getProjectDomain(),
-                AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Domain ID", "Project domain id", null, n ->callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getProjectDomainId()),
-                AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Parents", "Project parents", null, n -> n.getProjectParents(),
+
+
+        /*res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Parents", "Project parents", null, n -> n.getProjectParents(),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Parents ID", "Project parents id", null, n -> n.getProjectParentId(),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackProject>(this, String.class, null, "Subtree", "Project Subtree", null, n -> n.getProjectSubtree(),
-                AGTYPE.NOAGGREGATION, null, null));
+                AGTYPE.NOAGGREGATION, null, null));*/
         res.add(new AjtColumnInfo<OpenStackProject>(this, List.class, null, "Links", "Project links",
                 null, n -> n.getProjectLinks(), AGTYPE.NOAGGREGATION, null, null));
 
@@ -51,15 +53,12 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add project", e -> addProject(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add project", e -> addProject(), (a, b) -> b==b, null));
 
-        res.add(new AjtRcMenu("Remove project", e -> getSelectedElements().forEach(n -> {
-
-            removeProject(n);
-
-        }), (a, b) -> b == 1, null));
+        res.add(new AjtRcMenu("Delete selected projected", e -> removeProject(getSelectedElements()), (a, b) -> b >= 1, null));
 
        /* res.add(new AjtRcMenu("Change project's name", e -> getSelectedElements().forEach(n -> {
 
@@ -93,24 +92,23 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
         }), (a, b) -> b ==1, null));
 
 */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
     }
 
-    public void addProject(ArrayList<OpenStackProject> openStackProjects){
+    public void addProject(){
         Map<String,String> newList = new HashMap<>();
         newList.put("Name","");
         newList.put("Domain ID","Select");
         newList.put("Enable","Boolean");
 
-       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient,this,openStackProjects.get(0));
+       GeneralForm generalTableForm= new GeneralForm("Add project",newList,this.ajtType,this.openStackClient,this,null);
     }
-    public void removeProject(OpenStackProject project){
+    public void removeProject(ArrayList<OpenStackProject> project){
 
-        openStackClient.getOpenStackNetDelete().deleteOpenStackProject(project.getId());
-        updateTab();
+        project.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackProject(n.getId()));
+        updateThisTab();
     }
 
 }

@@ -33,7 +33,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
     {
 
         final List<AjtColumnInfo<OpenStackPort>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "ID", "Port ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "ID", "Port ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Name", "Port Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Set.class, null, "Allowed Address", "Port allowed address", null, n -> n.getPortAllowedAddressPair(),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -63,9 +63,10 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add port", e -> addPort(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add port", e -> addPort(), (a, b) -> b==b, null));
 
         res.add(new AjtRcMenu("Remove port", e -> getSelectedElements().forEach(n -> {
 
@@ -80,19 +81,18 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
         }), (a, b) -> b ==1, null));
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
     }
 
-    public void addPort(ArrayList<OpenStackPort> openStackPorts){
+    public void addPort(){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
         headers.put("Subnet ID","Select");
         headers.put("Router ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this,openStackPorts.get(0));
+        GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this,null);
         //updateTab();
     }
     public void removePort(OpenStackPort port){

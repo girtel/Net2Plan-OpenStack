@@ -26,7 +26,8 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.UndoRedoManager;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
-import com.net2plan.gui.utils.ProportionalResizeJSplitPaneListener;
+  import com.net2plan.gui.plugins.utils.OpenStackLoginDialogCreator;
+  import com.net2plan.gui.utils.ProportionalResizeJSplitPaneListener;
 import com.net2plan.interfaces.networkDesign.*;
 import com.net2plan.internal.Constants.NetworkElementType;
 import com.net2plan.internal.ErrorHandling;
@@ -73,6 +74,7 @@ import java.util.List;
 
         private NetPlan currentNetPlan;
         private OpenStackNet currentOpenStackNet;
+        private OpenStackLoginDialogCreator openStackLoginDialogCreator;
         private WindowController windowController;
         private GUIWindow tableControlWindow;
 
@@ -147,6 +149,7 @@ import java.util.List;
             this.vs = new VisualizationState(currentNetPlan, mapLayer2VisualizationOrder, layerVisibilityMap, MAXSIZEUNDOLISTPICK);
 
             topologyPanel = new TopologyPanel(this, JUNGCanvas.class);
+
 
             JPanel leftPane = new JPanel(new BorderLayout());
             JPanel logSection = configureLeftBottomPanel();
@@ -272,16 +275,24 @@ import java.util.List;
 
             addKeyCombinationActions();
             updateVisualizationAfterNewTopology();
+
+
+
         }
 
 
 
         public OpenStackNet getOpenStackNet() { return this.currentOpenStackNet; }
+
+        public OpenStackLoginDialogCreator getOpenStackLoginDialogCreator() { return this.openStackLoginDialogCreator; }
+        public void setOpenStackLoginDialogCreator (JButton jButton){this.openStackLoginDialogCreator = new OpenStackLoginDialogCreator(this,jButton);}
+
         public void clearDesign(){
             this.currentNetPlan = new NetPlan();
             this.currentOpenStackNet = new OpenStackNet(this);
             this.updateTopologyAndTables();
         }
+
         private JPanel configureLeftBottomPanel()
         {
             this.focusPanel = new FocusPane(this);

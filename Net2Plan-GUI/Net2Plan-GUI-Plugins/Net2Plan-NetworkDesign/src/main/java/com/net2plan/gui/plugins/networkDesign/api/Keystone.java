@@ -127,9 +127,9 @@ public class Keystone extends Api
         jsonObject.put("enabled",enabled);
         JSONObject project = new JSONObject();
         project.put("project",jsonObject);
-        System.out.println("Project !!!!!!!!!!!!!!!!!!!!!!!!!!!1"+project);
+        //System.out.println("Project !!!!!!!!!!!!!!!!!!!!!!!!!!!1"+project);
         Object responseObject = this.Post(url+KeystoneOption.PROJECT.tabName,osClientV3.getToken().getId(),project);
-System.out.println("OBJECCTTTT       "+ responseObject);
+//System.out.println("OBJECCTTTT       "+ responseObject);
         return (Object)responseObject;
     }
 

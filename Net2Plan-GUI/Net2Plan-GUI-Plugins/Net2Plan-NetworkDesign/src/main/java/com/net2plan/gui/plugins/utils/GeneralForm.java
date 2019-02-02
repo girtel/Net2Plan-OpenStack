@@ -21,6 +21,8 @@ import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +58,17 @@ public class GeneralForm extends JDialog implements ActionListener{
     public void init(){
 
         setTitle(title);
+        addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent windowEvent) {
+
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent windowEvent) {
+                dispose();
+            }
+        });
         enterButton = new JButton("Enter");
 
         propertiesPanel = new JPanel(new MigLayout("fillx, wrap 2"));//filas, columnas, espacio entre filas, espacio entre columnas
@@ -295,7 +308,7 @@ public class GeneralForm extends JDialog implements ActionListener{
         }
 
         //openStackClient.getOsn().getCallback().getViewEditTopTables().updateView();
-        advancedJTable_networkElement.updateTab();
+        advancedJTable_networkElement.updateThisTab();
         dispose();
 
     }

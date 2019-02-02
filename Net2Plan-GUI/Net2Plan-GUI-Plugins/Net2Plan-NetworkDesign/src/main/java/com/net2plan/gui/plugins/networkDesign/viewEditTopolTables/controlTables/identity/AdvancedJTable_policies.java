@@ -22,9 +22,9 @@ public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenS
     {
 
         final List<AjtColumnInfo<OpenStackPolicy>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "ID", "Policy ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "User ID", "Policy user id", null, n -> n.getPolicyUserId(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "Project ID", "Policy project id", null, n -> n.getPolicyProjectId(),
+        //res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "ID", "Policy ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "User ID", "Policy user id", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPolicyUserId()), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "Project ID", "Policy project id", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPolicyProjectId()),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPolicy>(this, String.class, null, "Type", "Policy type", null, n -> n.getPolicyType(),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -41,7 +41,8 @@ public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenS
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
       /*  res.add(new AjtRcMenu("Add policy", e -> addPolicy(), (a, b) -> true, null));
 
@@ -73,9 +74,7 @@ public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b ==1, null));
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
-
-        return res;
+         return res;
 
     }
 

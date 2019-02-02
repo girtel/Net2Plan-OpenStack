@@ -22,7 +22,7 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
     {
 
         final List<AjtColumnInfo<OpenStackRole>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "ID", "Role ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "ID", "Role ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "Name", "Role name", null, n -> n.getRoleName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRole>(this, String.class, null, "Domain ID", "Role domain id", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getRoleDomainId()),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -36,7 +36,8 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
 /*
         res.add(new AjtRcMenu("Add role", e -> addRole(), (a, b) -> true, null));
@@ -58,7 +59,6 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
 
         }), (a, b) -> b ==1, null));
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

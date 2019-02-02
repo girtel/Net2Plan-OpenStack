@@ -30,7 +30,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
     {
 
         final List<AjtColumnInfo<OpenStackNetwork>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "ID", "Network ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "ID", "Network ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Name", "Network Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, String.class, null, "Provider", "Network Provider PhyNet", null, n -> n.getNetworkProviderPhyNet(),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -46,7 +46,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, List.class, null, "Subnets", "Network subnets",
                 null, n -> n.getNetworkSubnets().stream().map(x-> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(x)).collect(Collectors.toList()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Admin State", "Network admin state",
-                null, n -> n.isNetworkIsAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
+                (n,v)->n.setNetworkIsAdminStateUp((Boolean)v), n -> n.isNetworkIsAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
 
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Router external", "Network router external", null, n -> n.isNetworkIsRouterExternal(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackNetwork>(this, Boolean.class, null, "Shared", "Network shared", null, n -> n.isNetworkIsShared(), AGTYPE.NOAGGREGATION, null, null));
@@ -60,13 +60,13 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
     {final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add network", e -> addNetwork(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add network", e -> addNetwork(), (a, b) -> b == b, null));
 
         res.add(new AjtRcMenu("Remove network", e -> getSelectedElements().forEach(n -> {
 
             removeNetwork(n);
 
-        }), (a, b) -> b == 1, null));
+        }), (a, b) -> b >= 1, null));
 
         /*
         res.add(new AjtRcMenu("Change network's name", e -> getSelectedElements().forEach(n -> {
@@ -78,13 +78,12 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         }), (a, b) -> b ==1, null));
 
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
     }
 
-    public void addNetwork(ArrayList<OpenStackNetwork> openStackNetworks){
+    public void addNetwork(){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
@@ -92,7 +91,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
         headers.put("Network type","Select");
         headers.put("IsExternal","Boolean");
         headers.put("Provider ID","");
-        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient,this,openStackNetworks.get(0));
+        GeneralForm generalTableForm = new GeneralForm("Add network",headers,this.ajtType,this.openStackClient,this,null);
 
 
 

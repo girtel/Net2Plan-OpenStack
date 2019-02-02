@@ -23,20 +23,16 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
     {
 
         final List<AjtColumnInfo<OpenStackService>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "ID", "Service ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "ID", "Service ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "Name", "Service name", null, n -> n.getServiceName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "Description", "Service description", null, n -> n.getServiceDescription(),
+          res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "Type", "Service type", null, n -> n.getServiceType(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "Type", "Service type", null, n -> n.getServiceType(),
+        res.add(new AjtColumnInfo<OpenStackService>(this, Boolean.class, null, "Enabled", "Service enable", (n,v)-> n.setServiceEnabled((Boolean)v), n -> n.isServiceEnabled(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "Version", "Service version", null, n -> n.getServiceVersion(),
-                AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackService>(this, Boolean.class, null, "Enabled", "Service enable", null, n -> n.isServiceEnabled(),
-                AGTYPE.NOAGGREGATION, null, null));
-
         res.add(new AjtColumnInfo<OpenStackService>(this, List.class, null, "Endpoints", "Service endpoints",
                 null, n -> n.getServiceEndpoints(), AGTYPE.NOAGGREGATION, null, null));
-
+        res.add(new AjtColumnInfo<OpenStackService>(this, String.class, null, "Description", "Service description", null, n -> n.getServiceDescription(),
+                AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackService>(this, List.class, null, "Links", "Service links",
                 null, n -> n.getServiceLinks(), AGTYPE.NOAGGREGATION, null, null));
 
@@ -47,7 +43,8 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
     /*
         res.add(new AjtRcMenu("Add service", e -> addService(), (a, b) -> true, null));
@@ -76,7 +73,6 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
 
         }), (a, b) -> b ==1, null));
 */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
 
         return res;

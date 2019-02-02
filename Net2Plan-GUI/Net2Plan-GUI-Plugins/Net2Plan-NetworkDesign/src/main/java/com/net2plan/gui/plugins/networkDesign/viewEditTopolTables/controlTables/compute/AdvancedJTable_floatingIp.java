@@ -23,7 +23,7 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
     {
 
         final List<AjtColumnInfo<OpenStackFloatingIp>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "ID", "Floating IP ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "ID", "Floating IP ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackFloatingIp>(this, String.class, null, "Address", "Floating IP address",
                 null, n -> n.getFloatingIPFloatingIpAddress(), AGTYPE.NOAGGREGATION, null, null));
 
@@ -39,17 +39,17 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add floating ip", e -> addFloatingIp(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add floating ip", e -> addFloatingIp(this.getSelectedElements()), (a, b) -> b==b, null));
 
         res.add(new AjtRcMenu("Remove floating ip", e -> getSelectedElements().forEach(n -> {
 
             removeFloatingIp(n);
 
-        }), (a, b) -> b == 1, null));
+        }), (a, b) -> b >= 1, null));
 
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 
@@ -66,7 +66,7 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
     public void removeFloatingIp(OpenStackFloatingIp floatingIp){
 
         openStackClient.getOpenStackNetDelete().deleteOpenStackFloatingIp(floatingIp.getId());
-        updateTab();
+        updateThisTab();
     }
 
 }

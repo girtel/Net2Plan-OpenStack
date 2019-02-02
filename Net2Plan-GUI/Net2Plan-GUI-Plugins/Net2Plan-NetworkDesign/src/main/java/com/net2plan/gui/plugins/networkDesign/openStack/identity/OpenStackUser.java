@@ -23,6 +23,7 @@ public class OpenStackUser extends OpenStackNetworkElement
     private Boolean userEnable;
     private Map<String,String> userLinks;
     private User user ;
+    private String userDefaultProjectId;
 
 
     public static OpenStackUser createFromAddUser (OpenStackNet osn , User user, OpenStackClient openStackClient)
@@ -36,6 +37,7 @@ public class OpenStackUser extends OpenStackNetworkElement
         res.userDescription=user.getDescription();
         res.userEnable = user.isEnabled();
         res.userLinks = user.getLinks();
+        res.userDefaultProjectId = user.getDefaultProjectId();
 
         return res;
     }
@@ -55,6 +57,7 @@ public class OpenStackUser extends OpenStackNetworkElement
     public String getDomainId () { return this.userDomainId; }
     public String getEmail () { return this.userEmail; }
     public String getDescription () { return this.userDescription; }
+    public String getUserDefaultProjectId () { return this.userDefaultProjectId; }
     public Boolean isUserEnable(){return  this.userEnable;}
     public Map<String,String> getUserLinks(){return this.userLinks;}
 
@@ -76,7 +79,7 @@ public class OpenStackUser extends OpenStackNetworkElement
         return description;
     }
 
-    public void isUserEnable(Boolean value){
+    public void changeUserEnabledState(Boolean value){
 
         try{
 

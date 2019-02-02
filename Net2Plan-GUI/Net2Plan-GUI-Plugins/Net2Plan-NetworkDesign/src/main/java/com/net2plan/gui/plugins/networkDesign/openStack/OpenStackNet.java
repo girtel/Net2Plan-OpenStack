@@ -71,6 +71,7 @@ public class OpenStackNet
     }
     public void addNewLoginInformationToNet(JSONObject jsonObject){
 
+
         JSONArray jsonArray = jsonObject.getJSONArray("information");
 
         for(Object object: jsonArray){

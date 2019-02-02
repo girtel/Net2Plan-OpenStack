@@ -43,7 +43,7 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
         final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Adjust quotas with host", e -> getSelectedElements().forEach(n -> {
+        res.add(new AjtRcMenu("Adjust quotas with hosts", e -> getSelectedElements().forEach(n -> {
 
          getAllHostAndTakeQuotasForAdmin(n);
 
@@ -68,7 +68,6 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
 
         }), (a, b) -> b == 1, null));
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

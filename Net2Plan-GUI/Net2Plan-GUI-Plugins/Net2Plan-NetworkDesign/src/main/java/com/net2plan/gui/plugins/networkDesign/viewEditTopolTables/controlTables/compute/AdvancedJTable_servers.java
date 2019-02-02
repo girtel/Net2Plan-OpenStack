@@ -34,7 +34,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackServer>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "ID", "Server ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "ID", "Server ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Name", "Server name", null, n -> n.getServerName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "IPv4", "Server Access IPv4", null, n -> n.getServerAccessIPv4(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "IPv6", "Server Access IPv6", null, n -> n.getServerAccessIPv6(), AGTYPE.NOAGGREGATION, null, null));
@@ -78,10 +78,11 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
 
-        res.add(new AjtRcMenu("Add server", e -> addServer(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add server", e -> addServer(this.getSelectedElements()), (a, b) -> b==b, null));
         res.add(new AjtRcMenu("Get console", e -> getSelectedElements().forEach(n -> {
             openStackClient.updateClient();
             VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
@@ -111,7 +112,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
             }
 
 
-        }), (a, b) -> b ==1, null));
+        }), (a, b) -> b == 1, null));
 
         res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
             openStackClient.updateClient();
@@ -120,9 +121,9 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
 
 
-        }), (a, b) -> b ==1, null));
+        }), (a, b) -> b == 1, null));
 
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+        //res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

@@ -14,6 +14,9 @@ import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackGnocchiMeasure;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.telemetry.AdvancedJTable_measures;
 import com.net2plan.gui.plugins.utils.Graficos;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 
@@ -262,6 +265,62 @@ public class OpenStackClient {
         return this;
     }
 
+    public void updateThisList (AdvancedJTable_networkElement advancedJTable_networkElement){
+
+        if(advancedJTable_networkElement instanceof AdvancedJTable_users){
+
+            openStackUsers.clear();
+            this.os.identity().users().list().forEach(n->addOpenStackUser(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_projects){
+
+            openStackProjects.clear();
+            this.keystone.projectList().stream().forEach(n->addOpenStackProject(n));
+            doTopology();
+            osn.getCallback().updateVisualizationAfterNewTopology();
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_domains){
+
+            openStackDomains.clear();
+            this.os.identity().domains().list().forEach(n->addOpenStackDomain(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_endpoints){
+
+            openStackEndpoints.clear();
+            this.os.identity().serviceEndpoints().listEndpoints().forEach(n->addOpenStackEndpoint(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_services){
+
+            openStackServices.clear();
+            this.os.identity().serviceEndpoints().list().forEach(n->addOpenStackService(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_regions){
+
+            openStackRegions.clear();
+            this.os.identity().regions().list().forEach(n->addOpenStackRegion(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_credentials){
+
+            openStackCredentials.clear();
+            this.os.identity().credentials().list().forEach(n->addOpenStackCredential(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_groups){
+
+            openStackGroups.clear();
+            this.os.identity().groups().list().forEach(n->addOpenStackGroup(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_policies){
+
+            openStackPolicies.clear();
+            this.os.identity().policies().list().forEach(n->addOpenStackPolicy(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_roles){
+
+            openStackRoles.clear();
+            this.os.identity().roles().list().forEach(n->addOpenStackRole(n));
+
+        }
+    }
     public void updateMeterList(String resource_id){
 
         //System.out.println ("Clearing meter for " + resource_id);
@@ -382,7 +441,7 @@ public class OpenStackClient {
 
         }
 
-        osn.getCallback().getViewEditTopTables().updateView();
+
         return graficos;
     }
 

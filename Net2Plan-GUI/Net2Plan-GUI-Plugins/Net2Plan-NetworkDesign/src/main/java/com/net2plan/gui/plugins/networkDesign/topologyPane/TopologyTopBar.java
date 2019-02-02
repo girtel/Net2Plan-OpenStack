@@ -196,6 +196,8 @@ public class TopologyTopBar extends JToolBar implements ActionListener
 
         if (src == btn_add)
         {
+
+
             OpenStackInitalButtonFunctionalities.addLoginUserInformationDialog(callback,btn_add);
             //topologyPanel.loadCredentialsDialog(btn_add,btn_add.getX(),btn_add.getY());
 

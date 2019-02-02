@@ -22,12 +22,12 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
     {
 
         final List<AjtColumnInfo<OpenStackSecurityGroup>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "ID", "Security group ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "ID", "Security group ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Name", "Security name", null, n -> n.getSecGroupExtensionName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Description", "Security description", null, n -> n.getSecGroupExtensionDescription(),
-                AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Rules", "Security rules",
                 null, n -> n.getSecGroupExtensionRules(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Description", "Security description", null, n -> n.getSecGroupExtensionDescription(),
+                AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSecurityGroup>(this, String.class, null, "Project ID", "Security tenant id",
                 null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getSecGroupExtensionTenantId()), AGTYPE.NOAGGREGATION, null, null));
 
@@ -47,7 +47,7 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
             removeSecurityGroup(n);
 
         }), (a, b) -> b == 1, null));*/
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+     //   res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

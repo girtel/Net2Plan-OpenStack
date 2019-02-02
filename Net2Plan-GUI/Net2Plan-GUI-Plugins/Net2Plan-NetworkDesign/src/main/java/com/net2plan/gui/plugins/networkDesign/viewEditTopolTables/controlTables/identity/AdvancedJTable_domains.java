@@ -23,13 +23,13 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackDomain>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "ID", "Domain ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "ID", "Domain ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "Name", "Domain name", null, n -> n.getDomainName(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "Description", "Domain description", null, n -> n.getDomainDescription(),
-                AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackDomain>(this, Boolean.class, null, "Enabled", "Domain enable",
                 null, n -> n.isDomainEnabled(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "Links", "Domain links",
+        res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "Description", "Domain description", null, n -> n.getDomainDescription(),
+                AGTYPE.NOAGGREGATION, null, null));
+           res.add(new AjtColumnInfo<OpenStackDomain>(this, String.class, null, "Links", "Domain links",
                 null, n -> n.getDomainLinks(), AGTYPE.NOAGGREGATION, null, null));
 
 
@@ -62,7 +62,6 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
 
         }), (a, b) -> b ==1, null));
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
 

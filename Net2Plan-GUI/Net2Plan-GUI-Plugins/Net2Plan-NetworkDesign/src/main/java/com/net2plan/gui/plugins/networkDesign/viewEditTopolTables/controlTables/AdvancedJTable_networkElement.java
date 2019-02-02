@@ -33,6 +33,8 @@ import com.net2plan.gui.plugins.networkDesign.interfaces.ITableRowFilter;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.AdvancedJTable_projects;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.AdvancedJTable_users;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.utils.JScrollPopupMenu;
 import com.net2plan.interfaces.networkDesign.NetPlan;
@@ -127,7 +129,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         final List<T> visibleElementsInTable = this.getAllAbstractElementsInTable();
         final List<AjtRcMenu> allPopupMenusButView = new ArrayList<> ();
         if (viewMenu.isPresent()) allPopupMenusButView.add(viewMenu.get());
-        allPopupMenusButView.add(new AjtRcMenu("Pick selection", e-> SwingUtilities.invokeLater(() -> pickSelection(new TreeSet<>(this.getSelectedElements()))), (a,b)->b>0, null));
+        allPopupMenusButView.add(new AjtRcMenu("Refresh table", e ->updateThisTab(), (a, b) -> b==b, null));
         allPopupMenusButView.add(AjtRcMenu.createMenuSeparator());
         allPopupMenusButView.addAll(getNonBasicRightClickMenusInfo());
         for (AjtRcMenu popupInfo : allPopupMenusButView)
@@ -158,6 +160,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
     protected abstract List<AjtColumnInfo<T>> getNonBasicUserDefinedColumnsVisibleOrNot ();
 
+
     @Override
     protected void reactToMouseClickInTable (int numClicks , int rowModelIndexOfClickOrMinus1IfOut , int columnModelIndexOfClickOrMinus1IfOut)
     {
@@ -185,7 +188,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             else if (selectedElements.isEmpty()) callback.resetPickedStateAndUpdateView();
         } else if (numClicks >= 2)
         {
-            if (rowModelIndexOfClickOrMinus1IfOut == -1) return;
+           /* if (rowModelIndexOfClickOrMinus1IfOut == -1) return;
 
             final Object value = getModel().getValueAt(rowModelIndexOfClickOrMinus1IfOut, columnModelIndexOfClickOrMinus1IfOut);
 
@@ -197,7 +200,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
 
                 SwingUtilities.invokeLater(() -> pickSelection(selectedElements));
-            }
+            }*/
         }
 
     }
@@ -266,6 +269,12 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         }
     }
 
+    public void updateThisTab(){
+
+        openStackClient.updateThisList(this);
+        updateView();
+
+    }
 
     @Override
     public void updateTab(){
@@ -292,7 +301,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
             case NETWORKS:
                 OpenStackNetwork network = ((OpenStackNetwork)selectedElements.iterator().next());
                 if(columnModelIndexOfClickOrMinus1IfOut == 11){
-                    network.isNetworkIsAdminStateUp(!network.isNetworkIsAdminStateUp());
+                    network.setNetworkIsAdminStateUp(!network.isNetworkIsAdminStateUp());
                 }else if(columnModelIndexOfClickOrMinus1IfOut == 12){
                     //network.i(!network.isNetworkIsRouterExternal());
                 }else if(columnModelIndexOfClickOrMinus1IfOut == 13){

@@ -23,7 +23,7 @@ public class AdvancedJTable_hostResources extends AdvancedJTable_networkElement<
     {
 
         final List<AjtColumnInfo<OpenStackHostResource>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackHostResource>(this, String.class, null, "Host", "Host", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackHostResource>(this, String.class, null, "Host", "Host", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackHostResource>(this, String.class, null, "Name", "Host name", null, n -> n.getHostName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackHostResource>(this, Integer.class, null, "Disk", "Host dis in Gb", null, n -> n.getHostDisk(),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -57,7 +57,7 @@ public class AdvancedJTable_hostResources extends AdvancedJTable_networkElement<
         }), (a, b) -> b == 1, null));
 
 */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
 
         return res;
 

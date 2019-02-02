@@ -15,7 +15,7 @@ import java.util.List;
 public class AdvancedJTable_summaries extends AdvancedJTable_networkElement<OpenStackSummary> {
     public AdvancedJTable_summaries(GUINetworkDesign callback, OpenStackClient openStackClient) {
         super(callback, ViewEditTopologyTablesPane.AJTableType.SUMMARY, true, openStackClient);
-        System.out.println("Creating advancedjtable sumarry");
+        //System.out.println("Creating advancedjtable sumarry");
     }
 
     @Override

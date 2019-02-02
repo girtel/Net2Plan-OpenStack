@@ -22,11 +22,11 @@ public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenSta
     {
 
         final List<AjtColumnInfo<OpenStackGroup>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackGroup>(this, String.class, null, "ID", "Group ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+       // res.add(new AjtColumnInfo<OpenStackGroup>(this, String.class, null, "ID", "Group ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackGroup>(this, String.class, null, "Name", "Group name", null, n -> n.getGroupName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackGroup>(this, String.class, null, "Description", "Group description", null, n -> n.getGroupDescription(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackGroup>(this, String.class, null, "Domain ID", "Group domain id", null, n -> n.getGroupDomainId(),
+        res.add(new AjtColumnInfo<OpenStackGroup>(this, String.class, null, "Domain ID", "Group domain id", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getGroupDomainId()),
                 AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackGroup>(this, List.class, null, "Links", "Group links",
                 null, n -> n.getGroupLinks(), AGTYPE.NOAGGREGATION, null, null));
@@ -38,7 +38,8 @@ public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenSta
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
 
         /*res.add(new AjtRcMenu("Add group", e -> addGroup(), (a, b) -> true, null));
@@ -65,8 +66,6 @@ public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenSta
         }), (a, b) -> b ==1, null));
 
 */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
-
         return res;
 
     }

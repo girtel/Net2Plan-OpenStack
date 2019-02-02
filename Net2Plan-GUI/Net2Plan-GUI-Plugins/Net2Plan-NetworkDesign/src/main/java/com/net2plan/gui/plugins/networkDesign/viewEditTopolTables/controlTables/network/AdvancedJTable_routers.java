@@ -30,7 +30,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackRouter>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "ID", "Router ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "ID", "Router ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Name", "Router name", null, n -> n.getRouterName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRouter>(this, String.class, null, "Project", "Router project", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getRouterTenantId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRouter>(this, State.class, null, "State", "Router state", null, n -> n.getRouterState(), AGTYPE.NOAGGREGATION, null, null));
@@ -47,15 +47,16 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add router", e -> addRouter(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add router", e -> addRouter(), (a, b) -> b==b, null));
 
         res.add(new AjtRcMenu("Remove router", e -> getSelectedElements().forEach(n -> {
 
             removeRouter(n);
 
-        }), (a, b) -> b == 1, null));
+        }), (a, b) -> b >= 1, null));
 
         /*
         res.add(new AjtRcMenu("Change router's name", e -> getSelectedElements().forEach(n -> {
@@ -105,13 +106,13 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
         }), (a, b) -> b ==1, null));
 
         */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+
 
         return res;
 
     }
 
-    public void addRouter(ArrayList<OpenStackRouter> openStackRouter){
+    public void addRouter(){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");

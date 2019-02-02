@@ -32,7 +32,7 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackSubnet>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "ID", "Subnet ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "ID", "Subnet ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Name", "Subnet Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Cidr", "Subnet Cidr", null, n -> n.getSubnetCidr(),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -57,9 +57,10 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
-        res.add(new AjtRcMenu("Add subnet", e -> addSubnet(this.getSelectedElements()), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Add subnet", e -> addSubnet(), (a, b) -> true, null));
 
         res.add(new AjtRcMenu("Remove subnet", e -> getSelectedElements().forEach(n -> {
 
@@ -73,7 +74,6 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
             GeneralFormUpdate generalTableFormUpdate = new GeneralFormUpdate("Add dns",headers,"DNS",n,ajtType,openStackClient,this);
             //updateTab();
         }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         /*
         res.add(new AjtRcMenu("Change subnet's name", e -> getSelectedElements().forEach(n -> {
@@ -161,7 +161,7 @@ updateTab();
 
     }
 
-    public void addSubnet(ArrayList<OpenStackSubnet> openStackSubnets){
+    public void addSubnet(){
 
         Map<String,String> headers = new HashMap<>();
         headers.put("Name","");
@@ -169,7 +169,7 @@ updateTab();
         headers.put("IP version","Select");
         headers.put("Cidr","Cidr");
         headers.put("Tenant ID","Select");
-        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this,openStackSubnets.get(0));
+        GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this,null);
         //updateTab();
     }
     public void removeSubnet(OpenStackSubnet subnet){

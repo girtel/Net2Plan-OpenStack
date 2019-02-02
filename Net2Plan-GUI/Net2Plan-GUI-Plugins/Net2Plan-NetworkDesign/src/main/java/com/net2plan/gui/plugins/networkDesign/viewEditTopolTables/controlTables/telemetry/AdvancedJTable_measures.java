@@ -22,7 +22,7 @@ public class AdvancedJTable_measures extends AdvancedJTable_networkElement<OpenS
     public List<AjtColumnInfo<OpenStackGnocchiMeasure>> getNonBasicUserDefinedColumnsVisibleOrNot() {
 
         final List<AjtColumnInfo<OpenStackGnocchiMeasure>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackGnocchiMeasure>(this, Object.class, null, "ID", "Measure ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackGnocchiMeasure>(this, Object.class, null, "ID", "Measure ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackGnocchiMeasure>(this, String.class, null, "Timestamp", "Measure Timestamp", null, n -> n.getTimestamp(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackGnocchiMeasure>(this, String.class, null, "Granurality", "Granurality Value", null, n -> n.getGranularity(),
                 AGTYPE.NOAGGREGATION, null, null));
@@ -36,9 +36,6 @@ public class AdvancedJTable_measures extends AdvancedJTable_networkElement<OpenS
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo() {
         final List<AjtRcMenu> res = new ArrayList<>();
-
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
-
 
         return res;
 

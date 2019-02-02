@@ -22,10 +22,10 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
     {
 
         final List<AjtColumnInfo<OpenStackRegion>> res = new LinkedList<>();
-        res.add(new AjtColumnInfo<OpenStackRegion>(this, String.class, null, "ID", "Region ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
+        //res.add(new AjtColumnInfo<OpenStackRegion>(this, String.class, null, "ID", "Region ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackRegion>(this, String.class, null, "Description", "Region Description", null, n -> n.getRegionDescription(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackRegion>(this, String.class, null, "Parent ID", "Region parent id", null, n -> n.getRegionParentRegionId(),
-                AGTYPE.NOAGGREGATION, null, null));
+        /*res.add(new AjtColumnInfo<OpenStackRegion>(this, String.class, null, "Parent ID", "Region parent id", null, n -> n.getRegionParentRegionId(),
+                AGTYPE.NOAGGREGATION, null, null));*/
 
 
 
@@ -35,7 +35,8 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
        /* res.add(new AjtRcMenu("Add region", e -> addRegion(), (a, b) -> true, null));
 
@@ -58,8 +59,6 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
 
         }), (a, b) -> b ==1, null));
 */
-        res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
-
         return res;
 
     }
