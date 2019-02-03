@@ -22,7 +22,7 @@ import org.openstack4j.model.network.State;
  * @author Manuel
  */
 public class OpenStackRouter extends OpenStackNetworkElement {
-    final Node npNode;
+    Node npNode;
 
     private String routerId;
     private String routerName;
@@ -35,30 +35,17 @@ public class OpenStackRouter extends OpenStackNetworkElement {
     private Router osRouter;
 
     public static OpenStackRouter createFromAddRouter(OpenStackNet osn, Router router,OpenStackClient openStackClient) {
+
         Map<String,String> attributes = new HashMap<>();
         attributes.put("rightClick","no");
         attributes.put("Router ID",router.getId());
         attributes.put("Router Name",router.getName());
         attributes.put("Router State",router.getStatus().toString());
         //attributes.put("External Gateway",router.getExternalGatewayInfo().toString());
-        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
-        npNode2.setName(router.getId());
+        final Node npNode = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
+        npNode.setName(router.getId());
 
-        if (router.getName().equals("router1")) {
-            try {
-
-                npNode2.setUrlNodeIcon(openStackClient.getNetPlanDesign().getNetworkLayerDefault(), new URL("http://aux2.iconspalace.com/uploads/router-icon-256.png"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                npNode2.setUrlNodeIcon(openStackClient.getNetPlanDesign().getNetworkLayerDefault(), new URL("http://aux2.iconspalace.com/uploads/router-icon-256.png"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        final OpenStackRouter res = new OpenStackRouter(osn, npNode2, router,openStackClient);
+        final OpenStackRouter res = new OpenStackRouter(osn,npNode, router,openStackClient);
         res.routerId = router.getId();
         res.routerName = router.getName();
         res.routerTenantId = router.getTenantId();
@@ -70,13 +57,15 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         return res;
     }
 
-    public OpenStackRouter(OpenStackNet osn, Node npNode, Router router,OpenStackClient openStackClient) {
+    public OpenStackRouter(OpenStackNet osn,Node npNode, Router router,OpenStackClient openStackClient) {
         super(osn, npNode, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackRouters,openStackClient);
-        this.npNode = npNode;
         this.osRouter = router;
+        this.npNode = npNode;
     }
 
-
+/*public void setNpNode(Node npNode){
+        this.npNode = npNode;
+}*/
     @Override
     public String getId() {
         return routerId;

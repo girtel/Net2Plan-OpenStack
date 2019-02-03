@@ -46,7 +46,7 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, List.class, null, "Host routes", "Subnet host routes", null, n -> n.getSubnetHostRoutes(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, IPVersionType.class, null, "Ip version type", "Subnet ip version type", null, n -> n.getSubnetIpVersion(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, String.class, null, "Project ", "Subnet project", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getSubnetTenantId()), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackSubnet>(this, Boolean.class, null, "DHCP", "Subnet dhcp", null, n -> n.isSubnetIsDHCPEnabled(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackSubnet>(this, Boolean.class, null, "DHCP", "Subnet dhcp", (n,v)->n.setSubnetIsDHCPEnabled((Boolean)v), n -> n.isSubnetIsDHCPEnabled(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, Ipv6AddressMode.class, null, "IPv6 address mode", "Subnet ipv6 address mode", null, n -> n.getSubnetIpv6AddressMode(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackSubnet>(this, Ipv6RaMode.class, null, "IPv6 Ra mode", "Subnet ipv6 ra mode", null, n -> n.getSubnetIpv6RaMode(), AGTYPE.NOAGGREGATION, null, null));
 
@@ -62,11 +62,7 @@ public class AdvancedJTable_subnets extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Add subnet", e -> addSubnet(), (a, b) -> true, null));
 
-        res.add(new AjtRcMenu("Remove subnet", e -> getSelectedElements().forEach(n -> {
-
-            removeSubnet(n);
-
-        }), (a, b) -> true, null));
+        res.add(new AjtRcMenu("Remove subnet", e -> removeSubnet(getSelectedElements()), (a, b) -> true, null));
         res.add(new AjtRcMenu("Add subnet's DNS", e -> getSelectedElements().forEach(n -> {
 
             Map<String,String> headers = new HashMap<>();
@@ -172,11 +168,10 @@ updateTab();
         GeneralForm generalTableForm = new GeneralForm("Add subnet",headers,this.ajtType,this.openStackClient,this,null);
         //updateTab();
     }
-    public void removeSubnet(OpenStackSubnet subnet){
+    public void removeSubnet(ArrayList<OpenStackSubnet> subnets){
 
-        openStackClient.updateClient();
-        openStackClient.getOpenStackNetDelete().deleteOpenStackSubnet(subnet.getId());
-        updateTab();
+        subnets.forEach(subnet -> openStackClient.updateClient().getOpenStackNetDelete().deleteOpenStackSubnet(subnet.getId()));
+        updateThisTab();
     }
 
 

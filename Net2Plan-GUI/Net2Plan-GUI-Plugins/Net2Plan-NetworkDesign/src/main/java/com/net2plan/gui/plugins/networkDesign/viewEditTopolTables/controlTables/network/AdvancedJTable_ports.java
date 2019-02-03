@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStackPort>
 {
@@ -51,7 +52,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         res.add(new AjtColumnInfo<OpenStackPort>(this, Map.class, null, "Profile", "Port profile",
                 null, n -> n.getPortProfile(), AGTYPE.NOAGGREGATION, null, null));
 
-        res.add(new AjtColumnInfo<OpenStackPort>(this, List.class, null, "Segurity Groups", "Port security groups", null, n -> n.getPortSecurityGroups(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackPort>(this, List.class, null, "Segurity Groups", "Port security groups", null, n -> n.getPortSecurityGroups().stream().map(x->callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(x)).collect(Collectors.toList()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, State.class, null, "State", "Port state", null, n -> n.getPortState(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Project", "Port project", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortTenantId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Boolean.class, null, "Admin state", "Port admin state", null, n -> n.isAdminStateUp(), AGTYPE.NOAGGREGATION, null, null));
@@ -68,11 +69,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
 
         res.add(new AjtRcMenu("Add port", e -> addPort(), (a, b) -> b==b, null));
 
-        res.add(new AjtRcMenu("Remove port", e -> getSelectedElements().forEach(n -> {
-
-            removePort(n);
-
-        }), (a, b) -> b == 1, null));
+        res.add(new AjtRcMenu("Remove port", e -> removePort(getSelectedElements()), (a, b) -> b >= 1, null));
 
         /*
         res.add(new AjtRcMenu("Change port's name", e -> getSelectedElements().forEach(n -> {
@@ -95,11 +92,10 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         GeneralForm generalTableForm = new GeneralForm("Add port",headers,this.ajtType,this.openStackClient,this,null);
         //updateTab();
     }
-    public void removePort(OpenStackPort port){
+    public void removePort(List<OpenStackPort> ports){
 
-        openStackClient.updateClient();
-        openStackClient.getOpenStackNetDelete().deleteOpenStackPort(port.getId());
-        updateTab();
+        ports.forEach(port -> openStackClient.updateClient().getOpenStackNetDelete().deleteOpenStackPort(port.getId()));
+        updateThisTab();
     }
 
 }

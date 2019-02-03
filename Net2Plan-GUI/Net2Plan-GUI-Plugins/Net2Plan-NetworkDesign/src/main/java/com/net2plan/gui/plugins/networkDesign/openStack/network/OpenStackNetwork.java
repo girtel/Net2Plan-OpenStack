@@ -46,7 +46,18 @@ import sun.nio.ch.Net;
         private Network osNetwork;
         public static OpenStackNetwork createFromAddNetwork (OpenStackNet osn , Network network, OpenStackClient openStackClient)
         {
-            final OpenStackNetwork res = new OpenStackNetwork(osn,network,openStackClient);
+            Map<String,String> attributes = new HashMap<>();
+            attributes.put("rightClick","no");
+            attributes.put("Network ID",network.getId());
+            attributes.put("Network Name",network.getName());
+            attributes.put("Network State",network.getStatus().toString());
+            attributes.put("Type",network.getNetworkType().toString());
+
+           final Node npNode = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
+
+
+
+            final OpenStackNetwork res = new OpenStackNetwork(osn,npNode,network,openStackClient);
             res.networkId= network.getId();
             res.networkName=network.getName();
             res.networkProviderPhyNet=network.getProviderPhyNet();
@@ -64,21 +75,13 @@ import sun.nio.ch.Net;
             return res;
         }
 
-        public OpenStackNetwork(OpenStackNet osn, Network network,OpenStackClient openStackClient)
+        public OpenStackNetwork(OpenStackNet osn, Node npNode,Network network,OpenStackClient openStackClient)
         {
 
-            super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks,openStackClient);
-            Map<String,String> attributes = new HashMap<>();
-            attributes.put("rightClick","no");
-            attributes.put("Network ID",network.getId());
-            attributes.put("Network Name",network.getName());
-            attributes.put("Network State",network.getStatus().toString());
-            attributes.put("Type",network.getNetworkType().toString());
+            super (osn , npNode , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackNetworks,openStackClient);
 
-            final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
-            npNode2.setName(network.getId());
+            this.npNode = npNode;
 
-            this.npNode = npNode2;
             this.osNetwork = network;
 
         }
@@ -86,6 +89,9 @@ import sun.nio.ch.Net;
         public Node getNpNode(){
             return  npNode;
         }
+       /* public void setNpNode(Node npNode){
+            this.npNode = npNode;
+        }*/
         @Override
         public String getId () { return this.networkId; }
         public String getName () { return this.networkName; }

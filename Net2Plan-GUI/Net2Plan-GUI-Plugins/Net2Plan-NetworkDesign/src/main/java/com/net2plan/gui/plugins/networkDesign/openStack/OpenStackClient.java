@@ -15,14 +15,25 @@ import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackGnocc
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_imagesV2;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_networks;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_ports;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_routers;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.network.AdvancedJTable_subnets;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.telemetry.AdvancedJTable_measures;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.telemetry.AdvancedJTable_resources;
+import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.gui.plugins.utils.Graficos;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 
 import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.interfaces.networkDesign.NetPlan;
+import com.net2plan.interfaces.networkDesign.NetworkLayer;
+import com.net2plan.interfaces.networkDesign.Node;
 import com.net2plan.utils.Pair;
+import org.apache.commons.collections15.BidiMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openstack4j.api.Builders;
@@ -216,6 +227,7 @@ public class OpenStackClient {
     }
     public OpenStackClient fillList(){
 
+        //System.out.println("Filllist");
         try {
             this.os = OSFactory.clientFromToken(token);
             /* Get elements of Identity(Keystone)*/
@@ -318,6 +330,78 @@ public class OpenStackClient {
 
             openStackRoles.clear();
             this.os.identity().roles().list().forEach(n->addOpenStackRole(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_networks || advancedJTable_networkElement instanceof AdvancedJTable_subnets || advancedJTable_networkElement instanceof AdvancedJTable_routers || advancedJTable_networkElement instanceof AdvancedJTable_ports || advancedJTable_networkElement instanceof AdvancedJTable_servers){
+
+            openStackNetworks.clear();
+            openStackSubnets.clear();
+            openStackRouters.clear();
+            openStackPorts.clear();
+            openStackServers.clear();
+
+            netPlan.removeAllNodes();
+
+            this.os.networking().network().list().forEach(n->addOpenStackNetwork(n));
+            this.os.networking().subnet().list().forEach(n->addOpenStackSubnet(n));
+            this.os.networking().router().list().forEach(n->addOpenStackRouter(n));
+            this.os.networking().port().list().forEach(n->addOpenStackPort(n));
+
+            this.os.compute().servers().listAll(true).forEach(n->addOpenStackServer(n));
+            doTopology();
+            final VisualizationState vs = osn.getCallback().getVisualizationState();
+            Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
+                    vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(osn.getCallback().getDesign().getNetworkLayers()));
+            vs.setCanvasLayerVisibilityAndOrder(osn.getCallback().getDesign(), res.getFirst(), res.getSecond());
+            osn.getCallback().updateVisualizationAfterNewTopology();
+            //osn.getCallback().updateVisualizationAfterNewTopology();
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_flavors){
+
+            openStackFlavors.clear();
+            this.os.compute().flavors().list().forEach(n->addOpenStackFlavor(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_floatingIp){
+
+            openStackFloatingIps.clear();
+            this.os.compute().floatingIps().list().forEach(n->addOpenStackFloatingIP(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_keypairs){
+
+            openStackKeypairs.clear();
+            this.os.compute().keypairs().list().forEach(n->addOpenStackKeypair(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_securityGroups){
+
+            openStackSecurityGroups.clear();
+            this.os.compute().securityGroups().list().forEach(n->addOpenStackSecurityGroup(n));
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_hostResources){
+
+            openStackHostResources.clear();
+            final List<? extends HostResource> hosts = os.compute().host().list();
+
+            for(HostResource hostResource: hosts){
+                if(hostResource.getService().equals("compute"))
+                    this.os.compute().host().hostDescribe(hostResource.getHostName()).stream().filter(x->((HostResource) x).getProject().equals("(total)")).forEach(p -> addOpenStackHostResource(p));
+            }
+
+
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_imagesV2){
+
+            openStackImages.clear();
+            /*Get elements of Image(GLANCE)*/
+            this.os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
+
+
+
+        }else if(advancedJTable_networkElement instanceof AdvancedJTable_resources){
+
+            openStackResources.clear();
+            if (gnocchi != null)
+                gnocchi.resourcesList().forEach(n->addOpenStackResource(n));
+
+
 
         }
     }
@@ -486,8 +570,9 @@ public class OpenStackClient {
     public OSClient.OSClientV3 getClient(){
         return this.os;
     }
-    public void updateClient(){
+    public OpenStackClient updateClient(){
         this.os = OSFactory.clientFromToken(token);
+        return this;
     }
     public OpenStackNetCreate getOpenStackNetCreate(){ return this.openStackNetCreate; }
     public OpenStackNetDelete getOpenStackNetDelete(){ return this.openStackNetDelete; }
@@ -685,7 +770,7 @@ public class OpenStackClient {
     public void doTopology(){
 
 
-
+        //addNet2PlanObjects();
         // Node list
         final List<OpenStackRouter> routerList = getOpenStackRouters();
         final List<OpenStackNetwork> networkList = getOpenStackNetworks();
@@ -801,6 +886,8 @@ public class OpenStackClient {
             }
         }
 
+        //
+        // osn.getCallback().setDesign(this.netPlan);
 
     }
 
@@ -816,6 +903,7 @@ public class OpenStackClient {
         return colores;
 
     }
+
 
 
 }

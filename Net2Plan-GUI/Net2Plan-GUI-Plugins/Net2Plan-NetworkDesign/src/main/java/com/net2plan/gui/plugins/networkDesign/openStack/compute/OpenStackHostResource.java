@@ -44,8 +44,7 @@ public class OpenStackHostResource extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.hostResourceId; }
-    public String getHostName () { return this.hostResourceName; }
-    public String getName () { return this.hostResourceName; }
+    public String getName () { return this.hostResourceId; }
     public Integer getHostCpu () { return this.hostResourceCpu; }
     public Integer getHostDisk () { return this.hostResourceDiskInGb; }
     public Integer getHostMemory () { return this.hostResourceMemoryInMb; }
@@ -58,7 +57,7 @@ public class OpenStackHostResource extends OpenStackNetworkElement
     {
         String description = "Host: " +
                 this.NEWLINE + "ID " + this.getId() +
-                this.NEWLINE + "Name " + this.getHostName() +
+                this.NEWLINE + "Name " + this.getName() +
                 this.NEWLINE + "Cpu " + this.getHostCpu() +
                 this.NEWLINE + "Disk " + this.getHostDisk() +
                 this.NEWLINE + "RAM " + this.getHostMemory() +

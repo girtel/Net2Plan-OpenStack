@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class OpenStackServer  extends OpenStackNetworkElement
 {
@@ -55,10 +56,21 @@ public class OpenStackServer  extends OpenStackNetworkElement
     private String serverUuid;
     private String serverVmState;
     private Server osServer;
-    final Node npNode;
+    Node npNode;
     public static OpenStackServer createFromAddServer (OpenStackNet osn , Server server,OpenStackClient openStackClient)
     {
-        final OpenStackServer res = new OpenStackServer(osn,server,openStackClient);
+        Map<String,String> attributes = new HashMap<>();
+        //attributes.put("rightClick","no");
+        attributes.put("Server ID",server.getId());
+        attributes.put("Server Name",server.getName());
+        attributes.put("Address",server.getAddresses().toString());
+        //attributes.put("Host",server.getServerHost());
+        // attributes.put("Launched at",osServer.getLaunchedAt().toString());
+        //System.out.println("Attributeees"+ attributes);
+        final Node npNode = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
+        npNode.setName(server.getId());
+
+        final OpenStackServer res = new OpenStackServer(osn,npNode,server,openStackClient);
         res.serverId= server.getId();
         res.serverName=server.getName();
         res.serverAccessIPv4=server.getAccessIPv4();
@@ -98,25 +110,17 @@ public class OpenStackServer  extends OpenStackNetworkElement
         return res;
     }
 
-    private OpenStackServer (OpenStackNet osn, Server server , OpenStackClient openStackClient)
+    private OpenStackServer (OpenStackNet osn,Node npNode, Server server , OpenStackClient openStackClient)
     {
-        super (osn ,  null, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackServers,openStackClient);
+        super (osn ,  npNode, (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackServers,openStackClient);
         this.osServer = server;
 
-        Map<String,String> attributes = new HashMap<>();
-        //attributes.put("rightClick","no");
-        attributes.put("Server ID",osServer.getId());
-        attributes.put("Server Name",osServer.getName());
-        attributes.put("Address",osServer.getAddresses().toString());
-        attributes.put("Host",osServer.getHost());
-       // attributes.put("Launched at",osServer.getLaunchedAt().toString());
-
-        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
-        npNode2.setName(server.getId());
-
-        this.npNode = npNode2;
+        this.npNode=npNode;
     }
 
+    /*public void setNpNode(Node npNode){
+        this.npNode=npNode;
+    }*/
     @Override
     public String getId () { return this.serverId; }
     public String getServerName () { return this.serverName; }
@@ -145,7 +149,10 @@ public class OpenStackServer  extends OpenStackNetworkElement
     public List<String> getServerOsExtendedVolumesAttached () { return this.serverOsExtendedVolumesAttached; }
     public String getServerPowerState () { return this.serverPowerState; }
     public Integer getServerProgress () { return this.serverProgress; }
-    public List<? extends SecurityGroup> getServerSecurityGroups () { return this.serverSecurityGroups; }
+    public List<OpenStackSecurityGroup> getServerSecurityGroups () {
+        List<String> names =serverSecurityGroups.stream().map(n-> ((SecurityGroup) n).getName()).collect(Collectors.toList());
+        List<OpenStackSecurityGroup> securityGroups = openStackClient.openStackSecurityGroups.stream().filter(n->names.contains(n.getName())).collect(Collectors.toList());
+        return securityGroups; }
     public Server.Status getServerStatus () { return this.serverStatus; }
     public String getServerTaskState () { return this.serverTaskState; }
     public String getServerTenantId () { return this.serverTenantId; }
@@ -214,9 +221,7 @@ public class OpenStackServer  extends OpenStackNetworkElement
 
         if(this.getServerSecurityGroups()!=null) {
             description += this.NEWLINE + "Security Groups" + this.NEWLINE;
-            for (SecurityGroup key : this.getServerSecurityGroups()) {
-                description += key + " " + NEWLINE;
-            }
+
         }
         return description;
     }

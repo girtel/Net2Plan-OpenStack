@@ -42,7 +42,16 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     public static OpenStackSubnet createFromAddSubnet (OpenStackNet osn , Subnet subnet, OpenStackClient openStackClient)
     {
 
-        final OpenStackSubnet res = new OpenStackSubnet(osn, subnet,openStackClient);
+        Map<String,String> attributes = new HashMap<>();
+        attributes.put("Subnet ID",subnet.getId());
+        attributes.put("Subnet Name",subnet.getName());
+        attributes.put("Subnet IP version ",subnet.getIpVersion().name());
+        attributes.put("Subnet CIDR",subnet.getCidr());
+        attributes.put("rightClick","no");
+        final Node npNode = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
+        npNode.setName(subnet.getId());
+
+        final OpenStackSubnet res = new OpenStackSubnet(osn,npNode, subnet,openStackClient);
         res.subnetId = subnet.getId();
         res.subnetName =subnet.getName();
         res.subnetCidr = subnet.getCidr();
@@ -61,22 +70,16 @@ public class OpenStackSubnet extends OpenStackNetworkElement
         return res;
     }
 
-    public OpenStackSubnet(OpenStackNet osn, Subnet subnet,OpenStackClient openStackClient)
+    public OpenStackSubnet(OpenStackNet osn,Node npNode, Subnet subnet,OpenStackClient openStackClient)
     {
-        super (osn , null , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSubnets,openStackClient);
+        super (osn , npNode , (List<OpenStackNetworkElement>) (List<?>) openStackClient.openStackSubnets,openStackClient);
         this.osSubnet = subnet;
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("Subnet ID",subnet.getId());
-        attributes.put("Subnet Name",subnet.getName());
-        attributes.put("Subnet IP version ",subnet.getIpVersion().name());
-        attributes.put("Subnet CIDR",subnet.getCidr());
-        attributes.put("rightClick","no");
-        final Node npNode2 = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
-        npNode2.setName(subnet.getId());
-
-        this.npNode = npNode2;
+        this.npNode = npNode;
     }
 
+    /*public void setNpNode(Node npNode){
+        this.npNode = npNode;
+    }*/
     @Override
     public String getId () { return this.subnetId; }
     public String getName () { return this.subnetName; }
@@ -250,7 +253,7 @@ public class OpenStackSubnet extends OpenStackNetworkElement
     }
 
 }
-    public void isSubnetIsDHCPEnabled (boolean value) {
+    public void setSubnetIsDHCPEnabled (boolean value) {
 
         try{
 

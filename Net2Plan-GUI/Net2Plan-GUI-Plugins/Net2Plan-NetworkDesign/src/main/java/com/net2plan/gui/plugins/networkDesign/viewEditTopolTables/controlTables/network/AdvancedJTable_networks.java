@@ -62,11 +62,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
         res.add(new AjtRcMenu("Add network", e -> addNetwork(), (a, b) -> b == b, null));
 
-        res.add(new AjtRcMenu("Remove network", e -> getSelectedElements().forEach(n -> {
-
-            removeNetwork(n);
-
-        }), (a, b) -> b >= 1, null));
+        res.add(new AjtRcMenu("Remove network", e -> removeNetwork(getSelectedElements()), (a, b) -> b >= 1, null));
 
         /*
         res.add(new AjtRcMenu("Change network's name", e -> getSelectedElements().forEach(n -> {
@@ -96,11 +92,10 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
 
 
     }
-    public void removeNetwork(OpenStackNetwork network){
+    public void removeNetwork(ArrayList<OpenStackNetwork> networks){
 
-        openStackClient.updateClient();
-        openStackClient.getOpenStackNetDelete().deleteOpenStackNetwork(network.getId());
-        updateTab();
+        networks.forEach(network -> openStackClient.getOpenStackNetDelete().deleteOpenStackNetwork(network.getId()));
+        updateThisTab();
     }
 
 

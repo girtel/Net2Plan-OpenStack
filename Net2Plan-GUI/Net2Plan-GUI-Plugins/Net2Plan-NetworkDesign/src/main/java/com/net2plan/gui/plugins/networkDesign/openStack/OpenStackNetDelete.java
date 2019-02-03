@@ -1,9 +1,12 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
 import com.net2plan.gui.plugins.utils.MyRunnable;
+import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.Facing;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Token;
+import org.openstack4j.model.network.RouterInterface;
 
 import javax.swing.*;
 
@@ -53,7 +56,9 @@ public class OpenStackNetDelete {
     //Network
     public void deleteOpenStackRouter(String id){
         try{
-        this.openStackClient.getClient().networking().router().delete(id);
+
+            ActionResponse delete =this.openStackClient.getClient().networking().router().delete(id);
+            if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
         }catch(Exception ex){
 
             logPanel(ex);
@@ -64,8 +69,8 @@ public class OpenStackNetDelete {
 
         try{
 
-            this.openStackClient.getClient().networking().network().delete(id);
-
+            ActionResponse delete = this.openStackClient.getClient().networking().network().delete(id);
+            if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
         }catch(Exception ex){
 
             logPanel(ex);
@@ -74,7 +79,10 @@ public class OpenStackNetDelete {
     }
     public void deleteOpenStackSubnet(String id){
         try{
-        this.openStackClient.getClient().networking().subnet().delete(id);
+        ActionResponse delete = this.openStackClient.getClient().networking().subnet().delete(id);
+
+        if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
+
         }catch(Exception ex){
 
             logPanel(ex);
@@ -83,7 +91,8 @@ public class OpenStackNetDelete {
     }
     public void deleteOpenStackPort(String id){
         try{
-        this.openStackClient.getClient().networking().port().delete(id);
+            ActionResponse delete =this.openStackClient.getClient().networking().port().delete(id);
+            if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
         }catch(Exception ex){
 
             logPanel(ex);
@@ -92,11 +101,25 @@ public class OpenStackNetDelete {
     }
 
     //Compute
+    public void deleteOpenStackServer(String id){
+        try{
+            this.openStackClient.getClient().compute().servers().delete(id);
+        }catch (Exception ex){
+            OpenStackUtils.openStackLogDialog("Something was wrong!");
+            ex.printStackTrace();
+        }
+
+    }
     public void deleteOpenStackFlavor(String id){
         this.openStackClient.getClient().compute().flavors().delete(id);
     }
     public void deleteOpenStackFloatingIp(String id){
-        this.openStackClient.getClient().compute().floatingIps().removeFloatingIP(id,"");
+        try {
+            this.openStackClient.getClient().compute().floatingIps().removeFloatingIP(id, id);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            OpenStackUtils.openStackLogDialog("Cant removed");
+        }
     }
     public void deleteOpenStackKeypair(String id){
         this.openStackClient.getClient().compute().keypairs().delete(id);

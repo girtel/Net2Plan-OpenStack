@@ -52,11 +52,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
 
         res.add(new AjtRcMenu("Add router", e -> addRouter(), (a, b) -> b==b, null));
 
-        res.add(new AjtRcMenu("Remove router", e -> getSelectedElements().forEach(n -> {
-
-            removeRouter(n);
-
-        }), (a, b) -> b >= 1, null));
+        res.add(new AjtRcMenu("Remove router", e -> removeRouter(getSelectedElements()), (a, b) -> b >= 1, null));
 
         /*
         res.add(new AjtRcMenu("Change router's name", e -> getSelectedElements().forEach(n -> {
@@ -121,11 +117,10 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
         GeneralForm generalTableForm = new GeneralForm("Add router",headers,this.ajtType,this.openStackClient,this,null);
         //updateTab();
     }
-    public void removeRouter(OpenStackRouter router){
+    public void removeRouter(List<OpenStackRouter> routers){
 
-        openStackClient.updateClient();
-        openStackClient.getOpenStackNetDelete().deleteOpenStackRouter(router.getId());
-        updateTab();
+        routers.forEach(router -> openStackClient.updateClient().getOpenStackNetDelete().deleteOpenStackRouter(router.getId()) );
+        updateThisTab();
     }
 
 

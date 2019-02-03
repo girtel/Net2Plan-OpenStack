@@ -68,11 +68,11 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
             OpenStackQuotas openStackQuota = (OpenStackQuotas)iterator.next();
             String name = openStackQuota.getOpenStackClient().getName();
             if(!openStack.contains(name))openStack.add(name);
-            System.out.println(openStackQuota.getProject_id() +"  " +openStackQuota.getOpenStackClient().getProjectId());
+            ///System.out.println(openStackQuota.getProject_id() +"  " +openStackQuota.getOpenStackClient().getProjectId());
             if(openStackQuota.getProject_id().equals(openStackQuota.getOpenStackClient().getProjectId())) adminProjectIsSelected=true;
 
         }
-        System.out.println(openStack);
+        //System.out.println(openStack);
         //System.out.println(openStack + "" +openStackQuotas.size());
 
         OpenStackProject openStackProjectAdmin = openStackQuotas.get(0).getOpenStackClient().openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get();

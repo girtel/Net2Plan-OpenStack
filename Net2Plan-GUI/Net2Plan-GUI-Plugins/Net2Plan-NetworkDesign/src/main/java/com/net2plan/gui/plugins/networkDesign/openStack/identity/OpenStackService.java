@@ -51,8 +51,7 @@ public class OpenStackService  extends OpenStackNetworkElement
     public String getServiceType () { return this.serviceType; }
     public Integer getServiceVersion () { return this.serviceVersion; }
     public boolean isServiceEnabled () { return this.serviceEnabled; }
-    public List<? extends Endpoint> getServiceEndpoints () {
-        System.out.println(serviceEndpoints);return this.serviceEndpoints; }
+    public List<? extends Endpoint> getServiceEndpoints () {return this.serviceEndpoints; }
     public Map<String,String> getServiceLinks () { return this.serviceLinks; }
 
     public void setServiceName (JSONObject jsonObject) {

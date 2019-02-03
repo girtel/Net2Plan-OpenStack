@@ -412,6 +412,7 @@ public class OpenStackNetCreate{
             String pool = poolName;
             FloatingIP floatingIP = osClientV3.compute().floatingIps().allocateIP(pool);
 
+            System.out.println(floatingIP.getId());
             ActionResponse response = osClientV3.compute().floatingIps().addFloatingIP(this.osClientV3.compute().servers().get(serverId), floatingIP.getFixedIpAddress(), floatingIP.getFloatingIpAddress());
 
         }catch(Exception ex){

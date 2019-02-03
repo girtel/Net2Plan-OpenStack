@@ -15,10 +15,11 @@ public class OpenStackFileChooser extends FileChooserConfirmOverwrite {
         super(file);
         this.setAcceptAllFileFilterUsed(false);
 
-        FileFilter shFilter = new FileNameExtensionFilter("Script RC de OpenStack v3 (*.sh)","sh");
         FileFilter netplanFilter = new FileNameExtensionFilter("Archivo Net2Plan (*.n2p)","n2p");
-        this.addChoosableFileFilter(shFilter);
+        FileFilter shFilter = new FileNameExtensionFilter("Script RC de OpenStack v3 (*.sh)","sh");
+
         this.addChoosableFileFilter(netplanFilter);
+        this.addChoosableFileFilter(shFilter);
     }
 
     protected void onAccept(){

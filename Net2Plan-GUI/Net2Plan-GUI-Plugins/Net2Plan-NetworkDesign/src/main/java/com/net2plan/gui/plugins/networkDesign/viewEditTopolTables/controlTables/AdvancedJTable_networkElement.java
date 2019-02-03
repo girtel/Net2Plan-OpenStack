@@ -293,54 +293,5 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
 
     }
 
-    public void changeValueOfBoolean(int columnModelIndexOfClickOrMinus1IfOut){
-        System.out.println("Boolean"+columnModelIndexOfClickOrMinus1IfOut);
-        openStackClient.updateClient();
-        final SortedSet<T> selectedElements = new TreeSet<>(this.getSelectedElements());
-        switch (ajtType){
-            case NETWORKS:
-                OpenStackNetwork network = ((OpenStackNetwork)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 11){
-                    network.setNetworkIsAdminStateUp(!network.isNetworkIsAdminStateUp());
-                }else if(columnModelIndexOfClickOrMinus1IfOut == 12){
-                    //network.i(!network.isNetworkIsRouterExternal());
-                }else if(columnModelIndexOfClickOrMinus1IfOut == 13){
-                    network.isNetworkIsShared(!network.isNetworkIsShared());
-                }else{
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-            case SUBNETS:
-                OpenStackSubnet subnet = ((OpenStackSubnet)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 12){
-                  subnet.isSubnetIsDHCPEnabled(!subnet.isSubnetIsDHCPEnabled());
-                }else{
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-            case ROUTERS:
-                OpenStackRouter router = ((OpenStackRouter)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 7){
-                    router.isAdminStateUp(!router.isRouterIsAdminStateUp());
-                }else if(columnModelIndexOfClickOrMinus1IfOut == 8){
-                    router.isDistributed(!router.isRouterIsDistributed());
-                } else {
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-            case PORTS:
-                OpenStackPort port = ((OpenStackPort)selectedElements.iterator().next());
-                if(columnModelIndexOfClickOrMinus1IfOut == 15){
-                    port.isAdminStateUp(!port.isAdminStateUp());
-                }else if(columnModelIndexOfClickOrMinus1IfOut == 16){
-                    port.isPortSecurityEnable(!port.isPortSecurityEnable());
-                } else {
-                    System.out.println("No boolean avaliable");
-                }
-                break;
-        }
-        //updateTab();
-        callback.getViewEditTopTables().updateView();
-    }
 
 }

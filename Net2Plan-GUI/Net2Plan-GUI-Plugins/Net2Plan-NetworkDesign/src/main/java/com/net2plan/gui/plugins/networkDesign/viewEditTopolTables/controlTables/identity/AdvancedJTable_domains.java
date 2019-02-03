@@ -77,7 +77,7 @@ public class AdvancedJTable_domains extends AdvancedJTable_networkElement<OpenSt
         //generalTableForm("Add domain",newList);
     }
     public void removeDomain(OpenStackDomain domain){
-        System.out.println("Deleting");
+        //System.out.println("Deleting");
         openStackClient.getOpenStackNetDelete().deleteOpenStackDomain(domain.getId());
         updateTab();
     }

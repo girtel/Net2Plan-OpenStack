@@ -359,6 +359,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     public void recomputNetPlanView() {
 
+       // System.out.println("recomput");
         /*
         private final Map<OpenStackClient,Map<AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>>> netPlanViewTable = new HashMap<> (); //new EnumMap<>(AJTableType.class);
     private final Map<AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>> ajTables = new EnumMap<>(AJTableType.class);
@@ -560,7 +561,7 @@ public class ViewEditTopologyTablesPane extends JPanel
                 telemetryTabbedPane.get(openStackClient).setSelectedComponent(pane);
                 break;
             default:
-                System.out.println(type);
+                System.out.println(type+"este");
                 assert false;
         }
     }
