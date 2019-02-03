@@ -44,11 +44,7 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
 
         res.add(new AjtRcMenu("Add floating ip", e -> addFloatingIp(), (a, b) -> b==b, null));
 
-        res.add(new AjtRcMenu("Remove floating ip", e -> getSelectedElements().forEach(n -> {
-
-            removeFloatingIp(n);
-
-        }), (a, b) -> b >= 1, null));
+        res.add(new AjtRcMenu("Remove floating ip", e -> removeFloatingIp(getSelectedElements()), (a, b) -> b >= 1, null));
 
 
         return res;
@@ -63,9 +59,9 @@ public class AdvancedJTable_floatingIp extends AdvancedJTable_networkElement<Ope
         GeneralForm generalTableForm = new GeneralForm("Add floating ip",headers,this.ajtType,this.openStackClient,this,null);
 
     }
-    public void removeFloatingIp(OpenStackFloatingIp floatingIp){
+    public void removeFloatingIp(ArrayList<OpenStackFloatingIp> floatingIps){
 
-        openStackClient.getOpenStackNetDelete().deleteOpenStackFloatingIp(floatingIp.getId());
+        floatingIps.forEach(floatingIp->openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(floatingIp));
         updateThisTab();
     }
 

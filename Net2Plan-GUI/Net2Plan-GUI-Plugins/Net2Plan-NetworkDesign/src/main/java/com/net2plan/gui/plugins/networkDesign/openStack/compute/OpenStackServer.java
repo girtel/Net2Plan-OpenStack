@@ -10,10 +10,7 @@ import org.openstack4j.model.common.Link;
 import org.openstack4j.model.compute.*;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OpenStackServer  extends OpenStackNetworkElement
@@ -150,8 +147,13 @@ public class OpenStackServer  extends OpenStackNetworkElement
     public String getServerPowerState () { return this.serverPowerState; }
     public Integer getServerProgress () { return this.serverProgress; }
     public List<OpenStackSecurityGroup> getServerSecurityGroups () {
-        List<String> names =serverSecurityGroups.stream().map(n-> ((SecurityGroup) n).getName()).collect(Collectors.toList());
-        List<OpenStackSecurityGroup> securityGroups = openStackClient.openStackSecurityGroups.stream().filter(n->names.contains(n.getName())).collect(Collectors.toList());
+        List<OpenStackSecurityGroup> securityGroups= new ArrayList<>();
+        if(serverSecurityGroups == null) return securityGroups;
+
+
+            List<String> names = serverSecurityGroups.stream().map(n -> ((SecurityGroup) n).getName()).collect(Collectors.toList());
+             securityGroups = openStackClient.openStackSecurityGroups.stream().filter(n -> names.contains(n.getName())).collect(Collectors.toList());
+        
         return securityGroups; }
     public Server.Status getServerStatus () { return this.serverStatus; }
     public String getServerTaskState () { return this.serverTaskState; }

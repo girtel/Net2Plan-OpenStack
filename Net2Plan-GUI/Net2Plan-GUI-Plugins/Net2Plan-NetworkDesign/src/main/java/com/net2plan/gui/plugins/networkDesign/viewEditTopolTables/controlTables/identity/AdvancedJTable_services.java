@@ -46,51 +46,9 @@ public class AdvancedJTable_services extends AdvancedJTable_networkElement<OpenS
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-    /*
-        res.add(new AjtRcMenu("Add service", e -> addService(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove service", e -> getSelectedElements().forEach(n -> {
-
-            removeService(n);
-
-        }), (a, b) -> b == 1, null));
-
-        res.add(new AjtRcMenu("Change service's name", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Name",n,"");
-
-        }), (a, b) -> b ==1, null));
-
-        res.add(new AjtRcMenu("Change service's description", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Description",n,"");
-
-        }), (a, b) -> b ==1, null));
-
-        res.add(new AjtRcMenu("Change service's type", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Service type",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-*/
-
 
         return res;
 
-    }
-
-    public void addService(){
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Name","");
-        newList.put("Service type","Select");
-
-       // generalTableForm("Add service",newList);
-
-    }
-    public void removeService(OpenStackService service){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackService(service.getId());
-        updateTab();
     }
 
 

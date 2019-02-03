@@ -51,7 +51,7 @@ public class OpenStackRouter extends OpenStackNetworkElement {
         res.routerTenantId = router.getTenantId();
         res.routerState = router.getStatus();
         res.routerIsAdminStateUp = router.isAdminStateUp();
-        res.routerIsDistributed = router.getDistributed();
+        res.routerIsDistributed = false;
         res.routerRoutes = router.getRoutes();
         res.routerExternalGatewayInfo = router.getExternalGatewayInfo();
         return res;

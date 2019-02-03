@@ -68,15 +68,14 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
             JSONObject information = new JSONObject();
             information.put("PATH",chooser.getSelectedFile().getPath());
             information.put("NAME",chooser.getSelectedFile().getName());
-            openStackClient.getOpenStackNetCreate().createOpenStackImage(information);
+            openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(this.ajtType,information);
             updateTab();
         }
     }
 
     public void deleteImage(OpenStackImageV2 image){
 
-        openStackClient.updateClient();
-        openStackClient.getOpenStackNetDelete().deleteOpenStackImage(image.getId());
+        openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(image);
         updateThisTab();
     }
 

@@ -46,7 +46,7 @@ public class AdvancedJTable_meters extends AdvancedJTable_networkElement<OpenSta
         res.add(new AjtRcMenu("Get measures of metric", e -> getSelectedElements().forEach(n -> {
 
             //System.out.println("GETTING MEASURES" + n.getId());
-            n.getOpenStackClient().updateMeasuresList(n,n.getId());
+            //n.getOpenStackClient().updateMeasuresList(n,n.getId());
 
         }), (a, b) -> b == 1, null));
 

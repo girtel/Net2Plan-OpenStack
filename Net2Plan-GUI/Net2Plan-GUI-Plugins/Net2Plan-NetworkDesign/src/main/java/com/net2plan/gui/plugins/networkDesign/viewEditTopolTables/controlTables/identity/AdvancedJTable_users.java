@@ -93,7 +93,7 @@ public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStac
 
     public void removeUser(ArrayList<OpenStackUser> user){
 
-        user.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackUser(n.getId()));
+        user.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(n));
         updateThisTab();
     }
 

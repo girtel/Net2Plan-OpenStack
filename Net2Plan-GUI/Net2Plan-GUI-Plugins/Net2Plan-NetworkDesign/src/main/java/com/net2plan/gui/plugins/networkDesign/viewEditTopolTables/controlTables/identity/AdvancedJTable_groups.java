@@ -41,48 +41,9 @@ public class AdvancedJTable_groups extends AdvancedJTable_networkElement<OpenSta
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-
-        /*res.add(new AjtRcMenu("Add group", e -> addGroup(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove group", e -> getSelectedElements().forEach(n -> {
-
-            removeGroup(n);
-
-        }), (a, b) -> b == 1, null));
-        res.add(new AjtRcMenu("Change group's name", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Name",n,"");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change group's description", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Description",n,"");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change group's domain ID", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Domain ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-
-*/
-        return res;
+    return res;
 
     }
 
-
-    public void addGroup(){
-
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Name","");
-        newList.put("Domain ID","Select");
-
-        //generalTableForm("Add group",newList);
-    }
-    public void removeGroup(OpenStackGroup group){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackGroup(group.getId());
-        updateTab();
-    }
 
 }

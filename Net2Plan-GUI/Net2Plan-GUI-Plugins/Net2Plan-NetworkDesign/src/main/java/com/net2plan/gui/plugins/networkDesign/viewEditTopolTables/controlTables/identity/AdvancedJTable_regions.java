@@ -38,46 +38,9 @@ public class AdvancedJTable_regions extends AdvancedJTable_networkElement<OpenSt
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-       /* res.add(new AjtRcMenu("Add region", e -> addRegion(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove region", e -> getSelectedElements().forEach(n -> {
-
-            removeRegion(n);
-
-        }), (a, b) -> b == 1, null));
-
-        res.add(new AjtRcMenu("Change region's description", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Description",n,"");
-
-        }), (a, b) -> b ==1, null));
-
-
-        res.add(new AjtRcMenu("Change region's parent ID", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Parent ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-*/
-        return res;
+      return res;
 
     }
-
-
-
-    public void addRegion(){
-
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Region ID","");
-        newList.put("Description","");
-        //generalTableForm("Add region",newList);
-    }
-    public void removeRegion(OpenStackRegion region){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackRegion(region.getId());
-        updateTab();
-    }
-
 
 }
 

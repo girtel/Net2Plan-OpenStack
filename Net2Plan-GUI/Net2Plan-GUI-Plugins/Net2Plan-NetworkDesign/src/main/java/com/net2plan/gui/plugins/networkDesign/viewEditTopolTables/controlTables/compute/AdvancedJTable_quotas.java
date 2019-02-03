@@ -76,7 +76,6 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
         //System.out.println(openStack + "" +openStackQuotas.size());
 
         OpenStackProject openStackProjectAdmin = openStackQuotas.get(0).getOpenStackClient().openStackProjects.stream().filter(n->n.getProjectName().equals("admin")).findFirst().get();
-        openStackQuotas.get(0).getOpenStackClient().updateClient();
         QuotaSet quotaSetAdmin = openStackQuotas.get(0).getOpenStackClient().getClient().compute().quotaSets().get(openStackProjectAdmin.getId());
 
         int ram = (quotaSetAdmin.getRam()/2)/openStackQuotas.size();
@@ -90,7 +89,6 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
              for(Iterator iterator = openStackQuotas.iterator();iterator.hasNext();){
              OpenStackQuotas openStackQuota= (OpenStackQuotas)iterator.next();
              OpenStackClient openStackClient = openStackQuota.getOpenStackClient();
-             openStackClient.updateClient();
 
              openStackClient.getClient().compute().quotaSets().updateForTenant(openStackQuota.getProject_id(),
                      Builders.quotaSet()
@@ -116,7 +114,7 @@ public class AdvancedJTable_quotas extends AdvancedJTable_networkElement<OpenSta
 
     }
     public void createInstances(OpenStackQuotas openStackQuotas){
-        openStackQuotas.getOpenStackClient().updateClient();
+        //openStackQuotas.getOpenStackClient().updateClient();
         //JS
         //for(int i=0;i<15;i++)
        // openStackClient.getOpenStackNetCreate().createOpenStackServer();

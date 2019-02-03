@@ -28,7 +28,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class Graficos extends JFrame {
+public class OpenStackGraphCreator{
 
     JPanel panel;
     String yName = "No unit available";
@@ -36,38 +36,35 @@ public class Graficos extends JFrame {
     GUINetworkDesign callback;
     OpenStackClient openStackClient;
 
-    public Graficos(GUINetworkDesign callback, OpenStackClient openStackClient,String title, String yName, double [] data){
-        setTitle(title);
-        setSize(800,500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setVisible(false);
-        this.title=title;
-        if(yName !="null") {
-            this.yName = yName;
-            System.out.println("not null please"+this.yName);
-        }
+    public OpenStackGraphCreator(GUINetworkDesign callback, OpenStackClient openStackClient){
+
+
         this.callback = callback;
         this.openStackClient = openStackClient;
         panel = new JPanel();
-        getContentPane().add(panel);
-        init(data);
-        ImageIcon img = new ImageIcon(getClass().getResource("/resources/common/openstack_logo.png"));
-        setIconImage(img.getImage());
-
 
     }
 
+    public void createPanel(String title, String yName, double [] data){
+        this.title=title;
+        if(yName !="null") {
+            this.yName = yName;
+        }
+        init(data);
+    }
     private void init(double [] data) {
 
+        panel.removeAll();
         XYSeries series = new XYSeries("Measures");
         for (int i = 0; i < data.length; i++) {
             series.add(i, data[i]);
         }
         XYSeriesCollection xydata = new XYSeriesCollection(series);
-        final JFreeChart chart = ChartFactory.createXYLineChart( this.title,
+        JFreeChart chart = ChartFactory.createXYLineChart( this.title,
                 "Timestamp", yName, xydata, PlotOrientation.VERTICAL, true, true, false);
         XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setNoDataMessage("No measures avaliable");
+
         final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
         xAxis.setTickUnit(new NumberTickUnit(data.length*0.25));
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -76,8 +73,8 @@ public class Graficos extends JFrame {
          jPopupMenu.add("Get table of measures").addActionListener(new ActionListener() {
              @Override
              public void actionPerformed(ActionEvent actionEvent) {
-                 JFrame jFrame = new JFrame("Measures");
-                 JPanel jPanel = new JPanel();
+                 final JFrame jFrame = new JFrame("Measures");
+                 final JPanel jPanel = new JPanel();
                  jPanel.add(callback.getViewEditTopTables().createPanelComponentInfo(ViewEditTopologyTablesPane.AJTableType.MEASURES,openStackClient).getSecond());
                  jFrame.add(jPanel);
                  jFrame.setResizable(false);

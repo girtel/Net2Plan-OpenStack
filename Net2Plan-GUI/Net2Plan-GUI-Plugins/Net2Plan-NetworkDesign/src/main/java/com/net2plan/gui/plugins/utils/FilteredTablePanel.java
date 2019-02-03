@@ -97,7 +97,7 @@ public class FilteredTablePanel extends JPanel
         if (callback.getVisualizationState().getTableRowFilter() != null && table instanceof AdvancedJTable_networkElement)
         {
             final AJTableType ajType = ((AdvancedJTable_networkElement) table).getAjType();
-            final int numUnfilteredElements = ITableRowFilter.getAllElements(openStackClient,openStackClient.getOsn(), ajType).size();
+            final int numUnfilteredElements = ITableRowFilter.getAllElements(openStackClient,openStackClient.getOpenStackNet(), ajType).size();
             numEntriesLabel.setText("Number of entries: " + numEntries + " / " + numUnfilteredElements + ", FILTERED VIEW: " + callback.getVisualizationState().getTableRowFilter().getDescription());
         }
         else

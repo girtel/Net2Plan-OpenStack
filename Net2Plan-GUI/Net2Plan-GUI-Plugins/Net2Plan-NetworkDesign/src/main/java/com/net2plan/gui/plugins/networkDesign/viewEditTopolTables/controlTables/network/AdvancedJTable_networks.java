@@ -94,7 +94,7 @@ public class AdvancedJTable_networks extends AdvancedJTable_networkElement<OpenS
     }
     public void removeNetwork(ArrayList<OpenStackNetwork> networks){
 
-        networks.forEach(network -> openStackClient.getOpenStackNetDelete().deleteOpenStackNetwork(network.getId()));
+        networks.forEach(network -> openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(network));
         updateThisTab();
     }
 

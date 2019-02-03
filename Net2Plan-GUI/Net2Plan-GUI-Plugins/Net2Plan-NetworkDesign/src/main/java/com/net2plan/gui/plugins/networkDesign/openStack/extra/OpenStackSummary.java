@@ -116,17 +116,20 @@ public class OpenStackSummary  extends OpenStackNetworkElement
         double temp = 0, temp0 = 0;
         // ordenar de menor a mayor
         values = orderArray ( values, 0 );
-
-        temp = n / 2;
-        if ( n % 2 == 0 ) {
-            pos = (int)temp;
-            temp0 = (double)(values [ pos ] / values [ pos + 1 ]);
-        }
-        if ( n % 2 == 1 ) {
-            pos = (int)(temp + 0.5);
-            temp0 = (double)(values [ pos ]);
-        }
-
+try {
+    temp = n / 2;
+    if (n % 2 == 0) {
+        pos = (int) temp;
+        temp0 = (double) (values[pos] / values[pos + 1]);
+    }
+    if (n % 2 == 1) {
+        pos = (int) (temp + 0.5);
+        temp0 = (double) (values[pos]);
+    }
+}
+catch(Exception ex){
+    System.out.println(ex.toString());
+    }
         return temp0;
     }
 

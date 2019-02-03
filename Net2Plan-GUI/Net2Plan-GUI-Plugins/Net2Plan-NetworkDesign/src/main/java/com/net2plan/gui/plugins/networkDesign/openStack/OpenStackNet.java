@@ -92,8 +92,8 @@ public class OpenStackNet
 
             if(openStackClient.isConnected()) {
                 openStackClient
-                        .clearList()
-                        .fillList();
+                        .clearClientListsAndTopology()
+                        .fillClientListsAndTopology();
                 osClients.add(openStackClient);
                 loginInformation.put(information);
 
@@ -125,10 +125,22 @@ public class OpenStackNet
 
         try {
 
+            //System.out.println("Clear quotas");
+            for(OpenStackClient openStackClient: getOsClients()){
+               // System.out.println("OpenStack " + openStackClient.getName());
+                addOpenStackLimit(openStackClient.getClient().compute().quotaSets().limits().getAbsolute(), openStackClient);
+                openStackClient.openStackProjects.stream().forEach(r -> {
+                 //   System.out.println("Project " + r.getName());
+                    addOpenStackQuota(openStackClient.getClient().compute().quotaSets().get(r.getId()), openStackClient, r);
+                    addOpenStackQuotaUsage(openStackClient.getClient().compute().quotaSets().getTenantUsage(r.getId()), openStackClient, r);
+                });
+
+            }
+/*
             getOsClients().stream().forEach(n -> addOpenStackLimit(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().limits().getAbsolute(), n));
             getOsClients().stream().forEach(n -> {n.openStackProjects.stream().forEach(r -> addOpenStackQuota(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().get(r.getId()), n, r));});
             getOsClients().stream().forEach(n -> n.openStackProjects.stream().forEach(r -> addOpenStackQuotaUsage(OSFactory.clientFromToken(n.getToken()).compute().quotaSets().getTenantUsage(r.getId()), n, r)));
-
+*/
         }catch(Exception ex){
             ex.printStackTrace();
         }

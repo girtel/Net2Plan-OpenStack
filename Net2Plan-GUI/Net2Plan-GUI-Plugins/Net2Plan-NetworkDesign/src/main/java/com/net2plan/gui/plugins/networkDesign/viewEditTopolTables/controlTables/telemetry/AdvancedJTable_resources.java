@@ -2,20 +2,13 @@ package com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables
 
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
-import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.AnalisisFrame;
-import com.net2plan.gui.plugins.utils.Graficos;
-import javafx.scene.control.Spinner;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 

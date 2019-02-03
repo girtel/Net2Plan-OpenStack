@@ -175,8 +175,8 @@ public class ViewEditTopologyTablesPane extends JPanel
                   //  System.out.println("Tab: " + viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()));
                     OpenStackClient openStackClient = callback.getOpenStackNet().getOsClients().stream().filter(n -> n.getName().equals(viewEditHighLevelTabbedPane.getTitleAt(viewEditHighLevelTabbedPane.getSelectedIndex()))).collect(Collectors.toList()).get(0);
                    // System.out.println("Net2plan nodes "+ openStackClient.getNetPlanDesign().getNodes().size());
+                    callback.setActualOpenStackClient(openStackClient);
                     callback.setDesign(openStackClient.getNetPlanDesign());
-
                     final VisualizationState vs = callback.getVisualizationState();
                     Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =
                             vs.suggestCanvasUpdatedVisualizationLayerInfoForNewDesign(new HashSet<>(callback.getDesign().getNetworkLayers()));
@@ -314,7 +314,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     public void updateView() {
 
          /* Load current network state */
-        this.callback.getOpenStackNet().getOsClients().forEach(n-> {n.clearList();n.fillList();});
+        this.callback.getOpenStackNet().getOsClients().forEach(n-> {n.clearClientListsAndTopology();n.fillClientListsAndTopology();});
         this.callback.getOpenStackNet().fillSlicingTabTablesOfNet();
 
         final NetPlan currentState = callback.getDesign();

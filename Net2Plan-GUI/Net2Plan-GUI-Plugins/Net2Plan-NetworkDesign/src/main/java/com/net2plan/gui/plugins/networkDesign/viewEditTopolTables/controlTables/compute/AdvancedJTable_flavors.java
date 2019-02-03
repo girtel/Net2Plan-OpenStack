@@ -51,33 +51,8 @@ public class AdvancedJTable_flavors extends AdvancedJTable_networkElement<OpenSt
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-       /* res.add(new AjtRcMenu("Add flavor", e -> addFlavor(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove flavor", e -> getSelectedElements().forEach(n -> {
-
-            removeFlavor(n);
-
-        }), (a, b) -> b == 1, null));
-
-*/
 
         return res;
 
     }
-
-    public void addFlavor(){
-
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Name","");
-        newList.put("RAM","");
-        newList.put("CPUs","");
-       // generalTableForm("Add flavor",newList);
-
-    }
-    public void removeFlavor(OpenStackFlavor flavor){
-
-       openStackClient.getOpenStackNetDelete().deleteOpenStackFlavor(flavor.getId());
-       updateThisTab();
-    }
-
 }

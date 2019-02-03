@@ -15,7 +15,8 @@ package com.net2plan.gui.plugins;
 import com.net2plan.gui.plugins.networkDesign.GUIWindow;
 import com.net2plan.gui.plugins.networkDesign.NetworkDesignWindow;
 import com.net2plan.gui.plugins.networkDesign.focusPane.FocusPane;
-import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
+  import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
+  import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.TopologyPanel;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
@@ -26,6 +27,8 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopolo
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane.AJTableType;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.UndoRedoManager;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+  import com.net2plan.gui.plugins.utils.OpenStackInformationDialogCreator;
+  import com.net2plan.gui.plugins.utils.OpenStackInitalButtonFunctionalities;
   import com.net2plan.gui.plugins.utils.OpenStackLoginDialogCreator;
   import com.net2plan.gui.utils.ProportionalResizeJSplitPaneListener;
 import com.net2plan.interfaces.networkDesign.*;
@@ -74,7 +77,9 @@ import java.util.List;
 
         private NetPlan currentNetPlan;
         private OpenStackNet currentOpenStackNet;
+        private OpenStackClient openStackClient;
         private OpenStackLoginDialogCreator openStackLoginDialogCreator;
+        private OpenStackInformationDialogCreator openStackInformationDialogCreator;
         private WindowController windowController;
         private GUIWindow tableControlWindow;
 
@@ -283,9 +288,14 @@ import java.util.List;
 
 
         public OpenStackNet getOpenStackNet() { return this.currentOpenStackNet; }
+        public OpenStackClient getActualOpenStackClient() { return this.openStackClient; }
+        public void setActualOpenStackClient(OpenStackClient openStackClient) {  this.openStackClient = openStackClient; }
 
         public OpenStackLoginDialogCreator getOpenStackLoginDialogCreator() { return this.openStackLoginDialogCreator; }
         public void setOpenStackLoginDialogCreator (JButton jButton){this.openStackLoginDialogCreator = new OpenStackLoginDialogCreator(this,jButton);}
+
+        public OpenStackInformationDialogCreator getOpenStackInformationDialogCreator() { return this.openStackInformationDialogCreator; }
+        public void setOpenStackInformationDialogCreator (JButton jButton){this.openStackInformationDialogCreator = new OpenStackInformationDialogCreator(this,jButton);}
 
         public void clearDesign(){
             this.currentNetPlan = new NetPlan();

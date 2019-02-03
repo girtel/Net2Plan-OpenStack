@@ -107,7 +107,7 @@ public class AdvancedJTable_projects extends AdvancedJTable_networkElement<OpenS
     }
     public void removeProject(ArrayList<OpenStackProject> project){
 
-        project.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackProject(n.getId()));
+        project.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(n));
         updateThisTab();
     }
 

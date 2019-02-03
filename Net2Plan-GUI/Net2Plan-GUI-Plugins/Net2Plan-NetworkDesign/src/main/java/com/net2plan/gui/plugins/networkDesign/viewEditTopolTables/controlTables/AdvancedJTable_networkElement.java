@@ -94,7 +94,7 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     protected final List<T> getAllAbstractElementsInTable()
     {
         final ITableRowFilter rf = callback.getVisualizationState().getTableRowFilter();
-        return rf == null ? (List<T>) ITableRowFilter.getAllElements(this.openStackClient,this.openStackClient.getOsn(), ajtType) : (List<T>) rf.getVisibleElements(this.openStackClient,this.openStackClient.getOsn(), ajtType);
+        return rf == null ? (List<T>) ITableRowFilter.getAllElements(this.openStackClient,this.openStackClient.getOpenStackNet(), ajtType) : (List<T>) rf.getVisibleElements(this.openStackClient,this.openStackClient.getOpenStackNet(), ajtType);
     }
 
     public final AJTableType getAjType () { return ajtType; }
@@ -234,40 +234,6 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
         return completeListIncludingCommonColumns;
     }
 
-    public void pickSelectionHyperLink(OpenStackNetworkElement openStackNetworkElement,Object value , int columnModelIndexOfClickOrMinus1IfOut){
-
-        switch (ajtType) {
-            /*NETWORK*/
-            case NETWORKS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 10) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",3);
-                }
-                break;
-            case PORTS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 10) {
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
-                }
-                break;
-            case SUBNETS:
-                if (columnModelIndexOfClickOrMinus1IfOut == 6)
-                    callback.getViewEditTopTables().updateViewOfTabAfterDoubleClick(ajtType,value,"String",0);
-                break;
-            case RESOURCES:
-
-                callback.getOpenStackNet().getOsClients().forEach(n->n.updateMeterList(value.toString()));
-
-                break;
-            case METERS:
-
-                callback.getOpenStackNet().getOsClients().forEach(n->n.updateMeasuresList((OpenStackMeter)openStackNetworkElement,value.toString()));
-
-                break;
-
-
-
-
-        }
-    }
 
     public void updateThisTab(){
 
@@ -280,8 +246,8 @@ public abstract class AdvancedJTable_networkElement<T extends OpenStackNetworkEl
     public void updateTab(){
 
         callback.getDesign().removeAllNodes();
-        openStackClient.clearList();
-        openStackClient.fillList();
+        openStackClient.clearClientListsAndTopology();
+        openStackClient.fillClientListsAndTopology();
 
         final VisualizationState vs = callback.getVisualizationState();
         Pair<BidiMap<NetworkLayer, Integer>, Map<NetworkLayer, Boolean>> res =

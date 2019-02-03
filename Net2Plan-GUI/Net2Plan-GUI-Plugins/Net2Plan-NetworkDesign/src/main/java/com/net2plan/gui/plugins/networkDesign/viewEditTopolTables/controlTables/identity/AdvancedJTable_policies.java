@@ -44,53 +44,8 @@ public class AdvancedJTable_policies extends AdvancedJTable_networkElement<OpenS
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-      /*  res.add(new AjtRcMenu("Add policy", e -> addPolicy(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove policy", e -> getSelectedElements().forEach(n -> {
-
-            removePolicy(n);
-
-        }), (a, b) -> b == 1, null));
-
-
-        res.add(new AjtRcMenu("Change policy's user id", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("User ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change policy's tenant/project id", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Tenant ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change policy's type", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Type",n,"");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change policy's blob", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Blob",n,"");
-
-        }), (a, b) -> b ==1, null));
-        */
          return res;
 
-    }
-
-    public void addPolicy(){
-
-        Map<String,String> newList = new HashMap<>();
-        newList.put("User ID","Select");
-        newList.put("Tenant ID","Select");
-        newList.put("Blob","Select");
-        newList.put("Type","Select");
-        //generalTableForm("Add policy",newList);
-    }
-    public void removePolicy(OpenStackPolicy policy){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackPolicy(policy.getId());
-        updateTab();
     }
 
 

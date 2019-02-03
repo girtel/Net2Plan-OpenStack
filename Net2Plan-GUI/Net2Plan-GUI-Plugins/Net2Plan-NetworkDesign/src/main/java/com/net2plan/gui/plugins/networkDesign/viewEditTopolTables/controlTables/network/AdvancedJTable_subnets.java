@@ -170,7 +170,7 @@ updateTab();
     }
     public void removeSubnet(ArrayList<OpenStackSubnet> subnets){
 
-        subnets.forEach(subnet -> openStackClient.updateClient().getOpenStackNetDelete().deleteOpenStackSubnet(subnet.getId()));
+        subnets.forEach(subnet -> openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(subnet));
         updateThisTab();
     }
 

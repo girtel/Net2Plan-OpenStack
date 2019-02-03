@@ -43,28 +43,9 @@ public class AdvancedJTable_keypairs extends AdvancedJTable_networkElement<OpenS
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-       /* res.add(new AjtRcMenu("Add keypair", e -> addKeypair(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove keypair", e -> getSelectedElements().forEach(n -> {
-
-            removeKeypair(n);
-
-        }), (a, b) -> b == 1, null));
-
-*/
 
         return res;
 
-    }
-    public void addKeypair(){
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Name","");
-       // generalTableForm("Add keypair",newList);
-    }
-    public void removeKeypair(OpenStackKeypair keypair){
-
-       openStackClient.getOpenStackNetDelete().deleteOpenStackKeypair(keypair.getId());
-       updateTab();
     }
 
 

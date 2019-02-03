@@ -62,7 +62,7 @@ public class AnalisisFrame extends JFrame {
         informationPanel.add(informationPanelAboutMetric,BorderLayout.NORTH);
         informationPanel.add(informationPanelAboutMeasures,BorderLayout.CENTER);
 
-        UIManager.put("ComboBox.selectionBackground", new ColorUIResource(Color.white));
+        //UIManager.put("ComboBox.selectionBackground", new ColorUIResource(Color.white));
         jComboBoxPanel.add(jComboBox);
         secondPanel.add(jComboBoxPanel,BorderLayout.NORTH);
         secondPanel.add(informationPanel,BorderLayout.SOUTH);

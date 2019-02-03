@@ -38,11 +38,11 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Name", "Port Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, Set.class, null, "Allowed Address", "Port allowed address", null, n -> n.getPortAllowedAddressPair(),
                 AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Router", "Port device ",
+        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Device", "Port device ",
                 null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortDeviceId()), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Device Owner", "Port device owner",
+     /*   res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Device Owner", "Port device owner",
                 null, n -> n.getPortDeviceOwner(), AGTYPE.NOAGGREGATION, null, null));
-
+*/
         res.add(new AjtColumnInfo<OpenStackPort>(this, Set.class, null, "Fixed IPs", "Port fiexd ips", null, n -> n.getPortFixedIps(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Host ", "Port host", null, n -> callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(n.getPortHostId()), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackPort>(this, String.class, null, "Mac Address", "Port mac address", null, n -> n.getPortMacAddress(),
@@ -94,7 +94,7 @@ public class AdvancedJTable_ports extends AdvancedJTable_networkElement<OpenStac
     }
     public void removePort(List<OpenStackPort> ports){
 
-        ports.forEach(port -> openStackClient.updateClient().getOpenStackNetDelete().deleteOpenStackPort(port.getId()));
+        ports.forEach(port -> openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(port));
         updateThisTab();
     }
 

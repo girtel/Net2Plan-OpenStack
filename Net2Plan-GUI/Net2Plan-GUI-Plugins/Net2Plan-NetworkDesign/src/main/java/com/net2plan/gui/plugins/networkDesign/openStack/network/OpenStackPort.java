@@ -36,7 +36,7 @@ public class OpenStackPort extends OpenStackNetworkElement
     private String portId;
     private String portTenantId;
     private String portHostId;
-    private Port osPort;
+    public Port osPort;
     private Node npNode;
     public static OpenStackPort createFromAddPort (OpenStackNet osn ,Port port,OpenStackClient openStackClient)
     {

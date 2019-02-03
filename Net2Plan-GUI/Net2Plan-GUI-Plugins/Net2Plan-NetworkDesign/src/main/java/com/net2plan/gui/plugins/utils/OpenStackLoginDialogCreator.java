@@ -63,6 +63,7 @@ public class OpenStackLoginDialogCreator implements ActionListener{
 
         enterButton = new JButton("Enter");
         enterButton.addActionListener(this);
+        jDialog.getRootPane().setDefaultButton(enterButton);
 
         loadButton = new JButton("Load RC file");
         loadButton.addActionListener(this);
@@ -185,6 +186,8 @@ public class OpenStackLoginDialogCreator implements ActionListener{
 
             callback.getOpenStackNet().addNewLoginInformationToNet(jsonObject1);
             recomput();
+            jDialog.getRootPane().setDefaultButton(enterButton);
+
             jDialog.pack();
             jDialog.dispose();
 
@@ -240,6 +243,7 @@ public class OpenStackLoginDialogCreator implements ActionListener{
 
 
                 jDialog.pack();
+                jDialog.getRootPane().setDefaultButton(enterButton);
                 jDialog.setVisible(true);
             }catch(Exception ex){
                 OpenStackUtils.openStackLogDialog("The file could not be opened");

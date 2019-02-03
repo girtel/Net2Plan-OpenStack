@@ -86,8 +86,8 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         res.add(new AjtRcMenu("Add server", e -> addServer(), (a, b) -> b==b, null));
         res.add(new AjtRcMenu("Remove server", e -> removeServer(this.getSelectedElements()), (a, b) -> b>=1, null));
         res.add(new AjtRcMenu("Get console", e -> getSelectedElements().forEach(n -> {
-            openStackClient.updateClient();
-            VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
+
+             VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(n.getId(), VNCConsole.Type.NOVNC);
 
             try {
                 //java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));
@@ -117,7 +117,6 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         }), (a, b) -> b == 1, null));
 
         res.add(new AjtRcMenu("Live migration", e -> getSelectedElements().forEach(n -> {
-            openStackClient.updateClient();
 
             doLiveMigration(n);
 
@@ -149,7 +148,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
     public void removeServer(ArrayList<OpenStackServer> openStackServers){
 
-        openStackServers.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackServer(n.getId()));
+        openStackServers.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(n));
         updateThisTab();
 
     }

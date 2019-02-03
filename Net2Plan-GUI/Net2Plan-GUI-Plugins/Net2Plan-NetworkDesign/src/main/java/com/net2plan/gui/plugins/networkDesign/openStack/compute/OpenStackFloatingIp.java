@@ -38,7 +38,7 @@ public class OpenStackFloatingIp extends OpenStackNetworkElement
 
     @Override
     public String getId () { return this.floatingIPId; }
-    public String getName() { return this.floatingIPId; }
+    public String getName() { return "Floating IP "+ this.floatingIPFloatingIpAddress; }
     public String getFloatingIPInstanceId () { return this.floatingIPInstanceId; }
     public String getFloatingIPPool () { return this.floatingIPPool; }
     public String getFloatingIPFloatingIpAddress () { return this.floatingIPFloatingIpAddress; }

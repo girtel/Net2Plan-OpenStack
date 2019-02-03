@@ -240,7 +240,7 @@ public abstract class ITableRowFilter
 
 
 			case LIMITS:
-				return os.getOsn().getOpenStackLimits();
+				return os.getOpenStackNet().getOpenStackLimits();
 			case QUOTAS:
 				return osn.getOpenStackQuotas();
 			case QUOTASUSAGE:

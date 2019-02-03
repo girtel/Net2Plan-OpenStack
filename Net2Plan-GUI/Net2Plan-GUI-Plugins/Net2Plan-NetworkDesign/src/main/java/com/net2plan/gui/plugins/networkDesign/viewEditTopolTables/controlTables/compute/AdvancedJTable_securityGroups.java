@@ -37,36 +37,13 @@ public class AdvancedJTable_securityGroups extends AdvancedJTable_networkElement
 
     @Override
     public List<AjtRcMenu> getNonBasicRightClickMenusInfo()
-    {final List<AjtRcMenu> res = new ArrayList<>();
-
-/*
-        res.add(new AjtRcMenu("Add security group", e -> addSecurityGroup(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove security group", e -> getSelectedElements().forEach(n -> {
-
-            removeSecurityGroup(n);
-
-        }), (a, b) -> b == 1, null));*/
-     //   res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
+    {
+        final List<AjtRcMenu> res = new ArrayList<>();
 
         return res;
 
     }
 
-    public void addSecurityGroup(){
-
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Name","");
-        newList.put("Description","");
-        //generalTableForm("Add security group",newList);
-
-
-    }
-    public void removeSecurityGroup(OpenStackSecurityGroup securityGroup){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackSecurityGroup(securityGroup.getId());
-        updateTab();
-    }
 
 
 }

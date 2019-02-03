@@ -21,6 +21,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackServer;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.CanvasFunction;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUILink;
 import com.net2plan.gui.plugins.networkDesign.topologyPane.jung.GUINode;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
 import com.net2plan.interfaces.networkDesign.Link;
 import com.net2plan.interfaces.networkDesign.NetPlan;
@@ -140,7 +141,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         {
             OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
             OpenStackClient openStackClient = openStackServer.getOpenStackClient();
-            openStackClient.updateClient();
+
             VNCConsole list = openStackClient.getClient().compute().servers().getVNCConsole(openStackServer.getId(), VNCConsole.Type.NOVNC);
             try {
                 java.awt.Desktop.getDesktop().browse(java.net.URI.create(list.getURL()));
@@ -155,7 +156,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         {
             OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
             OpenStackClient openStackClient = openStackServer.getOpenStackClient();
-            openStackClient.updateClient();
+
             try {
                 ActionResponse list = openStackClient.getClient().compute().servers().action(openStackServer.getId(), Action.START);
                 System.out.println(list.toString());
@@ -170,7 +171,7 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
         {
             OpenStackServer openStackServer =((OpenStackServer)callback.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(node.getAttribute("Server ID")));
             OpenStackClient openStackClient = openStackServer.getOpenStackClient();
-            openStackClient.updateClient();
+
             try {
                 ActionResponse list = openStackClient.getClient().compute().servers().action(openStackServer.getId(), Action.STOP);
 
@@ -506,9 +507,9 @@ public class PopupMenuPlugin extends MouseAdapter implements ITopologyCanvasPlug
                     }
                 }
 
-                openStackClient.getOpenStackNetCreate().createOpenStackRouter(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(ViewEditTopologyTablesPane.AJTableType.ROUTERS,jsonObject);
 
-                openStackClient.clearList().fillList();
+                openStackClient.clearClientListsAndTopology().fillClientListsAndTopology();
                 callback.getViewEditTopTables().updateView();
 
                 final VisualizationState vs = callback.getVisualizationState();

@@ -51,7 +51,7 @@ import sun.nio.ch.Net;
             attributes.put("Network ID",network.getId());
             attributes.put("Network Name",network.getName());
             attributes.put("Network State",network.getStatus().toString());
-            attributes.put("Type",network.getNetworkType().toString());
+           // attributes.put("Type",network.getNetworkType().toString());
 
            final Node npNode = openStackClient.getNetPlanDesign().addNode(0, 0, "", attributes);
 

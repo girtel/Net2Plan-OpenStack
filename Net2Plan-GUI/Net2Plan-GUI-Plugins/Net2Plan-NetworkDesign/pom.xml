@@ -49,11 +49,20 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.woorea/openstack-java-sdk -->
 
+        <!--
         <dependency>
             <groupId>org.pacesys</groupId>
             <artifactId>openstack4j</artifactId>
             <version>3.1.0</version>
             <classifier>withdeps</classifier>
+        </dependency>
+
+        -->
+
+        <dependency>
+            <groupId>org.pacesys</groupId>
+            <artifactId>openstack4j</artifactId>
+            <version>3.1.1-SNAPSHOT</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
         <dependency>
@@ -63,5 +72,11 @@
         </dependency>
 
     </dependencies>
-
+    <repositories>
+        <repository>
+            <id>st-snapshots</id>
+            <name>sonatype-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 </project>

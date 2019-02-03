@@ -33,7 +33,7 @@ public class OpenStackQuotas extends OpenStackNetworkElement
     public static OpenStackQuotas createFromAddQuota (OpenStackNet osn , QuotaSet quotaSet, OpenStackClient openStackClient,OpenStackProject project)
     {
         final OpenStackQuotas res = new OpenStackQuotas(osn,quotaSet,openStackClient,project);
-        res.quotaId= quotaSet.getId()+"quota";
+        res.quotaId= quotaSet.getId()+"quota"+openStackClient.getName();
         res.quotaCores=quotaSet.getCores();
         res.quotaFloatingIps=quotaSet.getFloatingIps();
         res.quotaGigabytes=quotaSet.getGigabytes();
@@ -56,7 +56,7 @@ public class OpenStackQuotas extends OpenStackNetworkElement
         this.quotaSet = quotaSet;
         this.project_id = project.getId();
         this.project = project;
-
+        this.openStackClient=openStackClient;
     }
 
     @Override

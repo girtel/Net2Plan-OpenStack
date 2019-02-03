@@ -109,6 +109,11 @@ public class Keystone extends Api
                 }
 
                 @Override
+                public List<String> getTags() {
+                    return null;
+                }
+
+                @Override
                 public ProjectBuilder toBuilder() {
                     return null;
                 }

@@ -1,15 +1,34 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackFloatingIp;
+import com.net2plan.gui.plugins.networkDesign.openStack.compute.OpenStackServer;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackProject;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackService;
+import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackUser;
+import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackNetwork;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackPort;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackRouter;
+import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.utils.MyRunnable;
 import com.net2plan.gui.plugins.utils.OpenStackUtils;
+import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Token;
+import org.openstack4j.model.network.AttachInterfaceType;
 import org.openstack4j.model.network.RouterInterface;
+import org.openstack4j.model.network.State;
+import org.openstack4j.openstack.networking.domain.NeutronIP;
 
 import javax.swing.*;
 
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import static edu.emory.mathcs.utils.ConcurrencyUtils.prevPow2;
 import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 public class OpenStackNetDelete {
@@ -20,139 +39,67 @@ public class OpenStackNetDelete {
          this.openStackClient = openStackClient;
     }
 
-    //Identity
-    public void deleteOpenStackUser(String id){
+    public void deleteOpenStackNetworkElement(OpenStackNetworkElement openStackNetworkElement){
 
-        this.openStackClient.getClient().identity().users().delete(id);
-    }
-    public void deleteOpenStackDomain(String id){
-        this.openStackClient.getClient().identity().domains().delete(id);
-    }
-    public void deleteOpenStackEndpoint(String id){
-        this.openStackClient.getClient().identity().serviceEndpoints().deleteEndpoint(id);
-    }
-    public void deleteOpenStackGroup(String id){
-        this.openStackClient.getClient().identity().groups().delete(id);
-    }
-    public void deleteOpenStackPolicy(String id){
-        this.openStackClient.getClient().identity().policies().delete(id);
-    }
-    public void deleteOpenStackProject(String id){
-        this.openStackClient.getClient().identity().projects().delete(id);
-    }
-    public void deleteOpenStackRegion(String id){
-        this.openStackClient.getClient().identity().regions().delete(id);
-    }
-    public void deleteOpenStackRole(String id){
-        this.openStackClient.getClient().identity().roles().delete(id);
-    }
-    public void deleteOpenStackService(String id){
-        this.openStackClient.getClient().identity().serviceEndpoints().delete(id);
-    }
-    public void deleteOpenStackCredential(String id){
-        this.openStackClient.getClient().identity().credentials().delete(id);
-    }
+        ActionResponse actionResponse = null;
 
-    //Network
-    public void deleteOpenStackRouter(String id){
-        try{
+        try {
+            if (openStackNetworkElement instanceof OpenStackUser) {
 
-            ActionResponse delete =this.openStackClient.getClient().networking().router().delete(id);
-            if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
-        }catch(Exception ex){
+                actionResponse = this.openStackClient.getClient().identity().users().delete(openStackNetworkElement.getId());
 
-            logPanel(ex);
+            } else if (openStackNetworkElement instanceof OpenStackProject) {
 
-        }
-    }
-    public void deleteOpenStackNetwork(String id){
+                actionResponse = this.openStackClient.getClient().identity().projects().delete(openStackNetworkElement.getId());
 
-        try{
+            } else if (openStackNetworkElement instanceof OpenStackNetwork) {
 
-            ActionResponse delete = this.openStackClient.getClient().networking().network().delete(id);
-            if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
-        }catch(Exception ex){
+                actionResponse = this.openStackClient.getClient().networking().network().delete(openStackNetworkElement.getId());
 
-            logPanel(ex);
+            } else if (openStackNetworkElement instanceof OpenStackSubnet) {
 
-        }
-    }
-    public void deleteOpenStackSubnet(String id){
-        try{
-        ActionResponse delete = this.openStackClient.getClient().networking().subnet().delete(id);
+                actionResponse = this.openStackClient.getClient().networking().subnet().delete(openStackNetworkElement.getId());
 
-        if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
+            } else if (openStackNetworkElement instanceof OpenStackRouter) {
 
-        }catch(Exception ex){
+                actionResponse = this.openStackClient.getClient().networking().router().delete(openStackNetworkElement.getId());
 
-            logPanel(ex);
+            } else if (openStackNetworkElement instanceof OpenStackPort) {
 
-        }
-    }
-    public void deleteOpenStackPort(String id){
-        try{
-            ActionResponse delete =this.openStackClient.getClient().networking().port().delete(id);
-            if(!delete.isSuccess()) OpenStackUtils.openStackLogDialog(delete.getFault());
-        }catch(Exception ex){
+                OpenStackPort openStackPort = (OpenStackPort) openStackNetworkElement;
+                OpenStackRouter openStackRouter = (OpenStackRouter)openStackClient.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(openStackPort.getPortDeviceId());
+                //OpenStackSubnet openStackSubnet = (OpenStackSubnet)openStackClient.getOpenStackNet().getOpenStackNetworkElementByOpenStackId(openStackPort.getPortFixedIps().stream().map(n->(((NeutronIP)n).getSubnetId())).collect(Collectors.toList()).get(0));
 
-            logPanel(ex);
+               // this.openStackClient.getClient().networking().port().update(openStackPort.osPort.toBuilder().state(State.DOWN).build());
+                RouterInterface deleteInterface = this.openStackClient.getClient().networking().router().detachInterface(openStackRouter.getId(),null,openStackPort.getId());
 
-        }
-    }
+                actionResponse = this.openStackClient.getClient().networking().port().delete(openStackNetworkElement.getId());
 
-    //Compute
-    public void deleteOpenStackServer(String id){
-        try{
-            this.openStackClient.getClient().compute().servers().delete(id);
+            }else if (openStackNetworkElement instanceof OpenStackServer) {
+
+                actionResponse = this.openStackClient.getClient().compute().servers().delete(openStackNetworkElement.getId());
+
+            }else if (openStackNetworkElement instanceof OpenStackFloatingIp) {
+
+                actionResponse= this.openStackClient.getClient().compute().floatingIps().deallocateIP(openStackNetworkElement.getId());
+
+            }else if (openStackNetworkElement instanceof OpenStackImageV2) {
+
+                actionResponse = this.openStackClient.getClient().imagesV2().delete(openStackNetworkElement.getId());
+
+            }
+
+
+            if (!actionResponse.isSuccess()) {
+                OpenStackUtils.openStackLogDialog(actionResponse.getFault());
+            }
+
         }catch (Exception ex){
-            OpenStackUtils.openStackLogDialog("Something was wrong!");
+
+            OpenStackUtils.openStackLogDialog(ex.getMessage());
             ex.printStackTrace();
         }
-
-    }
-    public void deleteOpenStackFlavor(String id){
-        this.openStackClient.getClient().compute().flavors().delete(id);
-    }
-    public void deleteOpenStackFloatingIp(String id){
-        try {
-            this.openStackClient.getClient().compute().floatingIps().removeFloatingIP(id, id);
-        }catch (Exception ex){
-            ex.printStackTrace();
-            OpenStackUtils.openStackLogDialog("Cant removed");
-        }
-    }
-    public void deleteOpenStackKeypair(String id){
-        this.openStackClient.getClient().compute().keypairs().delete(id);
-    }
-    public void deleteOpenStackSecurityGroup(String id){
-
-        this.openStackClient.getClient().compute().securityGroups().delete(id);
-    }
-    public void deleteOpenStackImage(String id){
-        try {
-            openStackClient.getClient().imagesV2().delete(id);
-        }catch (Exception ex){
-            logPanel(ex);
-        }
     }
 
-    public  void logPanel(Exception ex){
-        JOptionPane.showMessageDialog(null, "Ups! One problem ocurred. Show console");
-        ex.printStackTrace();
-    }
 
-   /*
-    public void changeOs(Facing facing){
-
-        Token token = osClientV3.getToken();
-        MyRunnable newR;
-
-        if(system.equals("ubuntu")) {
-            newR = new MyRunnable(token, facing);
-            submit(newR);
-            this.osClientV3 = newR.getOs();
-        }
-
-    }
-   */
 }

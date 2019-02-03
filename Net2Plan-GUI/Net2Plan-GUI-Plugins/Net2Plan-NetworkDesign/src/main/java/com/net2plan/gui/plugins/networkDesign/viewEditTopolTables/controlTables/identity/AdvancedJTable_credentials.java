@@ -42,59 +42,9 @@ public class AdvancedJTable_credentials extends AdvancedJTable_networkElement<Op
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-      /*  res.add(new AjtRcMenu("Add credential", e -> addCredential(), (a, b) -> true, null));
-
-        res.add(new AjtRcMenu("Remove credential", e -> getSelectedElements().forEach(n -> {
-
-            removeCredential(n);
-
-        }), (a, b) -> b == 1, null));
-
-
-        res.add(new AjtRcMenu("Change credential's user id", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("User ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change credential's tenant/project id", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Tenant ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change credential's type", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Type",n,"");
-
-        }), (a, b) -> b ==1, null));
-        res.add(new AjtRcMenu("Change credential's blob", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Blob",n,"");
-
-        }), (a, b) -> b ==1, null));
-
-        */
-
-
         return res;
 
     }
 
-
-
-    public void addCredential(){
-
-        Map<String,String> newList = new HashMap<>();
-        newList.put("User ID","Select");
-        newList.put("Tenant ID","Select");
-        newList.put("Blob","Select");
-        newList.put("Type","Select");
-        //generalTableForm("Add user",newList);
-
-    }
-    public void removeCredential(OpenStackCredential credential){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackCredential(credential.getId());
-        updateTab();
-    }
 
 }

@@ -67,8 +67,6 @@ public class AdvancedJTable_quotasUsage extends AdvancedJTable_networkElement<Op
             int volumenGbUsage = openStackQuotasUsage.getVolumenGbUsage().intValue();
 
 
-            openStackClientSelected.updateClient();
-
             QuotaSet quotaSet = openStackClientSelected.getClient().compute().quotaSets().get(openStackProjectId);
 
             int ram = quotaSet.getRam();

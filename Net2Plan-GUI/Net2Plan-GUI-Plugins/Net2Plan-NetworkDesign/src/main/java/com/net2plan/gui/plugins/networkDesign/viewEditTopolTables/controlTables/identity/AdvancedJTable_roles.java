@@ -39,43 +39,11 @@ public class AdvancedJTable_roles extends AdvancedJTable_networkElement<OpenStac
     {
         final List<AjtRcMenu> res = new ArrayList<>();
 
-/*
-        res.add(new AjtRcMenu("Add role", e -> addRole(), (a, b) -> true, null));
 
-        res.add(new AjtRcMenu("Remove role", e -> getSelectedElements().forEach(n -> {
-
-            removeRole(n);
-
-        }), (a, b) -> b == 1, null));
-        res.add(new AjtRcMenu("Change role's name", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Name",n,"");
-
-        }), (a, b) -> b ==1, null));
-
-        res.add(new AjtRcMenu("Change role's domain ID", e -> getSelectedElements().forEach(n -> {
-
-            generalTableUpdate("Domain ID",n,"Select");
-
-        }), (a, b) -> b ==1, null));
-        */
 
         return res;
 
     }
 
-    public void addRole(){
-        Map<String,String> newList = new HashMap<>();
-        newList.put("Name","");
-        newList.put("Domain ID","Select");
-
-        //generalTableForm("Add role",newList);
-
-    }
-    public void removeRole(OpenStackRole role){
-
-        openStackClient.getOpenStackNetDelete().deleteOpenStackRole(role.getId());
-        updateTab();
-    }
 }
 

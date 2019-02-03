@@ -48,7 +48,7 @@ public class GeneralForm extends JDialog implements ActionListener{
         this.openStackClient=openStackClient;
         this.advancedJTable_networkElement=advancedJTable_networkElement;
         this.openStackNetworkElement=openStackNetworkElement;
-
+        openStackClient.getClient();
         init();
 
 
@@ -239,29 +239,27 @@ public class GeneralForm extends JDialog implements ActionListener{
                     break;
             }
         }
-        openStackClient.updateClient();
-
         switch (ajTableType){
 
             case USERS:
-                openStackClient.getOpenStackNetCreate().createOpenStackUser(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 break;
             case PROJECTS:
-                openStackClient.getOpenStackNetCreate().createOpenStackProject(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 break;
 
             /*NETWORK*/
             case PORTS:
-                openStackClient.getOpenStackNetCreate().createOpenStackPort(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 break;
             case NETWORKS:
-                openStackClient.getOpenStackNetCreate().createOpenStackNetwork(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 break;
             case SUBNETS:
-                openStackClient.getOpenStackNetCreate().createOpenStackSubnet(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 break;
             case ROUTERS:
-                openStackClient.getOpenStackNetCreate().createOpenStackRouter(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 //callback.selectNetPlanViewItem(ajTableType);
                 //if (router != null) advancedJTable_networkElement.pi
                 break;
@@ -271,21 +269,13 @@ public class GeneralForm extends JDialog implements ActionListener{
                 if(title.equals("Live migration")){
                     ((OpenStackServer)openStackNetworkElement).doLiveMigration(jsonObject);
                 }else {
-                    openStackClient.getOpenStackNetCreate().createOpenStackServer(jsonObject);
+                    openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 }
 
                 break;
-            case FLAVORS:
-                openStackClient.getOpenStackNetCreate().createOpenStackFlavor(jsonObject);
-                break;
+
             case FLOATINGIPS:
-                openStackClient.getOpenStackNetCreate().createOpenStackFloatingIp(jsonObject);
-                break;
-            case KEYPAIRS:
-                openStackClient.getOpenStackNetCreate().createOpenStackKeypair(jsonObject);
-                break;
-            case SECURITYGROUPS:
-                openStackClient.getOpenStackNetCreate().createOpenStackSecurityGroup(jsonObject);
+                openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);
                 break;
 
             case LIMITS:
@@ -298,6 +288,8 @@ public class GeneralForm extends JDialog implements ActionListener{
                                 .build());
                 break;
             case QUOTAS:
+                System.out.println(openStackClient.isThisClientAdmin());
+                System.out.println(openStackClient.getName());
                openStackClient.getClient().compute().quotaSets()
                         .updateForTenant(((OpenStackQuotas)openStackNetworkElement).getOpenStackProject().getId(), Builders.quotaSet()
                                 .cores(Integer.valueOf(jsonObject.getString("Cores")))

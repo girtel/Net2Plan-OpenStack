@@ -14,6 +14,7 @@ import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.interfaces.ITopologyCanvas;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationConstants;
 import com.net2plan.gui.plugins.networkDesign.visualizationControl.VisualizationState;
+import com.net2plan.gui.plugins.utils.OpenStackInitalButtonFunctionalities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +30,7 @@ public class TopologySideBar extends JPanel implements ActionListener
     private final TopologyPanel topologyPanel;
     private final ITopologyCanvas canvas;
 
+    public JButton btn_legend;
     private final JToggleButton btn_multilayer;
     private final JToolBar layerToolBar;
     private final JButton btn_increaseInterLayerDistance, btn_decreaseInterLayerDistance;
@@ -123,6 +125,8 @@ public class TopologySideBar extends JPanel implements ActionListener
         this.btn_npChangeRedo.setToolTipText("Navigate forward to the next state of the network (when network design was changed");
         this.btn_multilayer = new JToggleButton();
         this.btn_multilayer.setToolTipText("Show layer control table");
+        this.btn_legend = new JButton();
+        this.btn_legend.setToolTipText("Information about topology visualization");
 
         this.btn_increaseInterLayerDistance.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/increaseLayerDistance.png")));
         this.btn_decreaseInterLayerDistance.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/decreaseLayerDistance.png")));
@@ -132,6 +136,7 @@ public class TopologySideBar extends JPanel implements ActionListener
         this.btn_npChangeUndo.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/undoButton.png")));
         this.btn_npChangeRedo.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/redoButton.png")));
         this.btn_multilayer.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/showLayerControl.png")));
+        this.btn_legend.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/redoButton.png")));
 
         this.btn_increaseInterLayerDistance.addActionListener(this);
         this.btn_decreaseInterLayerDistance.addActionListener(this);
@@ -141,7 +146,9 @@ public class TopologySideBar extends JPanel implements ActionListener
         this.btn_npChangeUndo.addActionListener(this);
         this.btn_npChangeRedo.addActionListener(this);
         this.btn_multilayer.addActionListener(this);
+        this.btn_legend.addActionListener(this);
 
+        this.layerToolBar.add(btn_legend);
         this.layerToolBar.add(btn_multilayer);
         this.layerToolBar.add(btn_increaseInterLayerDistance);
         this.layerToolBar.add(btn_decreaseInterLayerDistance);
@@ -169,6 +176,10 @@ public class TopologySideBar extends JPanel implements ActionListener
             canvas.updateInterLayerDistanceInNpCoordinates(newInterLayerDistance);
             canvas.updateAllVerticesXYPosition();
             canvas.refresh();
+
+        } else if(src == btn_legend)
+        {
+            OpenStackInitalButtonFunctionalities.addInformationPanelOfTopology(callback,btn_legend);
 
         } else if (src == btn_decreaseInterLayerDistance)
         {

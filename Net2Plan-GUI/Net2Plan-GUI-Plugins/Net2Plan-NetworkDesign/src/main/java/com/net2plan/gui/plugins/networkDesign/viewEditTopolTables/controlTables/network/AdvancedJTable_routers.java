@@ -119,7 +119,7 @@ public class AdvancedJTable_routers extends AdvancedJTable_networkElement<OpenSt
     }
     public void removeRouter(List<OpenStackRouter> routers){
 
-        routers.forEach(router -> openStackClient.updateClient().getOpenStackNetDelete().deleteOpenStackRouter(router.getId()) );
+        routers.forEach(router -> openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(router));
         updateThisTab();
     }
 

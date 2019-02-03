@@ -68,4 +68,16 @@ public class OpenStackInitalButtonFunctionalities {
             callback.getOpenStackLoginDialogCreator().setVisible();
         }
     }
+
+    public static void addInformationPanelOfTopology(GUINetworkDesign callback,JButton jButton){
+
+        if(callback.getOpenStackInformationDialogCreator()!=null) {
+            callback.getOpenStackInformationDialogCreator().recomput();
+            callback.getOpenStackInformationDialogCreator().setVisible();
+        }else{
+            callback.setOpenStackInformationDialogCreator(jButton);
+            callback.getOpenStackInformationDialogCreator().recomput();
+            callback.getOpenStackInformationDialogCreator().setVisible();
+        }
+    }
 }

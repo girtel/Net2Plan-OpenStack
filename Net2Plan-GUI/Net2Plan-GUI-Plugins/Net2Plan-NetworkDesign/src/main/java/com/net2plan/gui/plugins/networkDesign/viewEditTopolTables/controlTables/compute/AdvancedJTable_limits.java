@@ -89,7 +89,6 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
             }
         }
 
-        openStackClientFromLimit.updateClient();
 
         openStackClientFromLimit.getClient().compute().quotaSets()
                 .updateForTenant(adminProjectId, Builders.quotaSet()

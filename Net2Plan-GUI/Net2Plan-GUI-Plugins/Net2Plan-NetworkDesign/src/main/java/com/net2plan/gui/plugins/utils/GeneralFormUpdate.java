@@ -175,8 +175,8 @@ public class GeneralFormUpdate extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent actionEvent) {
         Component [] components = propertiesPanel.getComponents();
         JSONObject jsonObject = new JSONObject();
-        System.out.println("JSOOOOOOOOONDAIE "+components.length);
-            System.out.println("JSOOOOOOOOOOOOOOOOOOOOOOOOOON" + ((JLabel)components[0]).getText());
+        //System.out.println("JSOOOOOOOOONDAIE "+components.length);
+          //  System.out.println("JSOOOOOOOOOOOOOOOOOOOOOOOOOON" + ((JLabel)components[0]).getText());
             switch (headers.get(((JLabel)components[0]).getText())){
                 case "Select":
                     jsonObject.put( ((JLabel)components[0]).getText(),((JComboBox)components[1]).getSelectedItem().toString());
@@ -193,7 +193,7 @@ public class GeneralFormUpdate extends JFrame implements ActionListener{
             }
 
 
-        openStackClient.updateClient();
+
         switch (ajTableType){
 
             /*NETWORK*/
