@@ -8,13 +8,8 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.GeneralForm;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.openstack4j.api.types.Facing;
-import org.openstack4j.model.identity.v3.Token;
 
 import java.util.*;
-
-import static edu.emory.mathcs.utils.ConcurrencyUtils.submit;
 
 public class AdvancedJTable_users extends AdvancedJTable_networkElement<OpenStackUser>
 {

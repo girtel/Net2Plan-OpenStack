@@ -357,6 +357,24 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     }
 
+    public void updateViewForDeterminateAjtableAndOpenStackClient(AJTableType ajTableType,OpenStackClient openStackClient) {
+
+        //openStackClient.updateThisList();
+        this.callback.getOpenStackNet().fillSlicingTabTablesOfNet();
+
+
+        this.recomputNetPlanView();
+
+
+        netPlanViewTable.get(openStackClient).get(ajTableType).getFirst().updateView();
+        netPlanViewTable.get(openStackClient).get(ajTableType).getSecond().updateHeader();
+
+        ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
+        ajTables.values().stream().map(t -> t.getSecond()).forEach(t -> t.updateHeader());
+
+
+    }
+
     public void recomputNetPlanView() {
 
        // System.out.println("recomput");

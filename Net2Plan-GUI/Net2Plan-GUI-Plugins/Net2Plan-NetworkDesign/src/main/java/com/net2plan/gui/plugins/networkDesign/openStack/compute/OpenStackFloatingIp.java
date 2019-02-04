@@ -4,7 +4,6 @@ import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
 import org.openstack4j.model.compute.FloatingIP;
-import sun.plugin2.os.windows.FLASHWINFO;
 
 import java.util.List;
 

@@ -19,8 +19,6 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.State;
 import org.openstack4j.model.network.Subnet;
-import sun.nio.ch.Net;
-
 /**
  *
  * @author Manuel

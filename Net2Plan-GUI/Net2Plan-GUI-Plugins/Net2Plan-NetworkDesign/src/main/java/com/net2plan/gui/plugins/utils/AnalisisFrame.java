@@ -56,6 +56,44 @@ public class AnalisisFrame extends JFrame {
         informationPanel = new JPanel( new BorderLayout());
         jComboBoxPanel = new JPanel(new MigLayout("fillx, wrap"));
 
+        jComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value,
+                                                          int index, boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus);
+                if (c instanceof JLabel) {
+                    JLabel l = (JLabel) c;
+                        //l.setBackground(Color.RED);
+                    l.setFont(l.getFont().deriveFont(Font.PLAIN));
+                    if (isSelected) {
+                            //list.setSelectionForeground(Color.RED);
+                            list.setSelectionForeground(new Color(218,57 ,39));
+                            l.setFont(l.getFont().deriveFont(Font.BOLD));
+                        }
+
+                    return l;
+                }
+                return c;
+            }
+            @Override
+            public void paint(Graphics g) {
+                //setBackground(new Color(218,57 ,39));
+                setBackground(new Color(255,255 ,254));
+
+
+                //setForeground(Color.LIGHT_GRAY);
+                //setUndecorated(true);
+                setOpaque(true);
+
+                setBorder(BorderFactory.createEmptyBorder());
+                super.paint(g);
+            }
+        });
+
+        jComboBox.revalidate();
+        jComboBox.repaint();
+        jComboBox.updateUI();
         informationPanelAboutMetric = new JPanel(new MigLayout("fillx, wrap 2"));
         informationPanelAboutMeasures = new JPanel(new MigLayout("fillx, wrap 2"));
 

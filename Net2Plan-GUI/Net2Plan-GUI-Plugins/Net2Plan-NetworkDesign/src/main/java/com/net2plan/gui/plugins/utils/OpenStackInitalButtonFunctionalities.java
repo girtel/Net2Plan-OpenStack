@@ -48,11 +48,17 @@ public class OpenStackInitalButtonFunctionalities {
         if (rc != JFileChooser.APPROVE_OPTION) return;
 
 
+
         try{
             byte [] bytes = Files.readAllBytes(fc_netPlan.getSelectedFile().toPath());
             String everything = cc.descifra(bytes);
             JSONObject jsonObject = new JSONObject(everything);
-            callback.getOpenStackNet().addNewLoginInformationToNet(jsonObject);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("information");
+            OpenStackProgressBar openStackProgressBar = new OpenStackProgressBar(callback,jsonArray.length(),4,jsonObject);
+            openStackProgressBar.incrementProgressBar("Read file completed");
+
+            //callback.getOpenStackNet().addNewLoginInformationToNet(openStackProgressBar,jsonObject);
 
         } catch (Exception ex) {
             System.out.println(ex.toString());

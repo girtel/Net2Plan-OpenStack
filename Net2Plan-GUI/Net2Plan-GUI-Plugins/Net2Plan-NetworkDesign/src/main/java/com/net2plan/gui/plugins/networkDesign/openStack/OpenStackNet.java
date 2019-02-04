@@ -7,6 +7,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.OpenStackProject;
 import com.net2plan.gui.plugins.networkDesign.openStack.network.*;
 import com.net2plan.gui.plugins.utils.MyRunnable;
+import com.net2plan.gui.plugins.utils.OpenStackProgressBar;
 import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.interfaces.networkDesign.NetPlan;
 
@@ -69,21 +70,23 @@ public class OpenStackNet
         jsonObject.put("information",loginInformation);
         return jsonObject;
     }
-    public void addNewLoginInformationToNet(JSONObject jsonObject){
+    public void addNewLoginInformationToNet(OpenStackProgressBar openStackProgressBar,JSONObject jsonObject){
 
 
        // System.out.println("Adding new information");
         JSONArray jsonArray = jsonObject.getJSONArray("information");
 
         for(Object object: jsonArray){
-            this.addNewOpenStackClientToNet((JSONObject) object,this.loginInformation.length());
+            this.addNewOpenStackClientToNet(openStackProgressBar,(JSONObject) object,this.loginInformation.length());
           }
 
         this.fillSlicingTabTablesOfNet();
+        openStackProgressBar.incrementProgressBar("Fill slicing components");
         callback.getViewEditTopTables().updateView();
+        openStackProgressBar.incrementProgressBar("Update view");
 
     }
-    public void addNewOpenStackClientToNet(JSONObject information,int index){
+    public void addNewOpenStackClientToNet(OpenStackProgressBar openStackProgressBar,JSONObject information,int index){
 
           if(determinesIfExistInNet(information))
               return;
@@ -96,7 +99,7 @@ public class OpenStackNet
                         .fillClientListsAndTopology();
                 osClients.add(openStackClient);
                 loginInformation.put(information);
-
+                openStackProgressBar.incrementProgressBar("Add client completed");
              }else {
                 OpenStackUtils.openStackLogDialog("The connection was not possible. Please check the input data or the network. For more information look console. ");
             }

@@ -184,8 +184,11 @@ public class OpenStackLoginDialogCreator implements ActionListener{
             JSONObject jsonObject1 = new JSONObject();
             jsonObject1.put("information",jsonArray);
 
-            callback.getOpenStackNet().addNewLoginInformationToNet(jsonObject1);
+            //OpenStackProgressBar openStackProgressBar = new OpenStackProgressBar(1,10);
+           // callback.getOpenStackNet().addNewLoginInformationToNet(jsonObject1);
+
             recomput();
+
             jDialog.getRootPane().setDefaultButton(enterButton);
 
             jDialog.pack();
