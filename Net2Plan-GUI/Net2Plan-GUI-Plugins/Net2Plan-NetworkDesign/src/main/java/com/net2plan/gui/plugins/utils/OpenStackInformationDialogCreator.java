@@ -109,7 +109,7 @@ public class OpenStackInformationDialogCreator {
         JLabel jLabelInstance = new JLabel("Instance");
 
 
-        JLabel jLabelIcon = new JLabel("     ");
+        /*JLabel jLabelIcon = new JLabel("     ");
         jLabelIcon.setOpaque(true);
         try {
             URL url = new URL("https://cdn0.iconfinder.com/data/icons/network-database-1/65/34-512.png");
@@ -117,7 +117,7 @@ public class OpenStackInformationDialogCreator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-jLabelIcon.setSize(20,20);
+        jLabelIcon.setSize(20,20);
         iconsPanel.add(jLabelRouter, "align label");
         iconsPanel.add(jLabelIcon, "growx");
         JLabel jLabelIcon2 = new JLabel("     ");
@@ -144,7 +144,7 @@ jLabelIcon.setSize(20,20);
         jLabelIcon6.setOpaque(true);
         jLabelIcon6.setIcon(new ImageIcon(TopologyPanel.class.getResource("/resources/gui/redoButton.png")));
         iconsPanel.add(jLabelInstance,  "align label");
-        iconsPanel.add(jLabelIcon6, "growx");
+        iconsPanel.add(jLabelIcon6, "growx");*/
     }
 
 
