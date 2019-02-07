@@ -41,14 +41,14 @@ public class OpenStackProgressBar{
         jProgressBar = new JProgressBar(0, numClients*numSteps);
         jProgressBar.setValue(0);
         jProgressBar.setStringPainted(true);
-        jProgressBar.setString("Initialization");
+        jProgressBar.setString("Reading selected file");
 
         jPanel.add(jProgressBar);
-        jPanel.add(cancelButton);
+       // jPanel.add(cancelButton);
         jDialog.add(jPanel);
 
         //jDialog.setUndecorated(true);
-        jDialog.setModal(true);
+        //jDialog.setModal(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jDialog.pack();
         jDialog.setLocation(dim.width/2-jDialog.getSize().width/2, dim.height/2-jDialog.getSize().height/2);
@@ -60,10 +60,7 @@ public class OpenStackProgressBar{
                 Boolean finish = false;
                 jDialog.setVisible(true);
                 callback.getOpenStackNet().addNewLoginInformationToNet(getThis(),jsonObject);
-                if(swingWorker.isCancelled()){
-                    System.out.println("CANCEL1");
-                }
-                //jDialog.dispose();
+                jDialog.dispose();
                 return finish;
             }
         };
@@ -87,8 +84,9 @@ public class OpenStackProgressBar{
     public OpenStackProgressBar getThis(){return this;}
 
     public void incrementProgressBar(String information){
-        jProgressBar.setValue(jProgressBar.getValue() + 1);
-        jProgressBar.setString(information);
+       // System.out.println(jProgressBar.getValue() + 1 );
+        this.jProgressBar.setValue(jProgressBar.getValue() + 1);
+        this.jProgressBar.setString(information);
     }
 
     public void cancelAction(){

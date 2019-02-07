@@ -147,10 +147,14 @@ public abstract class ITableRowFilter
 				return os.getOpenStackSecurityGroups();
 			case HOSTRESOURCES:
 				return os.getOpenStackHostResource();
-
+			case RULES:
+				return os.getOpenStackRules();
 			/*OpenStackNetworkElements of GLANCE*/
 			case IMAGES:
 				return os.getOpenStackImages();
+
+			case VOLUMES:
+				return os.getOpenStackVolumes();
 
 			/*OpenStackNetworkElements of CEILOMETER*/
 			case METERS:
@@ -225,11 +229,15 @@ public abstract class ITableRowFilter
 				return os.getOpenStackSecurityGroups();
 			case HOSTRESOURCES:
 				return os.getOpenStackHostResource();
+			case RULES:
+				return os.getOpenStackRules();
 
 			/*OpenStackNetworkElements of GLANCE*/
 			case IMAGES:
 				return os.getOpenStackImages();
 
+			case VOLUMES:
+				return os.getOpenStackVolumes();
 			/*OpenStackNetworkElements of CEILOMETER*/
 			case METERS:
 				return os.getOpenStackMeters();

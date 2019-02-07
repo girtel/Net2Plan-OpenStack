@@ -35,6 +35,8 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
         final List<AjtColumnInfo<OpenStackImageV2>> res = new LinkedList<>();
         //res.add(new AjtColumnInfo<OpenStackImageV2>(this, Object.class, null, "ID", "Image ID", null, n -> n.getId(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackImageV2>(this, String.class, null, "Name", " Image Name", null, n -> n.getName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackImageV2>(this, Long.class, null, "Ram", " Min RAM", null, n -> n.getImageMinRam(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackImageV2>(this, Long.class, null, "Disk", " Min Disk", null, n -> n.getImageMinDisk(), AGTYPE.NOAGGREGATION, null, null));
 
         return res;
     }

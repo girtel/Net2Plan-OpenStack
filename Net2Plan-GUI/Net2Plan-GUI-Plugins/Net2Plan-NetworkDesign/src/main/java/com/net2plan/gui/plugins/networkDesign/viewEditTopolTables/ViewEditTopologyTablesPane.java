@@ -23,6 +23,7 @@ import javax.swing.table.TableModel;
 import com.net2plan.gui.plugins.GUINetworkDesign;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.networkDesign.openStack.blockstorage.OpenStackVolume;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.image.OpenStackImageV2;
@@ -34,6 +35,7 @@ import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackGnocc
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.*;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.blockstorage.AdvandecJTable_volume;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.extra.AdvancedJTable_summaries;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
@@ -85,9 +87,12 @@ public class ViewEditTopologyTablesPane extends JPanel
         KEYPAIRS("Keypairs"),
         SECURITYGROUPS("Security groups"),
         HOSTRESOURCES("Host resources"),
+        RULES("Rules"),
 
         //Image (Glance)
         IMAGES("Images"),
+
+        VOLUMES("Volumes"),
 
         //Telemetry (Ceilometer)
         RESOURCES("Resources"),
@@ -128,6 +133,7 @@ public class ViewEditTopologyTablesPane extends JPanel
     private final Map<OpenStackClient,JTabbedPane> networkTabbedPane = new HashMap<>();
     private final Map<OpenStackClient,JTabbedPane> computeTabbedPane = new HashMap<>();
     private final Map<OpenStackClient,JTabbedPane> imageTabbedPane = new HashMap<>();
+    private final Map<OpenStackClient,JTabbedPane> blockStorageTabbedPane = new HashMap<>();
     private final Map<OpenStackClient,JTabbedPane> telemetryTabbedPane = new HashMap<>();
 
     private JMenuBar menuBar;
@@ -264,10 +270,18 @@ public class ViewEditTopologyTablesPane extends JPanel
             case HOSTRESOURCES:
                 table = new AdvancedJTable_hostResources(callback,openStackClient);
                 break;
+            case RULES:
+                table = new AdvancedJTable_rules(callback,openStackClient);
+                break;
 
             /*IMAGE*/
             case IMAGES:
                 table = new AdvancedJTable_imagesV2(callback,openStackClient);
+                break;
+
+            /*IMAGE*/
+            case VOLUMES:
+                table = new AdvandecJTable_volume(callback,openStackClient);
                 break;
 
             /*TELEMETRY*/
@@ -357,17 +371,18 @@ public class ViewEditTopologyTablesPane extends JPanel
 
     }
 
-    public void updateViewForDeterminateAjtableAndOpenStackClient(AJTableType ajTableType,OpenStackClient openStackClient) {
+    public void updateViewForDeterminateAjtableAndOpenStackClient(List<AJTableType> ajTableTypeTables,OpenStackClient openStackClient) {
 
         //openStackClient.updateThisList();
         this.callback.getOpenStackNet().fillSlicingTabTablesOfNet();
 
 
-        this.recomputNetPlanView();
+       // this.recomputNetPlanView();
 
-
-        netPlanViewTable.get(openStackClient).get(ajTableType).getFirst().updateView();
-        netPlanViewTable.get(openStackClient).get(ajTableType).getSecond().updateHeader();
+        for(AJTableType ajTableType: ajTableTypeTables) {
+            netPlanViewTable.get(openStackClient).get(ajTableType).getFirst().updateView();
+            netPlanViewTable.get(openStackClient).get(ajTableType).getSecond().updateHeader();
+        }
 
         ajTables.values().stream().map(t -> t.getFirst()).forEach(t -> t.updateView());
         ajTables.values().stream().map(t -> t.getSecond()).forEach(t -> t.updateHeader());
@@ -432,7 +447,7 @@ public class ViewEditTopologyTablesPane extends JPanel
             computeTabbedPane.put(openStackClient, new JTabbedPane ());
             imageTabbedPane.put(openStackClient, new JTabbedPane ());
             telemetryTabbedPane.put(openStackClient, new JTabbedPane ());
-
+            blockStorageTabbedPane.put(openStackClient,new JTabbedPane());
             //ajTables.clear();
 
             final Map<AJTableType, Pair<AdvancedJTable_abstractElement, FilteredTablePanel>> ajTables_prub = new EnumMap<>(AJTableType.class);
@@ -453,7 +468,7 @@ public class ViewEditTopologyTablesPane extends JPanel
             subpaneThisLayer.addTab("Neutron", networkTabbedPane.get(openStackClient));
 
 
-            for (AJTableType type : Arrays.asList(AJTableType.SERVERS, AJTableType.FLAVORS,AJTableType.FLOATINGIPS,AJTableType.KEYPAIRS,AJTableType.SECURITYGROUPS,AJTableType.HOSTRESOURCES))
+            for (AJTableType type : Arrays.asList(AJTableType.SERVERS, AJTableType.FLAVORS,AJTableType.FLOATINGIPS,AJTableType.KEYPAIRS,AJTableType.SECURITYGROUPS,AJTableType.RULES,AJTableType.HOSTRESOURCES))
                 computeTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
             subpaneThisLayer.addTab("Nova", computeTabbedPane.get(openStackClient));
 
@@ -461,9 +476,15 @@ public class ViewEditTopologyTablesPane extends JPanel
                 imageTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
             subpaneThisLayer.addTab("Glance", imageTabbedPane.get(openStackClient));
 
+             for (AJTableType type : Arrays.asList(AJTableType.VOLUMES))
+                 blockStorageTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
+             subpaneThisLayer.addTab("Cinder", blockStorageTabbedPane.get(openStackClient));
+
             for (AJTableType type : Arrays.asList(AJTableType.RESOURCES))
                 telemetryTabbedPane.get(openStackClient).addTab(type.getTabName(), ajTables_prub.get(type).getSecond());
             subpaneThisLayer.addTab("Ceilometer", telemetryTabbedPane.get(openStackClient));
+
+
 
             viewEditHighLevelTabbedPane.addTab(openStackClient.getName().equals("")? openStackClient.getName() : openStackClient.getName() , subpaneThisLayer);
         }
@@ -565,6 +586,7 @@ public class ViewEditTopologyTablesPane extends JPanel
             case KEYPAIRS:
             case SECURITYGROUPS:
             case HOSTRESOURCES:
+            case RULES:
                 layerSubTabbedPaneMap.get(openStackClient).setSelectedComponent(computeTabbedPane.get(openStackClient));
                 computeTabbedPane.get(openStackClient).setSelectedComponent(pane);
             break;
@@ -628,6 +650,7 @@ public class ViewEditTopologyTablesPane extends JPanel
         if(openStackNetworkElement instanceof OpenStackPort) return  AJTableType.PORTS;
 
         if(openStackNetworkElement instanceof OpenStackFlavor) return  AJTableType.FLAVORS;
+        if(openStackNetworkElement instanceof OpenStackRule) return  AJTableType.RULES;
         if(openStackNetworkElement instanceof OpenStackFloatingIp) return  AJTableType.FLOATINGIPS;
         if(openStackNetworkElement instanceof OpenStackHostResource) return  AJTableType.HOSTRESOURCES;
         if(openStackNetworkElement instanceof OpenStackImageV2) return  AJTableType.IMAGES;
@@ -647,6 +670,8 @@ public class ViewEditTopologyTablesPane extends JPanel
         if(openStackNetworkElement instanceof OpenStackRole) return  AJTableType.ROLES;
         if(openStackNetworkElement instanceof OpenStackService) return  AJTableType.SERVICES;
         if(openStackNetworkElement instanceof OpenStackUser) return  AJTableType.USERS;
+
+        if(openStackNetworkElement instanceof OpenStackVolume) return  AJTableType.VOLUMES;
 
         if(openStackNetworkElement instanceof OpenStackMeter) return  AJTableType.METERS;
         if(openStackNetworkElement instanceof OpenStackResource) return  AJTableType.RESOURCES;

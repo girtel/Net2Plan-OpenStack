@@ -3,10 +3,15 @@ package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import org.json.JSONObject;
+import org.openstack4j.api.Builders;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Link;
+import org.openstack4j.model.compute.IPProtocol;
 import org.openstack4j.model.compute.SecGroupExtension;
 import org.openstack4j.model.compute.SecurityGroup;
+import org.openstack4j.model.network.IP;
 
 import java.util.List;
 
@@ -73,5 +78,21 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
         return description;
     }
 
+
+    public void addRule(JSONObject jsonObject){
+
+        try {
+            System.out.println(jsonObject);
+            if(!jsonObject.getString("IP Protocol").equals("ICMP")) {
+                this.openStackClient.getClient().compute().securityGroups().createRule(Builders.secGroupRule().cidr(jsonObject.getString("Cidr")).parentGroupId(this.getId()).range(1, 60000).protocol(IPProtocol.valueOf(jsonObject.get("IP Protocol").toString())).build());
+            }else {
+                this.openStackClient.getClient().compute().securityGroups().createRule(Builders.secGroupRule().cidr(jsonObject.getString("Cidr")).parentGroupId(this.getId()).protocol(IPProtocol.valueOf(jsonObject.get("IP Protocol").toString())).build());
+
+            }
+        }catch (Exception ex){
+            OpenStackUtils.openStackLogDialog(ex.getMessage());
+        }
+
+    }
 
 }

@@ -79,6 +79,7 @@ public class OpenStackInformationDialogCreator {
     }
 
     public void setVisible(){
+        jDialog.pack();
         jDialog.setVisible(true);
     }
     public void recomput(){

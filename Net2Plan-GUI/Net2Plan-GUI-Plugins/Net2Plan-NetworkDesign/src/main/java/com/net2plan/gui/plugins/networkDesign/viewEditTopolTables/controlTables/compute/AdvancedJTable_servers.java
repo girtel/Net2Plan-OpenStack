@@ -21,6 +21,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenStackServer>
 {
@@ -44,7 +45,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
         //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "IPv4", "Server Access IPv4", null, n -> n.getServerAccessIPv4(), AGTYPE.NOAGGREGATION, null, null));
         //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "IPv6", "Server Access IPv6", null, n -> n.getServerAccessIPv6(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackServer>(this, Addresses.class, null, "Addresses", "Server Addresses", null, n -> n.getServerAddresses(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackServer>(this, Addresses.class, null, "Addresses", "Server Addresses", null, n -> n.getServerAddresses().getAddresses().values(), AGTYPE.NOAGGREGATION, null, null));
        // res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Admin pass", "Server admin pass", null, n -> n.getServerAdminPass(), AGTYPE.NOAGGREGATION, null, null));
        // res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Availability Zone", "Server Availability Zone", null, n -> n.getServerAvailabilityZone(), AGTYPE.NOAGGREGATION, null, null));
         //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Config Drive", "Server Config Drive", null, n -> n.getServerConfigDrive(), AGTYPE.NOAGGREGATION, null, null));
@@ -136,6 +137,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         headers.put("Flavor ID","Select");
         headers.put("Image ID", "Select");
         headers.put("Network ID","Select");
+        headers.put("Security group ID","Select");
         GeneralForm generalTableForm = new GeneralForm("Add server",headers,this.ajtType,this.openStackClient,this,null);
     }
     public void doLiveMigration(OpenStackServer openStackServer){

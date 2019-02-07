@@ -73,21 +73,26 @@ public class OpenStackNet
     public void addNewLoginInformationToNet(OpenStackProgressBar openStackProgressBar,JSONObject jsonObject){
 
 
-       // System.out.println("Adding new information");
+       System.out.println("Adding new information");
         JSONArray jsonArray = jsonObject.getJSONArray("information");
+        openStackProgressBar.incrementProgressBar("Getting clients");
 
         for(Object object: jsonArray){
             this.addNewOpenStackClientToNet(openStackProgressBar,(JSONObject) object,this.loginInformation.length());
           }
 
+        openStackProgressBar.incrementProgressBar("Getting clients completed");
+        openStackProgressBar.incrementProgressBar("Filling slicing components");
         this.fillSlicingTabTablesOfNet();
-        openStackProgressBar.incrementProgressBar("Fill slicing components");
+        openStackProgressBar.incrementProgressBar("Filling slicing components completed");
+        openStackProgressBar.incrementProgressBar("Updating view");
         callback.getViewEditTopTables().updateView();
-        openStackProgressBar.incrementProgressBar("Update view");
+        openStackProgressBar.incrementProgressBar("Updating view complete");
 
     }
     public void addNewOpenStackClientToNet(OpenStackProgressBar openStackProgressBar,JSONObject information,int index){
 
+        openStackProgressBar.incrementProgressBar("Adding client");
           if(determinesIfExistInNet(information))
               return;
 
@@ -99,7 +104,7 @@ public class OpenStackNet
                         .fillClientListsAndTopology();
                 osClients.add(openStackClient);
                 loginInformation.put(information);
-                openStackProgressBar.incrementProgressBar("Add client completed");
+                openStackProgressBar.incrementProgressBar("Adding client completed");
              }else {
                 OpenStackUtils.openStackLogDialog("The connection was not possible. Please check the input data or the network. For more information look console. ");
             }
@@ -180,9 +185,12 @@ public class OpenStackNet
             allOpenStackNetworkElements.addAll(openStackClient.openStackKeypairs);
             allOpenStackNetworkElements.addAll(openStackClient.openStackSecurityGroups);
             allOpenStackNetworkElements.addAll(openStackClient.openStackFloatingIps);
+            allOpenStackNetworkElements.addAll(openStackClient.openStackRules);
 
             /*OpenStackNetworkElements of Glance*/
             allOpenStackNetworkElements.addAll(openStackClient.openStackImages);
+
+            allOpenStackNetworkElements.addAll(openStackClient.openStackVolumes);
 
             /*OpenStackNetworkElements of Ceilometer*/
             allOpenStackNetworkElements.addAll(openStackClient.openStackResources);

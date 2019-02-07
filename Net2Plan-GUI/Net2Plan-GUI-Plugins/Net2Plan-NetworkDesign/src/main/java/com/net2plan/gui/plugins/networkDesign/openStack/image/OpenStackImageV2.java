@@ -12,6 +12,7 @@ public class OpenStackImageV2 extends OpenStackNetworkElement
 
     private String imageId;
     private String imageName ;
+    private long imageMinDisk ,imageMinRam;
 
     private Image image ;
 
@@ -21,7 +22,9 @@ public class OpenStackImageV2 extends OpenStackNetworkElement
         final OpenStackImageV2 res = new OpenStackImageV2(osn,image,openStackClient);
         res.imageId= image.getId();
         res.imageName=image.getName();
-        image.getArchitecture();
+        res.imageMinDisk =image.getMinDisk();
+        res.imageMinRam =image.getMinRam();
+       /* image.getArchitecture();
         image.getChecksum();
         image.getContainerFormat();
         image.getCreatedAt();
@@ -32,8 +35,6 @@ public class OpenStackImageV2 extends OpenStackNetworkElement
         image.getIsProtected();
         image.getKernelId();
         image.getLocations();
-        image.getMinDisk();
-        image.getMinRam();
         image.getOsDistro();
         image.getOsVersion();
         image.getOwner();
@@ -46,6 +47,7 @@ public class OpenStackImageV2 extends OpenStackNetworkElement
         image.getUpdatedAt();
         image.getVirtualSize();
         image.getVisibility();
+        */
 
         return res;
     }
@@ -61,6 +63,8 @@ public class OpenStackImageV2 extends OpenStackNetworkElement
     @Override
     public String getId () { return this.imageId; }
     public String getName () { return this.imageName; }
+    public long getImageMinDisk () { return this.imageMinDisk; }
+    public long getImageMinRam () { return this.imageMinRam; }
 
 
     @Override

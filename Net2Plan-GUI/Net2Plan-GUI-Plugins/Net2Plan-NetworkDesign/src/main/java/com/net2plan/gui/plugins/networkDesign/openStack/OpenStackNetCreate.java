@@ -194,24 +194,30 @@ public class OpenStackNetCreate{
                 String serverFlavorName = information.getString("Flavor ID");
                 String serverImageName = information.getString("Image ID");
                 String serverNetworkName = information.getString("Network ID");
+                String securityGroupName = information.getString("Security group ID");
 
                 final String serverNetworkId = openStackClient.openStackNetworks.stream().filter(n->n.getName().equals(serverNetworkName)).findFirst().get().getId();
                 final String serverImageId = openStackClient.openStackImages.stream().filter(n->n.getName().equals(serverImageName)).findFirst().get().getId();
                 final String serverFlavorId = openStackClient.openStackFlavors.stream().filter(n->n.getFlavorName().equals(serverFlavorName)).findFirst().get().getId();
+                final String serverSecurtyGroupId = openStackClient.openStackSecurityGroups.stream().filter(n->n.getName().equals(securityGroupName)).findFirst().get().getId();
 
                 List<String> list = new ArrayList<>();
                 list.add(serverNetworkId);
 
-                ServerCreate sc = this.openStackClient.getClient().compute().servers().serverBuilder()
-                        .name(serverName)
-                        .flavor(serverFlavorId)
-                        .image(serverImageId)
-                        .networks(list)
-                        .build();
+                try {
+                    ServerCreate sc = this.openStackClient.getClient().compute().servers().serverBuilder()
+                            .name(serverName)
+                            .flavor(serverFlavorId)
+                            .image(serverImageId)
+                            .networks(list)
+                            .addSecurityGroup(serverSecurtyGroupId)
+                            .build();
 
-                Server server = this.openStackClient.getClient().compute().servers().boot(sc);
+                    Server server = this.openStackClient.getClient().compute().servers().boot(sc);
 
-
+                }catch (Exception ex){
+                    OpenStackUtils.openStackLogDialog(ex.getMessage());
+                }
 
             }else if (ajTableType == ViewEditTopologyTablesPane.AJTableType.FLOATINGIPS) {
 
@@ -261,6 +267,15 @@ public class OpenStackNetCreate{
                     OpenStackUtils.openStackLogDialog(actionResponse.getFault());
                 }
 
+            }else if(ajTableType == ViewEditTopologyTablesPane.AJTableType.SECURITYGROUPS){
+
+                String name = information.getString("Name");
+                String description = information.getString("Description");
+                try {
+                    this.openStackClient.getClient().compute().securityGroups().create(name, description);
+                }catch (Exception ex){
+                    OpenStackUtils.openStackLogDialog(ex.getMessage());
+                }
             }
 
         }catch (Exception ex){

@@ -1,7 +1,9 @@
 package com.net2plan.gui.plugins.networkDesign.openStack;
 
+import com.net2plan.gui.plugins.networkDesign.api.Cinder;
 import com.net2plan.gui.plugins.networkDesign.api.Gnocchi;
 import com.net2plan.gui.plugins.networkDesign.api.Keystone;
+import com.net2plan.gui.plugins.networkDesign.openStack.blockstorage.OpenStackVolume;
 import com.net2plan.gui.plugins.networkDesign.openStack.compute.*;
 import com.net2plan.gui.plugins.networkDesign.openStack.extra.OpenStackSummary;
 import com.net2plan.gui.plugins.networkDesign.openStack.identity.*;
@@ -13,7 +15,9 @@ import com.net2plan.gui.plugins.networkDesign.openStack.network.OpenStackSubnet;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackGnocchiMeasure;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackMeter;
 import com.net2plan.gui.plugins.networkDesign.openStack.telemetry.OpenStackResource;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.ViewEditTopologyTablesPane;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AdvancedJTable_networkElement;
+import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.blockstorage.AdvandecJTable_volume;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.compute.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.identity.*;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.image.AdvancedJTable_imagesV2;
@@ -30,6 +34,7 @@ import com.net2plan.interfaces.networkDesign.NetPlan;
 import com.net2plan.interfaces.networkDesign.NetworkLayer;
 import com.net2plan.utils.Pair;
 import org.apache.commons.collections15.BidiMap;
+import org.jfree.date.AnnualDateRule;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openstack4j.api.OSClient;
@@ -40,6 +45,7 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.Subnet;
+import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.telemetry.Meter;
 import org.openstack4j.model.telemetry.Resource;
 import org.openstack4j.openstack.OSFactory;
@@ -82,9 +88,12 @@ public class OpenStackClient {
     public final List<OpenStackKeypair> openStackKeypairs = new ArrayList<> ();
     public final List<OpenStackSecurityGroup> openStackSecurityGroups = new ArrayList<> ();
     public final List<OpenStackHostResource> openStackHostResources = new ArrayList<> ();
+    public final List<OpenStackRule> openStackRules = new ArrayList<> ();
 
     /*List of OpenStackNetworkElements of GLANCE*/
     public final List<OpenStackImageV2> openStackImages = new ArrayList<> ();
+
+    public final List<OpenStackVolume> openStackVolumes = new ArrayList<> ();
 
     /*List of OpenStackNetworkElements of CEILOMETER*/
     public final List<OpenStackMeter> openStackMeters = new ArrayList<> ();
@@ -96,6 +105,7 @@ public class OpenStackClient {
     public final List<OpenStackSummary> openStackSummaries= new ArrayList<>();
 
     private Gnocchi gnocchi;
+    private Cinder cinder;
     public Keystone keystone;
     private OpenStackNet openStackNet;
     private Token token;
@@ -136,10 +146,11 @@ public class OpenStackClient {
                     .scopeToProject(Identifier.byId(os_project_id))
                     .authenticate();
 
+            //System.out.println(os_project_id);
             this.os=os;
             this.token = os.getToken();
             this.name = name;
-
+            //System.out.println(token);
             this.openStackNet = osn;
             this.openStackNetCreate = new OpenStackNetCreate(this);
             this.openStackNetDelete = new OpenStackNetDelete(this);
@@ -167,6 +178,16 @@ public class OpenStackClient {
                 Service service = services.get(0);
                 Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
                 this.gnocchi = new Gnocchi(endpoint.getUrl().toString() + "/v1/", this.os);
+
+            }
+
+            List<Service> services2 = this.os.identity().serviceEndpoints().list().stream().filter(n -> ((Service) n).getName().equals("cinderv3")).collect(Collectors.toList());
+
+            if (services2.size() >= 1) {
+
+                Service service = services2.get(0);
+                Endpoint endpoint = this.os.identity().serviceEndpoints().listEndpoints().stream().filter(n -> ((Endpoint) n).getServiceId().equals(service.getId())).collect(Collectors.toList()).get(0);
+                this.cinder = new Cinder(endpoint.getUrl().toString(), this.os);
 
             }
             this.keystone = new Keystone(os_auth_url, this.os);
@@ -200,9 +221,12 @@ public class OpenStackClient {
         openStackKeypairs.clear();
         openStackSecurityGroups.clear();
         openStackHostResources.clear();
+        openStackRules.clear();
 
         /*Clear Glance list*/
         openStackImages.clear();
+
+        openStackVolumes.clear();
 
         /*Clear Ceilometer list*/
         openStackResources.clear();
@@ -254,6 +278,8 @@ public class OpenStackClient {
             this.os.compute().keypairs().list().stream().forEach(n -> addOpenStackKeypair(n));
             this.os.compute().securityGroups().list().stream().forEach(n -> addOpenStackSecurityGroup(n));
 
+            addRules();
+
             final List<? extends HostResource> hosts = os.compute().host().list();
 
             for (HostResource hostResource : hosts) {
@@ -264,6 +290,10 @@ public class OpenStackClient {
             /*Get elements of Image(GLANCE)*/
             this.os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
 
+
+            if (cinder != null) {
+                this.cinder.volumeList().forEach(n-> addOpenStackVolume(n));
+            }
             /*Get elements of Telmetry(Ceilometer)*/
             if (gnocchi != null)
                 gnocchi.resourcesList().forEach(n -> addOpenStackResource(n));
@@ -404,6 +434,7 @@ public class OpenStackClient {
             vs.setCanvasLayerVisibilityAndOrder(this.openStackNet.getCallback().getDesign(), res.getFirst(), res.getSecond());
             this.openStackNet.getCallback().updateVisualizationAfterNewTopology();
             //osn.getCallback().updateVisualizationAfterNewTopology();
+            openStackNet.getCallback().getViewEditTopTables().updateViewForDeterminateAjtableAndOpenStackClient(Arrays.asList(ViewEditTopologyTablesPane.AJTableType.NETWORKS, ViewEditTopologyTablesPane.AJTableType.SUBNETS,ViewEditTopologyTablesPane.AJTableType.ROUTERS,ViewEditTopologyTablesPane.AJTableType.PORTS,ViewEditTopologyTablesPane.AJTableType.SERVERS),this);
 
         } else if (advancedJTable_networkElement instanceof AdvancedJTable_flavors) {
 
@@ -420,10 +451,12 @@ public class OpenStackClient {
             openStackKeypairs.clear();
             this.os.compute().keypairs().list().forEach(n -> addOpenStackKeypair(n));
 
-        } else if (advancedJTable_networkElement instanceof AdvancedJTable_securityGroups) {
+        } else if (advancedJTable_networkElement instanceof AdvancedJTable_securityGroups  || advancedJTable_networkElement instanceof AdvancedJTable_rules) {
 
             openStackSecurityGroups.clear();
             this.os.compute().securityGroups().list().forEach(n -> addOpenStackSecurityGroup(n));
+            addRules();
+            openStackNet.getCallback().getViewEditTopTables().updateViewForDeterminateAjtableAndOpenStackClient(Arrays.asList(ViewEditTopologyTablesPane.AJTableType.SECURITYGROUPS, ViewEditTopologyTablesPane.AJTableType.RULES),this);
 
         } else if (advancedJTable_networkElement instanceof AdvancedJTable_hostResources) {
 
@@ -435,12 +468,20 @@ public class OpenStackClient {
                     this.os.compute().host().hostDescribe(hostResource.getHostName()).stream().filter(x -> ((HostResource) x).getProject().equals("(total)")).forEach(p -> addOpenStackHostResource(p));
             }
 
-
         } else if (advancedJTable_networkElement instanceof AdvancedJTable_imagesV2) {
 
             openStackImages.clear();
             /*Get elements of Image(GLANCE)*/
             this.os.imagesV2().list().stream().forEach(n -> addOpenStackImage(n));
+
+
+        } else if (advancedJTable_networkElement instanceof AdvandecJTable_volume) {
+
+            openStackVolumes.clear();
+
+            if (cinder != null) {
+                this.cinder.volumeList().forEach(n-> addOpenStackVolume(n));
+            }
 
 
         } else if (advancedJTable_networkElement instanceof AdvancedJTable_resources) {
@@ -498,12 +539,15 @@ public class OpenStackClient {
             openStackKeypairs.clear();
             this.os.compute().keypairs().list().forEach(n -> addOpenStackKeypair(n));
 
-        } else if (advancedJTable_networkElement instanceof AdvancedJTable_securityGroups) {
+        } else if (advancedJTable_networkElement instanceof AdvancedJTable_securityGroups || advancedJTable_networkElement instanceof AdvancedJTable_rules) {
 
             openStackSecurityGroups.clear();
             this.os.compute().securityGroups().list().forEach(n -> addOpenStackSecurityGroup(n));
+             addRules();
+             openStackNet.getCallback().getViewEditTopTables().updateViewForDeterminateAjtableAndOpenStackClient(Arrays.asList(ViewEditTopologyTablesPane.AJTableType.SECURITYGROUPS, ViewEditTopologyTablesPane.AJTableType.RULES),this);
 
-        } else if (advancedJTable_networkElement instanceof AdvancedJTable_imagesV2) {
+
+         } else if (advancedJTable_networkElement instanceof AdvancedJTable_imagesV2) {
 
             openStackImages.clear();
             /*Get elements of Image(GLANCE)*/
@@ -606,6 +650,10 @@ public class OpenStackClient {
     public Token getToken (){return this.token;}
     public NetPlan getNetPlanDesign(){return this.netPlan;}
 
+    public void addRules(){
+        openStackRules.clear();
+        openStackSecurityGroups.stream().forEach(n->n.getSecGroupExtensionRules().stream().forEach(x->addOpenStackRule(x)));
+    }
     /* Add OpenStackNetworkElements of Keystone*/
     public OpenStackUser addOpenStackUser (User user){
        final OpenStackUser res = OpenStackUser.createFromAddUser(this.openStackNet ,user,this);
@@ -614,6 +662,7 @@ public class OpenStackClient {
         return res;
     }
     public OpenStackProject addOpenStackProject(Project project){
+        //System.out.println(project.getId());
         final OpenStackProject res = OpenStackProject.createFromAddProject(this.openStackNet,project,this);
         if(openStackProjects.contains(res)) return res;
         openStackProjects.add(res);
@@ -733,6 +782,13 @@ public class OpenStackClient {
 
         return res;
     }
+    public OpenStackRule addOpenStackRule(SecGroupExtension.Rule rule) {
+        final OpenStackRule res = OpenStackRule.createFromAddRule(this.openStackNet,rule,this);
+        if(openStackRules.contains(res)) return res;
+        openStackRules.add(res);
+
+        return res;
+    }
 
     /* Add OpenStackNetworkElements of Glance*/
     public OpenStackImageV2 addOpenStackImage(org.openstack4j.model.image.v2.Image image) {
@@ -755,7 +811,12 @@ public class OpenStackClient {
         openStackResources.add(res);
         return res;
     }
-
+    public OpenStackVolume addOpenStackVolume (Volume volume){
+        final OpenStackVolume res = OpenStackVolume.createFromAddVolume(this.openStackNet ,volume,this);
+        if(openStackVolumes.contains(res)) return res;
+        openStackVolumes.add(res);
+        return res;
+    }
 
     /*Get list from OpenStackNetworkElements of KEYSTONE*/
     public List<OpenStackUser> getOpenStackUsers () { return Collections.unmodifiableList(openStackUsers); }
@@ -782,9 +843,12 @@ public class OpenStackClient {
     public List<OpenStackKeypair> getOpenStackKeypairs () { return Collections.unmodifiableList(openStackKeypairs); }
     public List<OpenStackSecurityGroup> getOpenStackSecurityGroups () { return Collections.unmodifiableList(openStackSecurityGroups); }
     public List<OpenStackHostResource> getOpenStackHostResource () { return Collections.unmodifiableList(openStackHostResources); }
+    public List<OpenStackRule> getOpenStackRules () { return Collections.unmodifiableList(openStackRules); }
 
     /*Get list from OpenStackNetworkElements of GLANCE*/
     public List<OpenStackImageV2> getOpenStackImages () { return Collections.unmodifiableList(openStackImages); }
+
+    public List<OpenStackVolume> getOpenStackVolumes () { return Collections.unmodifiableList(openStackVolumes); }
 
     /*Get list from OpenStackNetworkElements of CEILOMETER*/
     public List<OpenStackMeter> getOpenStackMeters () { return Collections.unmodifiableList(openStackMeters); }

@@ -55,8 +55,8 @@ public class OpenStackInitalButtonFunctionalities {
             JSONObject jsonObject = new JSONObject(everything);
 
             JSONArray jsonArray = jsonObject.getJSONArray("information");
-            OpenStackProgressBar openStackProgressBar = new OpenStackProgressBar(callback,jsonArray.length(),4,jsonObject);
-            openStackProgressBar.incrementProgressBar("Read file completed");
+            OpenStackProgressBar openStackProgressBar = new OpenStackProgressBar(callback,jsonArray.length(),8,jsonObject);
+            openStackProgressBar.incrementProgressBar("Reading file completed");
 
             //callback.getOpenStackNet().addNewLoginInformationToNet(openStackProgressBar,jsonObject);
 
