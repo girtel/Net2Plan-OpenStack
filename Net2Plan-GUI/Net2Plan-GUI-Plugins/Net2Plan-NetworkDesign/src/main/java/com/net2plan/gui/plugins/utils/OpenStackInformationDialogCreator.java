@@ -91,11 +91,11 @@ public class OpenStackInformationDialogCreator {
         callback.getOpenStackNet().getOsClients().stream().filter(n-> n.getNetPlanDesign().equals(callback.getDesign())).collect(Collectors.toList());
 
         if(callback.getOpenStackNet().getOsClients().stream().filter(n-> n.getNetPlanDesign().equals(callback.getDesign())).collect(Collectors.toList()).size()>0) {
-            System.out.println("in panel projects");
+            //System.out.println("in panel projects");
             callback.getOpenStackNet().getOsClients().stream().filter(n -> n.getNetPlanDesign().equals(callback.getDesign())).collect(Collectors.toList()).get(0).openStackProjects.forEach(n -> {
                 JLabel jLabel = new JLabel(n.getProjectName());
                 JLabel jLabelColor = new JLabel("     ");
-                System.out.println(n.getColor());
+               // System.out.println(n.getColor());
                 jLabelColor.setBackground(n.getColor());
                 jLabelColor.setOpaque(true);
                 projectsPanel.add(jLabel, "align label");

@@ -1,6 +1,5 @@
 package com.net2plan.gui.plugins.networkDesign.api;
 
-import com.sun.codemodel.internal.JJavaName;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openstack4j.api.OSClient;

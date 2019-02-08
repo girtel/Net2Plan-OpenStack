@@ -256,10 +256,11 @@ public class OpenStackServer  extends OpenStackNetworkElement
 
         try {
                 ActionResponse response = openStackClient.getClient().compute().servers().liveMigrate(this.getId(),LiveMigrateOptions.create().blockMigration(block).diskOverCommit(disk).host(hostname));
-            System.out.println("Code " + response.getCode()+ " Fault " + response.getFault() + "Success" + response.isSuccess());
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                logPanel();
+                if(!response.isSuccess())
+                OpenStackUtils.openStackLogDialog(response.getFault());
+                //System.out.println("Code " + response.getCode()+ " Fault " + response.getFault() + "Success" + response.isSuccess());
+            } catch (Exception ex) {
+               OpenStackUtils.openStackLogDialog(ex.getMessage());
             }
 
     }
