@@ -71,7 +71,8 @@ public class AdvancedJTable_imagesV2 extends AdvancedJTable_networkElement<OpenS
             information.put("PATH",chooser.getSelectedFile().getPath());
             information.put("NAME",chooser.getSelectedFile().getName());
             openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(this.ajtType,information);
-            updateTab();
+            //updateTab();
+            updateThisTab();
         }
     }
 

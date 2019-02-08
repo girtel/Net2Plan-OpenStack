@@ -75,24 +75,24 @@ public class OpenStackNet
 
        //System.out.println("Adding new information");
         JSONArray jsonArray = jsonObject.getJSONArray("information");
-        openStackProgressBar.incrementProgressBar("Getting clients");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Getting clients");
 
         for(Object object: jsonArray){
             this.addNewOpenStackClientToNet(openStackProgressBar,(JSONObject) object,this.loginInformation.length());
           }
 
-        openStackProgressBar.incrementProgressBar("Getting clients completed");
-        openStackProgressBar.incrementProgressBar("Filling slicing components");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Getting clients completed");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Filling slicing components");
         this.fillSlicingTabTablesOfNet();
-        openStackProgressBar.incrementProgressBar("Filling slicing components completed");
-        openStackProgressBar.incrementProgressBar("Updating view");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Filling slicing components completed");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Updating view");
         callback.getViewEditTopTables().updateView();
-        openStackProgressBar.incrementProgressBar("Updating view complete");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Updating view complete");
 
     }
     public void addNewOpenStackClientToNet(OpenStackProgressBar openStackProgressBar,JSONObject information,int index){
 
-        openStackProgressBar.incrementProgressBar("Adding client");
+        openStackProgressBar.getSwingWorker().incrementProgressBar("Adding client");
           if(determinesIfExistInNet(information))
               return;
 
@@ -104,7 +104,7 @@ public class OpenStackNet
                         .fillClientListsAndTopology();
                 osClients.add(openStackClient);
                 loginInformation.put(information);
-                openStackProgressBar.incrementProgressBar("Adding client completed");
+                openStackProgressBar.getSwingWorker().incrementProgressBar("Adding client completed");
              }else {
                 OpenStackUtils.openStackLogDialog("The connection was not possible. Please check the input data or the network. For more information look console. ");
             }

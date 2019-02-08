@@ -19,7 +19,7 @@ public class OpenStackProgressBar{
     JButton cancelButton;
     JSONObject jsonObject;
     GUINetworkDesign callback;
-    SwingWorker swingWorker;
+    Tarea swingWorker;
 
     public OpenStackProgressBar(GUINetworkDesign callback,int numClients, int numSteps, JSONObject jsonObject)
     {
@@ -38,8 +38,9 @@ public class OpenStackProgressBar{
                  cancelAction();
             }
         });
-        jProgressBar = new JProgressBar(0, numClients*numSteps);
-        jProgressBar.setValue(0);
+        jProgressBar = new JProgressBar();
+        //jProgressBar.setValue(0);
+        jProgressBar.setIndeterminate(true);
         jProgressBar.setStringPainted(true);
         jProgressBar.setString("Reading selected file");
 
@@ -48,12 +49,12 @@ public class OpenStackProgressBar{
         jDialog.add(jPanel);
 
         //jDialog.setUndecorated(true);
-        //jDialog.setModal(true);
+        jDialog.setModal(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         jDialog.pack();
         jDialog.setLocation(dim.width/2-jDialog.getSize().width/2, dim.height/2-jDialog.getSize().height/2);
 
-        swingWorker = new SwingWorker() {
+       /* swingWorker = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
 
@@ -63,13 +64,15 @@ public class OpenStackProgressBar{
                 jDialog.dispose();
                 return finish;
             }
-        };
-
+        };*/
+        swingWorker = new Tarea();
         swingWorker.execute();
-
-        if(swingWorker.isCancelled()){
-            System.out.println("CANCEL2");
+        try{
+            jDialog.setVisible(true);
+        }catch (Exception ex){
+            OpenStackUtils.openStackLogDialog(ex.getMessage());
         }
+
 
 
         /*try{
@@ -82,12 +85,7 @@ public class OpenStackProgressBar{
     }
 
     public OpenStackProgressBar getThis(){return this;}
-
-    public void incrementProgressBar(String information){
-       // System.out.println(jProgressBar.getValue() + 1 );
-        this.jProgressBar.setValue(jProgressBar.getValue() + 1);
-        this.jProgressBar.setString(information);
-    }
+    public Tarea getSwingWorker (){return this.swingWorker;}
 
     public void cancelAction(){
         Thread currentThread = Thread.currentThread();
@@ -96,5 +94,24 @@ public class OpenStackProgressBar{
 
        // jDialog.dispose();
         return;
+    }
+
+    public class Tarea extends SwingWorker{
+
+        @Override
+        protected Object doInBackground() throws Exception {
+            Boolean finish = false;
+            callback.getOpenStackNet().addNewLoginInformationToNet(getThis(),jsonObject);
+            jDialog.dispose();
+            return finish;
+            //return null;
+        }
+        public void incrementProgressBar(String information){
+            // System.out.println(jProgressBar.getValue() + 1 );
+           // jProgressBar.setValue(jProgressBar.getValue() + 1);
+            jProgressBar.setString(information);
+            //jDialog.pack();
+        }
+
     }
 }
