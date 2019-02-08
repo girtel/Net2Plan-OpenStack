@@ -82,7 +82,7 @@ public class OpenStackSecurityGroup  extends OpenStackNetworkElement
     public void addRule(JSONObject jsonObject){
 
         try {
-            System.out.println(jsonObject);
+           // System.out.println(jsonObject);
             if(!jsonObject.getString("IP Protocol").equals("ICMP")) {
                 this.openStackClient.getClient().compute().securityGroups().createRule(Builders.secGroupRule().cidr(jsonObject.getString("Cidr")).parentGroupId(this.getId()).range(1, 60000).protocol(IPProtocol.valueOf(jsonObject.get("IP Protocol").toString())).build());
             }else {

@@ -3,12 +3,14 @@ package com.net2plan.gui.plugins.networkDesign.openStack.compute;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackClient;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNet;
 import com.net2plan.gui.plugins.networkDesign.openStack.OpenStackNetworkElement;
+import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.interfaces.networkDesign.Node;
 import org.json.JSONObject;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Link;
 import org.openstack4j.model.compute.*;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
+import org.openstack4j.openstack.compute.domain.NovaAddresses;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -124,7 +126,20 @@ public class OpenStackServer  extends OpenStackNetworkElement
     public String getName () { return this.serverName; }
     public String getServerAccessIPv4 () { return this.serverAccessIPv4; }
     public String getServerAccessIPv6 () { return this.serverAccessIPv6; }
-    public Addresses getServerAddresses () { return this.serverAddresses; }
+    public List<String> getServerAddresses () {
+        List<String> ips = new ArrayList<>();
+        try {
+
+            //System.out.println("in");
+            for (String key : serverAddresses.getAddresses().keySet()) {
+              //  System.out.println(serverAddresses.getAddresses(key));
+                serverAddresses.getAddresses(key).stream().forEach(n-> ips.add(((Address) n).getAddr()));//.forEach(n -> n.forEach((x, y) -> y.stream().map(z -> ips.add(((Address) z).getAddr()))));
+            }
+        }catch (Exception ex){
+            OpenStackUtils.openStackLogDialog(ex.getMessage());
+        }
+        return ips;
+    }
     public String getServerAdminPass () { return this.serverAdminPass; }
     public String getServerAvailabilityZone () { return this.serverAvailabilityZone; }
     public String getServerConfigDrive () { return this.serverConfigDrive; }
@@ -190,7 +205,7 @@ public class OpenStackServer  extends OpenStackNetworkElement
                 this.NEWLINE + "User ID " + this.getServerUserId() +
                 this.NEWLINE + "Uuid " + this.getServerUuid() +
                 this.NEWLINE + "VM State " + this.getServerVmState() +
-                this.NEWLINE + "Addresses " + this.getServerAddresses() +
+                //this.NEWLINE + "Addresses " + this.getServerAddresses() +
                 this.NEWLINE + "Created " + this.getServerCreated() +
                 this.NEWLINE + "Disk config" + this.getServerDiskConfig() +
                 this.NEWLINE + "Fault " + this.getServerFault() +

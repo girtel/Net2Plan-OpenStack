@@ -73,7 +73,7 @@ public class OpenStackNet
     public void addNewLoginInformationToNet(OpenStackProgressBar openStackProgressBar,JSONObject jsonObject){
 
 
-       System.out.println("Adding new information");
+       //System.out.println("Adding new information");
         JSONArray jsonArray = jsonObject.getJSONArray("information");
         openStackProgressBar.incrementProgressBar("Getting clients");
 

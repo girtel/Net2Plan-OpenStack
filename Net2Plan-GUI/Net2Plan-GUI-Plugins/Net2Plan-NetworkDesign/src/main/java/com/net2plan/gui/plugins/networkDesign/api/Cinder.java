@@ -52,7 +52,7 @@ public class Cinder  extends Api
 
             JSONObject jsonObject = (JSONObject) object;
 
-            System.out.println("VOLUME" + jsonObject);
+            //System.out.println("VOLUME" + jsonObject);
             Volume volume = new Volume() {
                 @Override
                 public VolumeBuilder toBuilder() {

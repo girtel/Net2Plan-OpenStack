@@ -8,13 +8,16 @@ import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtColumnInfo;
 import com.net2plan.gui.plugins.networkDesign.viewEditTopolTables.controlTables.AjtRcMenu;
 import com.net2plan.gui.plugins.utils.GeneralForm;
+import com.net2plan.gui.plugins.utils.OpenStackUtils;
 import com.net2plan.gui.plugins.utils.SwingBrowser;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.*;
+import org.openstack4j.model.compute.Action;
 import org.openstack4j.model.compute.Image;
 import org.openstack4j.model.compute.actions.BaseActionOptions;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
 import org.openstack4j.openstack.compute.domain.actions.LiveMigrationAction;
+import org.openstack4j.openstack.compute.domain.actions.ServerAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +48,7 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
         //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "IPv4", "Server Access IPv4", null, n -> n.getServerAccessIPv4(), AGTYPE.NOAGGREGATION, null, null));
         //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "IPv6", "Server Access IPv6", null, n -> n.getServerAccessIPv6(), AGTYPE.NOAGGREGATION, null, null));
-        res.add(new AjtColumnInfo<OpenStackServer>(this, Addresses.class, null, "Addresses", "Server Addresses", null, n -> n.getServerAddresses().getAddresses().values(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackServer>(this, List.class, null, "Addresses", "Server Addresses", null, n -> n.getServerAddresses(), AGTYPE.NOAGGREGATION, null, null));
        // res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Admin pass", "Server admin pass", null, n -> n.getServerAdminPass(), AGTYPE.NOAGGREGATION, null, null));
        // res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Availability Zone", "Server Availability Zone", null, n -> n.getServerAvailabilityZone(), AGTYPE.NOAGGREGATION, null, null));
         //res.add(new AjtColumnInfo<OpenStackServer>(this, String.class, null, "Config Drive", "Server Config Drive", null, n -> n.getServerConfigDrive(), AGTYPE.NOAGGREGATION, null, null));
@@ -125,6 +128,13 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
 
         }), (a, b) -> b == 1, null));
 
+        final List<AjtRcMenu> res2 = new ArrayList<>();
+
+
+        res2.add(new AjtRcMenu("Start server", e -> changeAction(this.getSelectedElements().get(0),Action.START), (a, b) -> b==1, null));
+        res2.add(new AjtRcMenu("Stop server", e -> changeAction(this.getSelectedElements().get(0),Action.STOP), (a, b) -> b==1, null));
+
+        res.add(new AjtRcMenu("Action", e -> this.getSelectedElements(), (a, b) -> b == 1, res2));
         //res.add(new AjtRcMenu("Refresh", e ->updateTab(), (a, b) -> b >=0, null));
 
         return res;
@@ -153,6 +163,20 @@ public class AdvancedJTable_servers extends AdvancedJTable_networkElement<OpenSt
         openStackServers.forEach(n->openStackClient.getOpenStackNetDelete().deleteOpenStackNetworkElement(n));
         updateThisTab();
 
+    }
+    public void changeAction(OpenStackServer openStackServer,Action action){
+
+        try {
+            ActionResponse list = openStackClient.getClient().compute().servers().action(openStackServer.getId(), action);
+
+            if(!list.isSuccess()){
+                OpenStackUtils.openStackLogDialog(list.getFault());
+            }
+            updateThisTab();
+        } catch (Exception ex) {
+            OpenStackUtils.openStackLogDialog(ex.getMessage());
+
+        }
     }
 
 

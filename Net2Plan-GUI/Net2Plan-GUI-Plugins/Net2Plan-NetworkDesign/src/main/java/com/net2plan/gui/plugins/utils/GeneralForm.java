@@ -191,7 +191,7 @@ public class GeneralForm extends JDialog implements ActionListener{
                 stockArr = IPVersionType.values();
                 break;
             case "IP Protocol":
-                System.out.println("ippprotocol");
+                //System.out.println("ippprotocol");
                 stockArr = IPProtocol.values();
                 break;
             case "Network type":
@@ -236,7 +236,7 @@ public class GeneralForm extends JDialog implements ActionListener{
 
         System.out.println("aciton");
         for(int i = 3;i< components.length;i=i+2){
-            System.out.println(headers.get(((JLabel)components[i-1]).getText()));
+            //System.out.println(headers.get(((JLabel)components[i-1]).getText()));
             switch (headers.get(((JLabel)components[i-1]).getText())){
                 case "Select":
                     jsonObject.put( ((JLabel)components[i-1]).getText(),((JComboBox)components[i]).getSelectedItem().toString());
@@ -312,9 +312,9 @@ public class GeneralForm extends JDialog implements ActionListener{
                                 .build());
                 break;
             case SECURITYGROUPS:
-                System.out.println("adding");
+                //System.out.println("adding");
                 if(title.equals("Add rule")){
-                    System.out.println("adding");
+                    //System.out.println("adding");
                     ((OpenStackSecurityGroup)openStackNetworkElement).addRule(jsonObject);
                 }else {
                     openStackClient.getOpenStackNetCreate().createOpenStackNetworkElement(advancedJTable_networkElement.getAjType(),jsonObject);

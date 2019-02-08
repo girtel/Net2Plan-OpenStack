@@ -349,6 +349,8 @@ public class OpenStackClient {
 
     public void updateThisList (AdvancedJTable_networkElement advancedJTable_networkElement){
 
+        updateClient();
+
         if(isAdmin) {
             updateThisListAdmin(advancedJTable_networkElement);
         }else {
@@ -967,7 +969,7 @@ public class OpenStackClient {
 
         for(OpenStackServer openStackServer: this.getOpenStackServers()){
             for(OpenStackSubnet openStackSubnet: subnetList) {
-                if(OpenStackUtils.belongsToThisNetwork(openStackServer.getServer(), openStackSubnet.getSubnet())){
+                if(OpenStackUtils.belongsToThisNetwork(openStackServer.getServer(), openStackSubnet.getSubnet())  && openStackSubnet.getSubnetTenantId().equals(openStackServer.getServerTenantId())){
                     Map<String,String> attributes = new HashMap<>();
                     attributes.put("Color",colores.get(openStackSubnet.getSubnetTenantId()));
                     attributes.put("Subnet ",openStackSubnet.getName());
