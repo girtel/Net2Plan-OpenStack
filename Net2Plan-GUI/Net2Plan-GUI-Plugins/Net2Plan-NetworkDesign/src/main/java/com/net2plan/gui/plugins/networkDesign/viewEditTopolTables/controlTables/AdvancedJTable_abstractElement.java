@@ -391,6 +391,7 @@ public abstract class AdvancedJTable_abstractElement<T> extends AdvancedJTable
                     final boolean clickOutside = rowAtPoint(e.getPoint()) == -1;
                     final int rowModelIndex = clickOutside || clickFixedTable? -1 : parent.convertRowIndexToModel(rowAtPoint(e.getPoint()));
                     final int columnModelIndex = clickOutside || clickFixedTable? -1 : parent.convertColumnIndexToModel(columnAtPoint(e.getPoint()));
+                    if(rowModelIndex != -1 && columnModelIndex != -1)
                     reactToMouseClickInTable (e.getClickCount(), rowModelIndex , columnModelIndex);
 
                     return;

@@ -27,6 +27,7 @@ public class AdvancedJTable_limits extends AdvancedJTable_networkElement<OpenSta
 
         final List<AjtColumnInfo<OpenStackLimits>> res = new LinkedList<>();
         res.add(new AjtColumnInfo<OpenStackLimits>(this, String.class, null, "OpenStack", "OpenStack ID", null, n -> n.getOpenStackClient().getName(), AGTYPE.NOAGGREGATION, null, null));
+        res.add(new AjtColumnInfo<OpenStackLimits>(this, String.class, null, "URL", "OpenStack URL", null, n -> n.getOpenStackClient().os_auth_url, AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimits>(this, String.class, null, " Total Cores", " Total Cores", null, n -> n.getLimitCores(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimits>(this, Image.Status.class, null, "Used Cores", "Used Cores", null, n -> n.getLimitCoresUsed(), AGTYPE.NOAGGREGATION, null, null));
         res.add(new AjtColumnInfo<OpenStackLimits>(this, Image.Status.class, null, "Total Ram", "Total Ram", null, n -> n.getLimitRam(), AGTYPE.NOAGGREGATION, null, null));

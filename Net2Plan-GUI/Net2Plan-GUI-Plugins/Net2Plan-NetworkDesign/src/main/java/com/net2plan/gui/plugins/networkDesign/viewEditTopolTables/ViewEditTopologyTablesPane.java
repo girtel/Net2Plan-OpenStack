@@ -492,7 +492,7 @@ public class ViewEditTopologyTablesPane extends JPanel
 
          if(viewEditHighLevelTabbedPane.getTabCount()>selectedIndexFirstLevel && viewEditHighLevelTabbedPane.getTabCount() != 0) {
              viewEditHighLevelTabbedPane.setSelectedIndex(selectedIndexFirstLevel);
-             if (viewEditHighLevelTabbedPane.getSelectedComponent() instanceof JTabbedPane && selectedIndexSecondLevel >= 0) {
+             if (viewEditHighLevelTabbedPane.getSelectedComponent() instanceof JTabbedPane && selectedIndexSecondLevel >= 0 && selectedIndexSecondLevel>viewEditHighLevelTabbedPane.getTabCount()) {
                  ((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).setSelectedIndex(selectedIndexSecondLevel);
                  if (((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedComponent() instanceof JTabbedPane && selectedIndexThirdLevel >= 0)
                      ((JTabbedPane) ((JTabbedPane) viewEditHighLevelTabbedPane.getSelectedComponent()).getSelectedComponent()).setSelectedIndex(selectedIndexThirdLevel);

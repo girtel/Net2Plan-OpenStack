@@ -73,7 +73,7 @@ public class OpenStackNetDelete {
                // this.openStackClient.getClient().networking().port().update(openStackPort.osPort.toBuilder().state(State.DOWN).build());
                 RouterInterface deleteInterface = this.openStackClient.getClient().networking().router().detachInterface(openStackRouter.getId(),null,openStackPort.getId());
 
-                actionResponse = this.openStackClient.getClient().networking().port().delete(openStackNetworkElement.getId());
+                //actionResponse = this.openStackClient.getClient().networking().port().delete(openStackNetworkElement.getId());
 
             }else if (openStackNetworkElement instanceof OpenStackServer) {
 
